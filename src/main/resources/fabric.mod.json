@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "jason-model-extensions",
+  "version": "${version}",
+
+  "name": "JSON Model Extensions",
+  "description": "JSON Model Extensions for Fabric Rendering",
+  "authors": [
+    "Grondag", "Pyrofab"
+  ],
+  "contact": {
+    "sources": "https://github.com/grondag/jason-model-extensions"
+  },
+
+  "license": "Apache-2.0",
+  "icon": "assets/jmx/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "grondag.jmx.JsonModelExtensions"
+    ]
+  },
+  "mixins": [
+    "jmx.mixins.json"
+  ],
+
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
+  }
+}

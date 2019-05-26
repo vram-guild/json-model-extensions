@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "grondag.jmx.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+  	"MixinBakedQuadFactory",
+  	"MixinJsonUnbakedModel",
+  	"MixinMultipartBakedModel",
+  	"MixinWeightedBakedModel",
+  	"MixinWeightedBakedModelEntry"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
