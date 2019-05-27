@@ -161,7 +161,7 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
          * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
          */
         public void addQuad(Direction cullFace, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
-            RenderMaterial mat = finder.clear().disableDiffuse(0, !element.shade).find();
+            RenderMaterial mat = finder.clear().disableDiffuse(0, !element.shade).disableAo(0, !usesAo).find();
             final QuadEmitter emitter = this.emitter;
             emitter.material(mat);
             emitter.cullFace(cullFace);
