@@ -1,0 +1,19 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "block/redstone_ore"
+    },
+    "jmx_textures": {
+        "jmx_tex_all_0": "block/stone_ore_mask",
+        "jmx_tex_all_1": "block/redstone_ore_bits"
+    },
+    "jmx_materials": {
+    	"jmx_mat_all": {
+    		"layer0": "cutout_mipped",
+    		"layer1": "cutout_mipped",
+    		"emissive1": true,
+    		"ambient_occlusion1": false,
+    		"diffuse1": false
+    	}
+    }
+}
