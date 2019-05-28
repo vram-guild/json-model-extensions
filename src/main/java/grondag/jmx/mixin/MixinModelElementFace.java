@@ -1,5 +1,6 @@
 package grondag.jmx.mixin;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,6 +26,6 @@ public class MixinModelElementFace implements JmxExtension<FaceExtData> {
     
     @Inject(at = @At("RETURN"), method = "<init>") 
     private void onInit(CallbackInfo ci) {
-        jmx_ext = FaceExtData.TRANSFER.get();
+        jmx_ext = ObjectUtils.defaultIfNull(FaceExtData.TRANSFER.get(), FaceExtData.EMPTY);
     }
 }

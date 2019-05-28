@@ -3,10 +3,17 @@ package grondag.jmx.json.model;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.collect.ImmutableList;
 
+import grondag.jmx.json.ext.FaceExtData;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JmxMaterial;
+import grondag.jmx.json.ext.JmxModelExt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -19,6 +26,7 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
@@ -160,13 +168,43 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
         /**
          * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
          */
-        public void addQuad(Direction cullFace, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
-            RenderMaterial mat = finder.clear().disableDiffuse(0, !element.shade).disableAo(0, !usesAo).find();
+        public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
+            @SuppressWarnings("unchecked")
+            FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
+            JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
+            
+            //TODO: support multi-sprite quads with FREX
+            
+            final MaterialFinder finder = this.finder.clear();
+            finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse0.get());
+            finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : jmxMat.ao0.get());
+            finder.emissive(0, jmxMat.emissive0.get());
+            if(jmxMat.layer0 != null) {
+                finder.blendMode(0, jmxMat.layer0);
+            }
+            RenderMaterial mat = finder.find();
             final QuadEmitter emitter = this.emitter;
             emitter.material(mat);
             emitter.cullFace(cullFace);
             QUADFACTORY_EXT.bake(emitter, element, elementFace, sprite, face, bakeProps);
             emitter.emit();
+            
+            if(jmxMat.depth == 2 && extData.jmx_tex1 != null) {
+                JmxModelExt.boop();
+                sprite = spriteFunc.apply(extData.jmx_tex1);
+                finder.clear();
+                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
+                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+                finder.emissive(1, jmxMat.emissive1.get());
+                if(jmxMat.layer1 != null) {
+                    finder.blendMode(1, jmxMat.layer1);
+                }
+                mat = finder.find();
+                emitter.material(mat);
+                emitter.cullFace(cullFace);
+                QUADFACTORY_EXT.bake(emitter, element, elementFace, sprite, face, bakeProps);
+                emitter.emit();
+            }
         }
     }
 }

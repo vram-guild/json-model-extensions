@@ -1,5 +1,8 @@
 package grondag.jmx;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.fabricmc.api.ClientModInitializer;
 
 //TODO:  tag
@@ -10,4 +13,6 @@ public class JsonModelExtensions implements ClientModInitializer {
     public void onInitializeClient() {
         // nothing yet
     }
+    
+    public static final Logger LOG = LogManager.getLogger("JMX");
 }

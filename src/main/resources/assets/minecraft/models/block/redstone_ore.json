@@ -1,11 +1,11 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/jmx_cube_all",
     "textures": {
         "all": "block/redstone_ore"
     },
     "jmx_textures": {
-        "jmx_tex_all_0": "block/stone_ore_mask",
-        "jmx_tex_all_1": "block/redstone_ore_bits"
+        "jmx_tex_all0": "block/stone_ore_mask",
+        "jmx_tex_all1": "block/redstone_ore_bits"
     },
     "jmx_materials": {
     	"jmx_mat_all": {
