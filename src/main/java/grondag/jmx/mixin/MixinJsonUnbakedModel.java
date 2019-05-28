@@ -1,6 +1,9 @@
 package grondag.jmx.mixin;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -28,6 +32,7 @@ import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
+import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -75,9 +80,16 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
      */
     @SuppressWarnings("unlikely-arg-type")
     @Inject(at = @At("RETURN"), method = "getTextureDependencies") 
-    private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<String> errors, CallbackInfoReturnable<Identifier> ci) {
+    private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<String> errors, CallbackInfoReturnable<Collection<Identifier>> ci) {
+        if(jmxTextureDeps != null) {
+            ci.getReturnValue().addAll(jmxTextureDeps);
+        }
+        
+        if(jmxTextureErrors != null) {
+            errors.addAll(jmxTextureErrors);
+        }
+        
         Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
-
         for(JsonUnbakedModelExt model = (JsonUnbakedModelExt)(Object)this; model.jmx_parentId() != null && model.jmx_parent() == null; model = model.jmx_parent()) {
             set.add(model);
             UnbakedModel parentModel = (UnbakedModel)modelFunc.apply(model.jmx_parentId());
@@ -96,6 +108,55 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
             model.jmx_parent((JsonUnbakedModelExt)parentModel);
         }
+    }
+    
+    private HashSet<Identifier> jmxTextureDeps = null;
+    
+    private HashSet<Identifier> getOrCreateJmxTextureDeps() {
+        HashSet<Identifier> result = jmxTextureDeps;
+        if(result == null) {
+            result = new HashSet<>();
+            jmxTextureDeps = result;
+        }
+        return result;
+    }
+    
+    private HashSet<String> jmxTextureErrors = null;
+    
+    private HashSet<String> getOrCreateJmxTextureErrors() {
+        HashSet<String> result = jmxTextureErrors;
+        if(result == null) {
+            result = new HashSet<>();
+            jmxTextureErrors = result;
+        }
+        return result;
+    }
+    
+    @ModifyVariable(method = "getTextureDependencies", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
+    private ModelElementFace hookTextureDeps(ModelElementFace face) {
+        @SuppressWarnings("unchecked")
+        FaceExtData jmxData = ((JmxExtension<FaceExtData>)face).jmx_ext();
+        JsonUnbakedModel me = (JsonUnbakedModel)(Object)this;
+        
+        if(jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
+            String tex = me.resolveTexture(jmxData.jmx_tex0);
+            if (Objects.equals(tex, MissingSprite.getMissingSpriteId().toString())) {
+                getOrCreateJmxTextureErrors().add(String.format("%s in %s", jmxData.jmx_tex0, me.id));
+            } else {
+                getOrCreateJmxTextureDeps().add(new Identifier(tex));
+            }
+        }
+        
+        if(jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
+            String tex = me.resolveTexture(jmxData.jmx_tex1);
+            if (Objects.equals(tex, MissingSprite.getMissingSpriteId().toString())) {
+                getOrCreateJmxTextureErrors().add(String.format("%s in %s", jmxData.jmx_tex1, me.id));
+             } else {
+                 getOrCreateJmxTextureDeps().add(new Identifier(tex));
+             }
+        }
+        
+        return face;
     }
 
     @SuppressWarnings("unchecked")

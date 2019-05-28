@@ -90,9 +90,4 @@ public class JmxModelExt {
             this.root = root;
         }
     }
-    
-    //TODO: remove
-    public static void boop() {
-        System.out.print(false);
-    }
 }

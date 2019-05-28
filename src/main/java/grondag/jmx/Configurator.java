@@ -1,76 +1,120 @@
-//package grondag.jmx;
-//
-//import blue.endless.jankson.Comment;
-//import net.fabricmc.api.EnvType;
-//import net.fabricmc.api.Environment;
-//
-//@Environment(EnvType.CLIENT)
-//public class Configurator {
-//
-//    @SuppressWarnings("hiding")
-//    static class ConfigData {
-//        @Comment("Applies material properties and shaders to items. (WIP)")
-//        boolean itemShaderRender = false;
-//        
-//        @Comment("Reduces terrain lighting to full darkness in absence of moon/torch light.")
-//        boolean hardcoreDarkness = false;
-//        
-//        @Comment("Makes terrain fog a little less foggy.")
-//        boolean subtleFog = false;
-//        
-////        @Comment("TODO")
-////        boolean enableCompactGPUFormats = false;
-//        
-//        @Comment("Truly smoothh lighting. Some impact to memory use, chunk loading and frame rate.")
-//        boolean hdLightmaps = false;
-//        
-//        @Comment("Slight variation in light values - may prevent banding. Slight performance impact and not usually necessary.")
-//        boolean lightmapNoise = false;
-//        
-//        @Comment("Mimics directional light.")
-//        DiffuseMode diffuseShadingMode = DiffuseMode.NORMAL;
-//        
-//        @Comment("Makes light sources less cross-shaped. Chunk loading a little slower. Overall light levels remain similar.")
-//        boolean lightSmoothing = false;
-//        
-//        @Comment("Mimics light blocked by nearby objects.")
-//        AoMode aoShadingMode = AoMode.NORMAL;
-//        
-//        @Comment("Setting > 0 may give slightly better FPS at cost of potential flickering when lighting changes.")
-//        int maxLightmapDelayFrames = 0;
-//        
-//        @Comment("Extra lightmap capacity. Ensure enabled if you are getting `unable to create HD lightmap(s) - out of space' messages.")
-//        boolean moreLightmap = true;
-//        
-////        @Comment("TODO")
-////        boolean enableSinglePassCutout = true;
-//        
-//        @Comment("Helps with chunk rebuild and also rendering when player is moving or many blocks update.")
-//        boolean fastChunkOcclusion = true;
-//        
-//        @Comment("Draws multiple chunks with same view transformation. Much faster, but try without if you see visual defects.")
-//        boolean batchedChunkRender = true;
-//        
-////        @Comment("TODO")
-////        boolean disableVanillaChunkMatrix = true;
-//        
-//        @Comment("Adjusts quads on some vanilla models (like iron bars) to avoid z-fighting with neighbor blocks.")
-//        boolean preventDepthFighting = true;
-//        
-//        @Comment("Forces game to allow up to this many nanoseconds for chunk loading each frame. May prevent chunk load delay at high FPS.")
-//        long minChunkBudgetNanos = 100000;
-//
-//        // DEBUG
-//        @Comment("Output runtime per-material shader source. For shader development debugging.")
-//        boolean shaderDebug = false;
-//        
-//        @Comment("Shows HD lightmap pixels for debug purposes. Also looks cool.")        
-//        boolean lightmapDebug = false;
-//        
-//        @Comment("Summarizes multiple errors and warnings to single-line entries in the log.")        
-//        boolean conciseErrors = true;
-//        
-//        @Comment("Writes information useful for bug reports to the game log at startup.")        
-//        boolean logMachineInfo = true;
-//    }
-//}
+package grondag.jmx;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import blue.endless.jankson.Comment;
+import blue.endless.jankson.Jankson;
+import blue.endless.jankson.JsonObject;
+import me.shedaniel.cloth.api.ConfigScreenBuilder;
+import me.shedaniel.cloth.api.ConfigScreenBuilder.SavedConfig;
+import me.shedaniel.cloth.gui.entries.BooleanListEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resource.language.I18n;
+
+@Environment(EnvType.CLIENT)
+public class Configurator {
+
+    @SuppressWarnings("hiding")
+    static class ConfigData {
+        @Comment("Load all model as meshes.")
+        boolean loadVanillaModels = true;
+    }
+    
+    static final ConfigData DEFAULTS = new ConfigData();
+    private static final Gson GSON = new GsonBuilder().create();
+    private static final Jankson JANKSON = Jankson.builder().build();
+    
+    //TODO: use this
+    public static boolean loadVanillaModels = DEFAULTS.loadVanillaModels;
+    
+    /** use to stash parent screen during display */
+    private static Screen screenIn;
+    
+    private static File configFile;
+    
+    public static void init() {
+        configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.json5");
+        if(configFile.exists()) {
+            loadConfig();
+        } else {
+            saveConfig();
+        }
+    }
+    
+    private static void loadConfig() {
+        ConfigData config = new ConfigData();
+        try {
+            JsonObject configJson = JANKSON.load(configFile);
+            String regularized = configJson.toJson(false, false, 0);
+            config = GSON.fromJson(regularized, ConfigData.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JsonModelExtensions.LOG.error("Unable to load config. Using default values.");
+        }
+        loadVanillaModels = config.loadVanillaModels;
+    }
+
+    private static void saveConfig() {
+        ConfigData config = new ConfigData();
+        config.loadVanillaModels = loadVanillaModels;
+        
+        
+        try {
+            String result = JANKSON.toJson(config).toJson(true, true, 0);
+            if (!configFile.exists())
+                configFile.createNewFile();
+            
+            try(
+                    FileOutputStream out = new FileOutputStream(configFile, false);
+            ) {
+                out.write(result.getBytes());
+                out.flush();
+                out.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JsonModelExtensions.LOG.error("Unable to save config.");
+            return;
+        }
+    }
+    
+    private static Screen display() {
+        ConfigScreenBuilder builder = ConfigScreenBuilder.create(screenIn, "config.jmx.title", null);
+        
+        // FEATURES
+        ConfigScreenBuilder.CategoryBuilder features = builder.addCategory("config.jmx.category.features");
+        
+        features.addOption(new BooleanListEntry("config.jmx.value.item_render", loadVanillaModels, "config.jmx.reset", 
+                () -> DEFAULTS.loadVanillaModels, b -> loadVanillaModels = b, 
+                () -> Optional.of(I18n.translate("config.jmx.help.item_render").split(";"))));
+        
+        builder.setDoesConfirmSave(false);
+        
+        builder.setOnSave(Configurator::saveUserInput);
+        
+        return builder.build();
+    }
+    
+    public static Optional<Supplier<Screen>> getConfigScreen(Screen screen) {
+        screenIn = screen;
+        return Optional.of(Configurator::display);
+    }
+    
+    public static Screen getRawConfigScreen(Screen screen) {
+        screenIn = screen;
+        return display();
+    }
+    
+    private static void saveUserInput(SavedConfig config) {
+        saveConfig();
+    }
+}

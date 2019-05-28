@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 public final class JmxTexturesExt {
     public static void handleJmxTextures(JsonObject jsonObj, Map<String,String> map) {
         if(jsonObj.has("jmx_textures")) {
-            JmxModelExt.boop();
             JsonObject job = jsonObj.getAsJsonObject("jmx_textures");
             Iterator<Entry<String, JsonElement>> it = job.entrySet().iterator();
             while(it.hasNext()) {

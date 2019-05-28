@@ -190,14 +190,13 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
             emitter.emit();
             
             if(jmxMat.depth == 2 && extData.jmx_tex1 != null) {
-                JmxModelExt.boop();
                 sprite = spriteFunc.apply(extData.jmx_tex1);
                 finder.clear();
-                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
-                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
-                finder.emissive(1, jmxMat.emissive1.get());
+                finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
+                finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+                finder.emissive(0, jmxMat.emissive1.get());
                 if(jmxMat.layer1 != null) {
-                    finder.blendMode(1, jmxMat.layer1);
+                    finder.blendMode(0, jmxMat.layer1);
                 }
                 mat = finder.find();
                 emitter.material(mat);
