@@ -23,7 +23,7 @@ import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import grondag.jmx.json.model.BasicBakedModel;
+import grondag.jmx.json.model.JmxBakedModel;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -169,7 +169,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
         } else {
             Function<String, Sprite> spriteFuncInner = s -> spriteFunc.apply(new Identifier(me.resolveTexture(s)));
             Sprite particleSprite = spriteFuncInner.apply("particle");
-            BasicBakedModel.Builder builder = (new BasicBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel))).setParticle(particleSprite);
+            JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel))).setParticle(particleSprite);
             Iterator<ModelElement> elements = me.getElements().iterator();
             while(elements.hasNext()) {
                 ModelElement element = elements.next();

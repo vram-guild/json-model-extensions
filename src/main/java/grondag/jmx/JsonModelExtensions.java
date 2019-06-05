@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ClientModInitializer;
 
-//TODO:  tag
 //TODO:  uv per layer
 //TODO:  rotation per layer
 public class JsonModelExtensions implements ClientModInitializer {

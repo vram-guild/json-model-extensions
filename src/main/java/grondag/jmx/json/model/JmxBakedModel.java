@@ -44,7 +44,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
-public class BasicBakedModel implements BakedModel, FabricBakedModel {
+public class JmxBakedModel implements BakedModel, FabricBakedModel {
     protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
     
     protected final Mesh mesh;
@@ -55,7 +55,7 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
     protected final ModelTransformation transformation;
     protected final ModelItemPropertyOverrideList itemPropertyOverrides;
 
-    public BasicBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList ttemPropertyOverrides) {
+    public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList ttemPropertyOverrides) {
         this.mesh = mesh;
         this.usesAo = usesAo;
         this.depthInGui = depthInGui;
@@ -149,7 +149,7 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
             this.transformation = transformation;
         }
 
-        public BasicBakedModel.Builder setParticle(Sprite sprite) {
+        public JmxBakedModel.Builder setParticle(Sprite sprite) {
             this.particleTexture = sprite;
             return this;
         }
@@ -158,7 +158,7 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
             if (this.particleTexture == null) {
                 throw new RuntimeException("Missing particle!");
             } else {
-                return new BasicBakedModel(meshBuilder.build(), usesAo, depthInGui, particleTexture, transformation, itemPropertyOverrides);
+                return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, particleTexture, transformation, itemPropertyOverrides);
             }
         }
 
@@ -187,6 +187,9 @@ public class BasicBakedModel implements BakedModel, FabricBakedModel {
             emitter.material(mat);
             emitter.cullFace(cullFace);
             QUADFACTORY_EXT.bake(emitter, element, elementFace, sprite, face, bakeProps);
+            if(extData.jmx_tag != 0) {
+                emitter.tag(extData.jmx_tag);
+            }
             emitter.emit();
             
             if(jmxMat.depth == 2 && extData.jmx_tex1 != null) {
