@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "jason-model-extensions",
+  "id": "json-model-extensions",
   "version": "${version}",
 
   "name": "JSON Model Extensions",
@@ -17,16 +17,14 @@
 
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "grondag.jmx.JsonModelExtensions"
-    ]
+    "modmenu": [ "grondag.jmx.ModMenuHelper" ]
   },
   "mixins": [
     "jmx.mixins.json"
   ],
 
   "requires": {
-    "fabricloader": ">=0.4.0",
+    "fabricloader": ">=0.4.8",
     "fabric": "*"
   }
 }

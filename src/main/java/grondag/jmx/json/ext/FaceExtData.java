@@ -54,7 +54,17 @@ public class FaceExtData {
     public final String jmx_tex1;
     public final String jmx_material;
     
-    //TODO
+  //TODO:  uv per layer
+  //TODO:  rotation per layer
     public final ModelElementTexture jmx_texData0;
     public final ModelElementTexture jmx_texData1;
+    
+    public boolean isEmpty() {
+        return jmx_tag == 0
+                && (jmx_tex0 == null || jmx_tex0.isEmpty())
+                && (jmx_tex1 == null || jmx_tex1.isEmpty())
+                && (jmx_material == null || jmx_material.isEmpty())
+                && jmx_texData0 == null
+                && jmx_texData1 == null;
+    }
 }

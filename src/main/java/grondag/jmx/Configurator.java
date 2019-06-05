@@ -42,14 +42,13 @@ public class Configurator {
     @SuppressWarnings("hiding")
     static class ConfigData {
         @Comment("Load all model as meshes.")
-        boolean loadVanillaModels = true;
+        boolean loadVanillaModels = false;
     }
     
     static final ConfigData DEFAULTS = new ConfigData();
     private static final Gson GSON = new GsonBuilder().create();
     private static final Jankson JANKSON = Jankson.builder().build();
     
-    //TODO: use this
     public static boolean loadVanillaModels = DEFAULTS.loadVanillaModels;
     
     /** use to stash parent screen during display */

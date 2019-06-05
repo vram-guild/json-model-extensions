@@ -190,6 +190,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
             
             //TODO: support multi-sprite quads with FREX
+            //TODO: support named material array - JSON material def used if none found
             
             final MaterialFinder finder = this.finder.clear();
             finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse0.get());

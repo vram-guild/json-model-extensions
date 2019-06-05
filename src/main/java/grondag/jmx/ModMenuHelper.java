@@ -16,11 +16,20 @@
 
 package grondag.jmx;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-public class JsonModelExtensions {
-    public static final Logger LOG = LogManager.getLogger("JMX");
+import io.github.prospector.modmenu.api.ModMenuApi;
+import net.minecraft.client.gui.screen.Screen;
+
+public class ModMenuHelper implements ModMenuApi {
+    @Override
+    public Optional<Supplier<Screen>> getConfigScreen(Screen screen) {
+        return Configurator.getConfigScreen(screen);
+    }
     
-    public static final String MODID = "json-model-extensions";
+    @Override
+    public String getModId() {
+        return JsonModelExtensions.MODID;
+    }
 }
