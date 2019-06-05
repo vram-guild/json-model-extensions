@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2019 grondag
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+
 package grondag.jmx.json.ext;
 
 import java.util.Collections;
@@ -15,14 +31,18 @@ public class JmxModelExt {
 
     public JmxModelExt parent;
 
-    private final Map<String, Object> map; 
+    private final Map<String, Object> materialMap; 
 
-    private JmxModelExt(Map<String, Object> map) {
-        this.map = map;
+    private JmxModelExt(Map<String, Object> materialMap) {
+        this.materialMap = materialMap;
     }
 
+    public boolean isEmpty() {
+        return materialMap.isEmpty();
+    }
+    
     public JmxMaterial resolveMaterial(String matName) {
-        return matName == null || map == null ? JmxMaterial.DEFAULT : resolveMaterialInner(matName);
+        return matName == null || materialMap == null ? JmxMaterial.DEFAULT : resolveMaterialInner(matName);
     }
 
     private JmxMaterial resolveMaterialInner(String matName) {
@@ -40,7 +60,7 @@ public class JmxModelExt {
                 JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
                 return JmxMaterial.DEFAULT;
             } else {
-                Object result = this.map.get(((String)val).substring(1));
+                Object result = this.materialMap.get(((String)val).substring(1));
                 if(result != null && result instanceof JmxMaterial) {
                     return result;
                 }

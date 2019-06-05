@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * Copyright 2019 grondag
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+
 package grondag.jmx.mixin;
 
 import java.util.Collection;
@@ -70,17 +86,19 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
         }
     }
 
+    /** We use a threadlocal populated just before initialization vs trying to hook initialization directly. */
     @Inject(at = @At("RETURN"), method = "<init>") 
     private void onInit(CallbackInfo ci) {
         jmxModelExt = JmxModelExt.TRANSFER.get();
     }
 
     /**
-     * We don't need the collection of material dependencies - this is just to map parent relationships.
+     * Appends JMX texture dependencies and computes material dependencies.
      */
     @SuppressWarnings("unlikely-arg-type")
     @Inject(at = @At("RETURN"), method = "getTextureDependencies") 
     private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<String> errors, CallbackInfoReturnable<Collection<Identifier>> ci) {
+        // TODO: remove unused vanilla texture dependencies
         if(jmxTextureDeps != null) {
             ci.getReturnValue().addAll(jmxTextureDeps);
         }
@@ -89,6 +107,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
             errors.addAll(jmxTextureErrors);
         }
         
+        //We don't need the collection of material dependencies - this is just to map parent relationships.
         Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
         for(JsonUnbakedModelExt model = (JsonUnbakedModelExt)(Object)this; model.jmx_parentId() != null && model.jmx_parent() == null; model = model.jmx_parent()) {
             set.add(model);
