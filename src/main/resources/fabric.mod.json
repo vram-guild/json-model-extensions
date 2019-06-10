@@ -9,9 +9,10 @@
     "Grondag", "Pyrofab"
   ],
   "contact": {
-    "sources": "https://github.com/grondag/jason-model-extensions"
+    "sources": "https://github.com/grondag/json-model-extensions",
+    "homepage": "https://github.com/grondag/json-model-extensions",
+    "issues": "https://github.com/grondag/json-model-extensions/issues"
   },
-
   "license": "Apache-2.0",
   "icon": "assets/jmx/jmx_icon.png",
 

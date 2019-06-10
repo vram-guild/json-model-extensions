@@ -108,9 +108,9 @@ public class Configurator {
         // FEATURES
         ConfigScreenBuilder.CategoryBuilder features = builder.addCategory("config.jmx.category.features");
         
-        features.addOption(new BooleanListEntry("config.jmx.value.item_render", loadVanillaModels, "config.jmx.reset", 
+        features.addOption(new BooleanListEntry("config.jmx.value.load_vanilla", loadVanillaModels, "config.jmx.reset", 
                 () -> DEFAULTS.loadVanillaModels, b -> loadVanillaModels = b, 
-                () -> Optional.of(I18n.translate("config.jmx.help.item_render").split(";"))));
+                () -> Optional.of(I18n.translate("config.jmx.help.load_vanilla").split(";"))));
         
         builder.setDoesConfirmSave(false);
         

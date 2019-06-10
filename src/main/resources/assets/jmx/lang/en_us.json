@@ -1,0 +1,8 @@
+{
+	"config.jmx.button" : "JMX",
+	"config.jmx.title" : "JSON Model Extensions",
+	"config.jmx.reset" : "Reset",
+	"config.jmx.category.features" : "Features",
+	"config.jmx.value.load_vanilla" : "Load Vanilla Models",
+	"config.jmx.help.load_vanilla" : "Load all models as Fabric;Render API meshes. May save memory."
+}
