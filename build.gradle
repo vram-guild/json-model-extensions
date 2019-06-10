@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.1.0+build." + project.getVersionCode();
+version = version = "0.1.0+alpha." + project.getVersionCode();
 
 minecraft {
 }
@@ -119,8 +119,8 @@ dependencies {
     modImplementation "grondag:fermion:0.6.+"
     include "grondag:fermion:0.6.+"
 	
-	modCompile "grondag:frex:0.7.0+build.52"
-    include "grondag:frex:0.7.0+build.52"
+	modCompile "grondag:frex:0.7.0+build.54"
+    include "grondag:frex:0.7.0+build.54"
     
 	// For dev env testing 
 	modImplementation "com.jamieswhiteshirt:developer-mode:1.0.11"
