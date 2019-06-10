@@ -1,0 +1,31 @@
+{
+	"spriteDepth": 1,
+	"vertexSource": "canvas:default.vert",
+	"fragmentSource": "canvas:default.frag",
+	"layers": [
+		{
+			"spriteIndex": 0,
+			"disableAo": false,
+			"disableColorIndex": false,
+			"disableDiffuse": false,
+			"blendMode": "solid",
+			"emissive": false
+		},
+		{
+			"spriteIndex": 1,
+			"disableAo": false,
+			"disableColorIndex": false,
+			"disableDiffuse": false,
+			"blendMode": "translucent",
+			"emissive": false
+		},
+		{
+			"spriteIndex": 2,
+			"disableAo": false,
+			"disableColorIndex": false,
+			"disableDiffuse": false,
+			"blendMode": "cutout",
+			"emissive": false		
+		}
+	]
+}

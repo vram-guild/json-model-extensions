@@ -51,7 +51,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     protected abstract void method_3460(int[] ints_1, int int_1, int int_2, Vector3f vector3f_1, int int_3, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
    
     @Override
-    public void bake(QuadEmitter q, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
+    public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
         final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
         final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
@@ -71,14 +71,23 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
         tex.uvs[2] = MathHelper.lerp(uvCent, tex.uvs[2], uAdj);
         tex.uvs[1] = MathHelper.lerp(uvCent, tex.uvs[1], vAdj);
         tex.uvs[3] = MathHelper.lerp(uvCent, tex.uvs[3], vAdj);
-        int[] ints_1 = buildVertexData(help.data, tex, sprite, face, normalizePos(help.pos, element.from, element.to), bakeProps.getRotation(), modelRotation);
-        Direction nominalFace = BakedQuadFactory.method_3467(ints_1);
+        int[] vertexData = buildVertexData(help.data, tex, sprite, face, normalizePos(help.pos, element.from, element.to), bakeProps.getRotation(), modelRotation);
+        Direction nominalFace = BakedQuadFactory.method_3467(vertexData);
         System.arraycopy(uvs, 0, tex.uvs, 0, BakedQuadFactoryHelper.UV_LEN);
         if (modelRotation == null) {
-            method_3462(ints_1, nominalFace);
+            method_3462(vertexData, nominalFace);
         }
-        q.fromVanilla(ints_1, 0, false);
-        q.colorIndex( elementFace.tintIndex);
+        
+        if(spriteIndex == 0) {
+            q.fromVanilla(vertexData, 0, false);
+            q.colorIndex( elementFace.tintIndex);
+        } else {
+            q.sprite(0, spriteIndex, Float.intBitsToFloat(vertexData[4]), Float.intBitsToFloat(vertexData[5]));
+            q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[11]), Float.intBitsToFloat(vertexData[12]));
+            q.sprite(2, spriteIndex, Float.intBitsToFloat(vertexData[18]), Float.intBitsToFloat(vertexData[19]));
+            q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[25]), Float.intBitsToFloat(vertexData[26]));
+            q.spriteColor(spriteIndex, vertexData[3], vertexData[10], vertexData[17], vertexData[24]);
+        }
     }
 
     private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, ModelRotation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {

@@ -26,6 +26,8 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.collect.ImmutableList;
 
+import grondag.frex.Frex;
+import grondag.frex.api.material.MaterialLoader;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxMaterial;
@@ -55,6 +57,7 @@ import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.ExtendedBlockView;
@@ -62,6 +65,7 @@ import net.minecraft.world.ExtendedBlockView;
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel {
     protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
+    protected static final boolean FREX_ACTIVE = Frex.isAvailable();
     
     protected final Mesh mesh;
     protected WeakReference<List<BakedQuad>[]> quadLists = null;
@@ -189,8 +193,43 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
             JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
             
-            //TODO: support multi-sprite quads with FREX
-            //TODO: support named material array - JSON material def used if none found
+            RenderMaterial mat = getPrimaryMaterial(jmxMat, element);
+            
+            final QuadEmitter emitter = this.emitter;
+            emitter.material(mat);
+            emitter.cullFace(cullFace);
+            if(extData.jmx_tag != 0) {
+                emitter.tag(extData.jmx_tag);
+            }
+            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+            
+            if(FREX_ACTIVE) {
+                if(jmxMat.depth == 2) {
+                    sprite = spriteFunc.apply(extData.jmx_tex1);
+                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, sprite, face, bakeProps);
+                }
+                // With FREX will emit both sprites as one quad
+                emitter.emit();
+            } else {
+                emitter.emit();
+                if(jmxMat.depth == 2) {
+                    emitter.material(getSecondaryMaterial(jmxMat, element));
+                    emitter.cullFace(cullFace);
+                    sprite = spriteFunc.apply(extData.jmx_tex1);
+                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+                    emitter.emit();
+                }
+            }
+        }
+        
+        private RenderMaterial getPrimaryMaterial(JmxMaterial jmxMat, ModelElement element) {
+            if(jmxMat.presets != null && jmxMat.presets.length > 0) {
+                RenderMaterial mat = null;
+                for(String preset : jmxMat.presets) {
+                    mat = MaterialLoader.loadMaterial(new Identifier(preset));
+                    if(mat != null) return mat;
+                }
+            }
             
             final MaterialFinder finder = this.finder.clear();
             finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse0.get());
@@ -199,32 +238,34 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             if(jmxMat.layer0 != null) {
                 finder.blendMode(0, jmxMat.layer0);
             }
-            RenderMaterial mat = finder.find();
-            final QuadEmitter emitter = this.emitter;
-            emitter.material(mat);
-            emitter.cullFace(cullFace);
-            QUADFACTORY_EXT.bake(emitter, element, elementFace, sprite, face, bakeProps);
-            if(extData.jmx_tag != 0) {
-                emitter.tag(extData.jmx_tag);
-            }
-            emitter.emit();
             
-            if(jmxMat.depth == 2 && extData.jmx_tex1 != null) {
-                sprite = spriteFunc.apply(extData.jmx_tex1);
-                finder.clear();
-                finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
-                finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
-                finder.emissive(0, jmxMat.emissive1.get());
+            if(FREX_ACTIVE && jmxMat.depth == 2) {
+                finder.spriteDepth(2);
+                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
+                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+                finder.emissive(1, jmxMat.emissive1.get());
                 if(jmxMat.layer1 != null) {
-                    finder.blendMode(0, jmxMat.layer1);
+                    finder.blendMode(1, jmxMat.layer1);
                 }
-                mat = finder.find();
-                emitter.material(mat);
-                emitter.cullFace(cullFace);
-                QUADFACTORY_EXT.bake(emitter, element, elementFace, sprite, face, bakeProps);
-                emitter.emit();
             }
+            
+            return finder.find();
         }
+        
+        /** 
+         * Material used for 2nd layer when FREX renderer not available.
+         */
+        private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
+             final MaterialFinder finder = this.finder.clear();
+             finder.clear();
+             finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
+             finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+             finder.emissive(0, jmxMat.emissive1.get());
+             if(jmxMat.layer1 != null) {
+                 finder.blendMode(0, jmxMat.layer1);
+             }
+             return finder.find();
+         }
     }
 }
 

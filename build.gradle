@@ -1,12 +1,12 @@
 plugins {
-	id 'fabric-loom' version '0.2.2-SNAPSHOT'
-	id 'java'
-	id 'maven'
+	id 'fabric-loom' version '0.2.4-SNAPSHOT'
+	//id 'java'
+	//id 'maven'
 	id 'maven-publish'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 ext.getVersionCode = { ->
     try {
@@ -53,9 +53,14 @@ repositories {
 
 processResources {
 	inputs.property "version", version
+	
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
 		expand "version": version
+	}
+	
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "fabric.mod.json"
 	}
 }
 
@@ -67,11 +72,17 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
+
+
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
+}
+
+jar {
+	from "LICENSE"
 }
 
 sourceSets {
@@ -97,25 +108,28 @@ def mcVersion = "1.14.2"
 
 dependencies {
 	minecraft "com.mojang:minecraft:$mcVersion"
-	mappings "net.fabricmc:yarn:$mcVersion+build.2"
-    modCompile "net.fabricmc:fabric-loader:0.4.8+build.154"
-    modCompile "net.fabricmc.fabric-api:fabric-api:0.3.0+build.175"
+	mappings "net.fabricmc:yarn:$mcVersion+build.7"
+    modImplementation "net.fabricmc:fabric-loader:0.4.8+build.154"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.180"
 	
+	modImplementation "grondag:canvas:0.7.0+pre.314"
+
 	compile "com.google.code.findbugs:jsr305:3.0.2"
 		
-    modCompile "grondag:fermion:0.6.+"
+    modImplementation "grondag:fermion:0.6.+"
     include "grondag:fermion:0.6.+"
 	
-	modCompile "grondag:frex:0.7.+"
-    include "grondag:frex:0.7.+"
+	modCompile "grondag:frex:0.7.0+build.52"
+    include "grondag:frex:0.7.0+build.52"
     
 	// For dev env testing 
-	modCompile "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modCompile "io.github.prospector.modmenu:ModMenu:1.5.4-85"
+	modImplementation "com.jamieswhiteshirt:developer-mode:1.0.11"
+	modImplementation "io.github.prospector.modmenu:ModMenu:1.5.4-85"
+	
 	//modCompile "cloth:ClothEvents:0.3.1.23" // for REI
 	//modCompile "roughly-enough-items:RoughlyEnoughItems:2.7.11.97"
-	modCompile "grondag:canvas:0.6.3+build.310"
-	modCompile "grondag:instruments:0.0.1+build.3"
+	
+	modImplementation "grondag:instruments:0.0.1+build.3"
 	
 	// dev env annotation support
 	compile "org.apiguardian:apiguardian-api:1.0.0"
@@ -126,8 +140,8 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-			artifact(jar) {
-				builtBy remapJar
+			artifact(jar.archivePath) {
+	    		builtBy remapJar
 			}
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar

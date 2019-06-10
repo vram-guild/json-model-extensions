@@ -9,6 +9,7 @@
     },
     "jmx_materials": {
     	"jmx_mat_all": {
+    		"presets": ["jmx:redstone"],
     		"layer0": "cutout_mipped",
     		"layer1": "cutout_mipped",
     		"emissive1": true,

@@ -1,0 +1,20 @@
+{
+	"vertexSource": "canvas:shaders/default.vert",
+	"fragmentSource": "jmx:shaders/redstone.frag",
+	"layers": [
+		{
+			"disableAo": false,
+			"disableColorIndex": false,
+			"disableDiffuse": false,
+			"blendMode": "cutout_mipped",
+			"emissive": false
+		},
+		{
+			"disableAo": true,
+			"disableColorIndex": false,
+			"disableDiffuse": true,
+			"blendMode": "cutout_mipped",
+			"emissive": true
+		}
+	]
+}
