@@ -23,15 +23,19 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import grondag.frex.Frex;
 import grondag.jmx.JsonModelExtensions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public class JmxModelExt {
     public static final ThreadLocal<JmxModelExt> TRANSFER  = new ThreadLocal<>();
 
+    private static final boolean FREX = Frex.isAvailable();
+    
     public JmxModelExt parent;
+    
+    private final Map<String, Object> materialMap;
 
-    private final Map<String, Object> materialMap; 
 
     private JmxModelExt(Map<String, Object> materialMap) {
         this.materialMap = materialMap;
@@ -54,7 +58,6 @@ public class JmxModelExt {
     }
 
     private Object resolveMaterial(Object val, MaterialResolutionContext context) {
-
         if (isMaterialReference(val)) {
             if (this == context.current) {
                 JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
@@ -85,18 +88,11 @@ public class JmxModelExt {
         return val instanceof String && ((String)val).charAt(0) == '#';
     }
 
-    public static void deserialize(JsonObject jsonObj) {
-        if(jsonObj.has("jmx_materials")) {
-            final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
-            JsonObject job = jsonObj.getAsJsonObject("jmx_materials");
-            for(Entry<String, JsonElement> e : job.entrySet()) {
-                if(e.getValue().isJsonObject()) {
-                    map.put(e.getKey(), new JmxMaterial(e.getKey(), e.getValue().getAsJsonObject()));
-                } else {
-                    map.put(e.getKey(), e.getValue().getAsString());
-                }
-            }
-            TRANSFER.set(new JmxModelExt(map));
+    public static void deserialize(JsonObject jsonObjIn) {
+        if(FREX && jsonObjIn.has("frex")) {
+            deserializeInner(jsonObjIn.getAsJsonObject("frex"));
+        } else if(jsonObjIn.has("jmx")) {
+            deserializeInner(jsonObjIn.getAsJsonObject("jmx"));
         } else {
             TRANSFER.set(new JmxModelExt(Collections.emptyMap()));
         }
@@ -109,5 +105,18 @@ public class JmxModelExt {
         private MaterialResolutionContext(JmxModelExt root) {
             this.root = root;
         }
+    }
+    
+    private static void deserializeInner(JsonObject jsonObj) {
+        final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
+        JsonObject job = jsonObj.getAsJsonObject("materials");
+        for(Entry<String, JsonElement> e : job.entrySet()) {
+            if(e.getValue().isJsonObject()) {
+                map.put(e.getKey(), new JmxMaterial(e.getKey(), e.getValue().getAsJsonObject()));
+            } else {
+                map.put(e.getKey(), e.getValue().getAsString());
+            }
+        }
+        TRANSFER.set(new JmxModelExt(map));
     }
 }

@@ -18,7 +18,6 @@ package grondag.jmx.json.ext;
 
 import java.util.Locale;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.fabricmc.fabric.api.util.TriState;
@@ -29,7 +28,7 @@ public class JmxMaterial {
     public static final JmxMaterial DEFAULT = new JmxMaterial();
     
     public final String id;
-    public final String[] presets;
+    public final String preset;
     public final TriState diffuse0;
     public final TriState ao0;
     public final TriState emissive0;
@@ -45,7 +44,7 @@ public class JmxMaterial {
     
     private JmxMaterial() {
         id = "DEFAULT";
-        presets = null;
+        preset = null;
         ao0 = TriState.DEFAULT;
         ao1 = TriState.DEFAULT;
         diffuse0 = TriState.DEFAULT;
@@ -59,7 +58,7 @@ public class JmxMaterial {
     
     public JmxMaterial(String id, JsonObject jsonObj) {
         this.id = id;
-        presets = deserializePresets(jsonObj);
+        preset = JsonHelper.getString(jsonObj, "frex_preset", null);
         ao0 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion0", null));
         ao1 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion1", null));
         diffuse0 = asTriState(JsonHelper.getString(jsonObj, "diffuse0", null));
@@ -76,19 +75,6 @@ public class JmxMaterial {
         }
         this.depth = depth;
     };
-    
-    private static String[] deserializePresets(JsonObject jsonObj) {
-        if(jsonObj.has("presets")) {
-            JsonArray presets = JsonHelper.asArray(jsonObj.get("presets"), "presets");
-            final int size = presets.size();
-            String[] result = new String[size];
-            for(int i = 0; i < size; i++) {
-                result[i] = presets.get(i).getAsString();
-            }
-            return result;
-        }
-        return null;
-    }
     
     private static BlockRenderLayer asLayer(String property) {
         if (property == null || property.isEmpty()) {

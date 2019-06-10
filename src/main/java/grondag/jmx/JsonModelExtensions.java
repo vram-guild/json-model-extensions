@@ -19,6 +19,7 @@ package grondag.jmx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+//TODO: add JMX jsons for crop, cross, template, slabs, stem_fruit, stairs, orientable and thin block root models
 public class JsonModelExtensions {
     public static final Logger LOG = LogManager.getLogger("JMX");
     

@@ -223,12 +223,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
         }
         
         private RenderMaterial getPrimaryMaterial(JmxMaterial jmxMat, ModelElement element) {
-            if(jmxMat.presets != null && jmxMat.presets.length > 0) {
+            if(FREX_ACTIVE && jmxMat.preset != null) {
                 RenderMaterial mat = null;
-                for(String preset : jmxMat.presets) {
-                    mat = MaterialLoader.loadMaterial(new Identifier(preset));
-                    if(mat != null) return mat;
-                }
+                mat = MaterialLoader.loadMaterial(new Identifier(jmxMat.preset));
+                if(mat != null) return mat;
             }
             
             final MaterialFinder finder = this.finder.clear();

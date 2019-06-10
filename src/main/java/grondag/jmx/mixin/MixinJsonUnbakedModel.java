@@ -106,7 +106,6 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
     private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<String> errors,
             CallbackInfoReturnable<Collection<Identifier>> ci) {
         
-        // TODO: remove unused vanilla texture dependencies
         if (jmxTextureDeps != null) {
             ci.getReturnValue().addAll(jmxTextureDeps);
         }

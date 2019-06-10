@@ -1,20 +1,33 @@
 {
-    "parent": "block/jmx_cube_all",
+    "parent": "jmx:block/jmx_cube_all",
     "textures": {
-        "all": "block/redstone_ore"
+        "all": "minecraft:block/redstone_ore"
     },
-    "jmx_textures": {
-        "jmx_tex_all0": "block/stone_ore_mask",
-        "jmx_tex_all1": "block/redstone_ore_bits"
+    "jmx": {
+	    "textures": {
+	    	"jmx_tex_particle": "minecraft:block/redstone_ore",
+	        "jmx_tex_all0": "jmx:block/stone_ore_mask",
+	        "jmx_tex_all1": "jmx:block/redstone_ore_bits"
+	    },
+	    "materials": {
+	    	"jmx_mat_all": {
+	    		"layer0": "cutout_mipped",
+	    		"layer1": "cutout_mipped",
+	    		"emissive1": true,
+	    		"ambient_occlusion1": false,
+	    		"diffuse1": false
+	    	}
+	    }
     },
-    "jmx_materials": {
-    	"jmx_mat_all": {
-    		"presets": ["jmx:redstone"],
-    		"layer0": "cutout_mipped",
-    		"layer1": "cutout_mipped",
-    		"emissive1": true,
-    		"ambient_occlusion1": false,
-    		"diffuse1": false
-    	}
+    "frex": {
+    	"textures": {
+    		"jmx_tex_particle": "minecraft:block/redstone_ore",
+	        "jmx_tex_all0": "jmx:block/redstone_ore_shader",
+	        "jmx_tex_all1": null
+	    },
+	    "materials": {
+	    	"jmx_mat_all": { "frex_preset": "jmx:redstone" }
+	    	}
+	    }
     }
 }
