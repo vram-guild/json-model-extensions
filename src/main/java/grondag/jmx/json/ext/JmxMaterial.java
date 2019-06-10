@@ -20,10 +20,13 @@ import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.util.JsonHelper;
 
+@Environment(EnvType.CLIENT)
 public class JmxMaterial {
     public static final JmxMaterial DEFAULT = new JmxMaterial();
     

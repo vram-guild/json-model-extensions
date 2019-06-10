@@ -23,8 +23,11 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import com.google.gson.JsonObject;
 
 import grondag.jmx.json.ext.FaceExtData;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementFace;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ModelElementFace.Deserializer.class)
 public class MixinModelElementFaceDeserializer {
     @ModifyVariable(method = "method_3397", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)

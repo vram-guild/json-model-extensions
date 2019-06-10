@@ -20,8 +20,11 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import io.github.prospector.modmenu.api.ModMenuApi;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 
+@Environment(EnvType.CLIENT)
 public class ModMenuHelper implements ModMenuApi {
     @Override
     public Optional<Supplier<Screen>> getConfigScreen(Screen screen) {

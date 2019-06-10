@@ -16,8 +16,11 @@
 
 package grondag.jmx.json.ext;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 
+@Environment(EnvType.CLIENT)
 public interface JsonUnbakedModelExt {
     public JmxModelExt jmx_modelExt();
 

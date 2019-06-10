@@ -16,6 +16,10 @@
 
 package grondag.jmx.json.model;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class BakedQuadFactoryHelper {
     public static final int UV_LEN = 4;
     private static final ThreadLocal<BakedQuadFactoryHelper> HELPERS = ThreadLocal.withInitial(BakedQuadFactoryHelper::new);

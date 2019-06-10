@@ -13,9 +13,9 @@
   },
 
   "license": "Apache-2.0",
-  "icon": "assets/jmx/icon.png",
+  "icon": "assets/jmx/jmx_icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "modmenu": [ "grondag.jmx.ModMenuHelper" ]
   },

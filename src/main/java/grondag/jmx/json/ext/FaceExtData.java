@@ -18,9 +18,12 @@ package grondag.jmx.json.ext;
 
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.util.JsonHelper;
 
+@Environment(EnvType.CLIENT)
 public class FaceExtData {
     public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
     

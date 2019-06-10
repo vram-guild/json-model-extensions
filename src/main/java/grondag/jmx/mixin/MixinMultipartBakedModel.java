@@ -31,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
@@ -41,6 +43,7 @@ import net.minecraft.util.SystemUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ExtendedBlockView;
 
+@Environment(EnvType.CLIENT)
 @Mixin(MultipartBakedModel.class)
 public class MixinMultipartBakedModel implements FabricBakedModel {
     @Shadow private List<Pair<Predicate<BlockState>, BakedModel>> components;

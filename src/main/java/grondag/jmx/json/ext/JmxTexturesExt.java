@@ -24,7 +24,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import grondag.frex.Frex;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
+@Environment(EnvType.CLIENT)
 public final class JmxTexturesExt {
     private static final boolean FREX = Frex.isAvailable();
     /** prevents "unable to resolve" errors when 2nd texture layer isn't used */

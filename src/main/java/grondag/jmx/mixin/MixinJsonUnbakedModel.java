@@ -41,6 +41,8 @@ import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
 import grondag.jmx.json.model.JmxBakedModel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -54,6 +56,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
+@Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.class)
 public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
     @Shadow

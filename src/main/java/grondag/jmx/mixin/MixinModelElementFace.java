@@ -24,8 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementFace;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ModelElementFace.class)
 public class MixinModelElementFace implements JmxExtension<FaceExtData> {
     private FaceExtData jmx_ext;

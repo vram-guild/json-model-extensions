@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import grondag.jmx.json.model.BakedQuadFactoryExt;
 import grondag.jmx.json.model.BakedQuadFactoryHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.render.model.BakedQuadFactory;
 import net.minecraft.client.render.model.CubeFace;
@@ -36,6 +38,7 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
+@Environment(EnvType.CLIENT)
 @Mixin(BakedQuadFactory.class)
 public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     @Shadow

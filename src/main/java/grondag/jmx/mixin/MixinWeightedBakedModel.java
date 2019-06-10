@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
@@ -33,6 +35,7 @@ import net.minecraft.util.WeightedPicker;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ExtendedBlockView;
 
+@Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
 public class MixinWeightedBakedModel implements FabricBakedModel {
     @SuppressWarnings("rawtypes")
