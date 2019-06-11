@@ -25,4 +25,4 @@ bin/
 run/
 
 # eclipse
-.launch
+*.launch
