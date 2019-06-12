@@ -14,24 +14,10 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.mixin;
+package grondag.jmx.json.ext;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
-import grondag.jmx.json.ext.ModelEntryAccess;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
 
-@Environment(EnvType.CLIENT)
-@Mixin(targets = {"net/minecraft/client/render/model/WeightedBakedModel$ModelEntry"})
-public abstract class MixinWeightedBakedModelEntry implements ModelEntryAccess {
-    @Shadow
-    protected BakedModel model;
-
-    @Override
-    public BakedModel jmx_getModel() {
-        return model;
-    }
+public interface ModelEntryAccess {
+    BakedModel jmx_getModel();
 }

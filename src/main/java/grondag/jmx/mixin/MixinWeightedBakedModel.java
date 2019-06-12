@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import grondag.jmx.json.ext.ModelEntryAccess;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
@@ -37,7 +38,7 @@ import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
-public class MixinWeightedBakedModel implements FabricBakedModel {
+public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel {
     @SuppressWarnings("rawtypes")
     @Shadow private List models;
     @Shadow private int totalWeight;
@@ -62,6 +63,6 @@ public class MixinWeightedBakedModel implements FabricBakedModel {
 
     @SuppressWarnings("unchecked")
     private BakedModel getModel(Random random) {
-        return ((MixinWeightedBakedModelEntry)WeightedPicker.getAt(models, Math.abs((int)random.nextLong()) % totalWeight)).getModel();
+        return ((ModelEntryAccess)WeightedPicker.getAt(models, Math.abs((int)random.nextLong()) % totalWeight)).jmx_getModel();
     }
 }
