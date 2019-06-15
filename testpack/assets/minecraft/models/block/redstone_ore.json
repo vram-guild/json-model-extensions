@@ -26,7 +26,7 @@
 	        "jmx_tex_all1": null
 	    },
 	    "materials": {
-	    	"jmx_mat_all": { "frex_preset": "jmx:redstone" }
+	    	"jmx_mat_all": { "preset": "jmx:redstone" }
 	    	}
 	    }
     }

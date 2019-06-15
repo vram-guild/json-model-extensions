@@ -31,7 +31,6 @@ public class FaceExtData {
     public static final FaceExtData EMPTY = new FaceExtData();
     
     private FaceExtData() {
-        jmx_tag = 0;
         jmx_tex0 = null;
         jmx_tex1 = null;
         jmx_material = null;
@@ -40,7 +39,6 @@ public class FaceExtData {
     }
     
     private FaceExtData(JsonObject jsonObj, JsonDeserializationContext context) {
-        jmx_tag = JsonHelper.getInt(jsonObj, "jmx_tag", 0);
         jmx_tex0 = JsonHelper.getString(jsonObj, "jmx_tex0", null);
         jmx_tex1 = JsonHelper.getString(jsonObj, "jmx_tex1", null);
         jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
@@ -52,7 +50,6 @@ public class FaceExtData {
         TRANSFER.set(new FaceExtData(jsonObj, context));
     }
     
-    public final int jmx_tag;
     public final String jmx_tex0;
     public final String jmx_tex1;
     public final String jmx_material;
@@ -63,8 +60,7 @@ public class FaceExtData {
     public final ModelElementTexture jmx_texData1;
     
     public boolean isEmpty() {
-        return jmx_tag == 0
-                && (jmx_tex0 == null || jmx_tex0.isEmpty())
+        return (jmx_tex0 == null || jmx_tex0.isEmpty())
                 && (jmx_tex1 == null || jmx_tex1.isEmpty())
                 && (jmx_material == null || jmx_material.isEmpty())
                 && jmx_texData0 == null

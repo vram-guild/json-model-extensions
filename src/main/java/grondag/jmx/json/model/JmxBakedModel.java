@@ -198,8 +198,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             final QuadEmitter emitter = this.emitter;
             emitter.material(mat);
             emitter.cullFace(cullFace);
-            if(extData.jmx_tag != 0) {
-                emitter.tag(extData.jmx_tag);
+            if(jmxMat.tag != 0) {
+                emitter.tag(jmxMat.tag);
             }
             QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
             final int color0 = jmxMat.color0;
@@ -221,6 +221,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             } else {
                 emitter.emit();
                 if(jmxMat.depth == 2) {
+                    if(jmxMat.tag != 0) {
+                        emitter.tag(jmxMat.tag);
+                    }
                     emitter.material(getSecondaryMaterial(jmxMat, element));
                     emitter.cullFace(cullFace);
                     sprite = spriteFunc.apply(extData.jmx_tex1);
@@ -269,7 +272,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
          */
         private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
              final MaterialFinder finder = this.finder.clear();
-             finder.clear();
              finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
              finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
              finder.emissive(0, jmxMat.emissive1.get());

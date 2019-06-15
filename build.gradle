@@ -30,7 +30,7 @@ minecraft {
 }
 
 repositories {
-	mavenLocal()
+	//mavenLocal()
     //flatDir {
     //    dirs '../fabric/build/libs'
     //}
@@ -110,14 +110,14 @@ dependencies {
 	minecraft "com.mojang:minecraft:$mcVersion"
 	mappings "net.fabricmc:yarn:$mcVersion+build.7"
     modImplementation "net.fabricmc:fabric-loader:0.4.8+build.155"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.184"
+    modCompile "net.fabricmc.fabric-api:fabric-api:0.3.0+build.185"
 	
-	modImplementation "grondag:canvas:0.7.0+alpha.+"
+	modImplementation "grondag:canvas:0.7.1+alpha.+"
 
     modImplementation "grondag:fermion:0.6.+"
     include "grondag:fermion:0.6.+"
 	
-	modCompile "grondag:frex:0.7.0+build.54"
+	modImplementation "grondag:frex:0.7.0+build.54"
     include "grondag:frex:0.7.0+build.54"
     
 	// For dev env testing 

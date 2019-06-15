@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
-import grondag.fermion.color.ColorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
@@ -49,6 +48,7 @@ public class JmxMaterial {
     public final BlockRenderLayer layer1;
     
     public final int depth;
+    public final int tag;
     
     private JmxMaterial() {
         id = "DEFAULT";
@@ -66,11 +66,13 @@ public class JmxMaterial {
         layer0 = null;
         layer1 = null;
         depth = 1;
+        tag = 0;
     };
     
     public JmxMaterial(String id, JsonObject jsonObj) {
         this.id = id;
-        preset = JsonHelper.getString(jsonObj, "frex_preset", null);
+        preset = JsonHelper.getString(jsonObj, "preset", null);
+        tag = JsonHelper.getInt(jsonObj, "tag", 0);
         ao0 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion0", null));
         ao1 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion1", null));
         diffuse0 = asTriState(JsonHelper.getString(jsonObj, "diffuse0", null));
@@ -86,15 +88,14 @@ public class JmxMaterial {
         
         int depth = JsonHelper.getInt(jsonObj, "depth", 1);
         // force depth to 2 if attributes for 2nd layer are given
-        if(depth == 1 && (ao1 != TriState.DEFAULT || diffuse1 != TriState.DEFAULT || emissive1 != TriState.DEFAULT)) {
+        if(depth == 1 && (ao1 != TriState.DEFAULT || diffuse1 != TriState.DEFAULT || emissive1 != TriState.DEFAULT || color1 != -1)) {
             depth = 2;
         }
         this.depth = depth;
     };
     
     private static int color(String str) {
-        final int result = str.startsWith("0x") ? Integer.parseUnsignedInt(str.substring(2), 16) : Integer.parseInt(str);
-        return ColorHelper.swapRedBlue(result);
+        return str.startsWith("0x") ? Integer.parseUnsignedInt(str.substring(2), 16) : Integer.parseInt(str);
     }
     
     private static BlockRenderLayer asLayer(String property) {
