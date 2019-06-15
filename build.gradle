@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.1.0+alpha." + project.getVersionCode();
+version = version = "0.1.1+alpha." + project.getVersionCode();
 
 minecraft {
 }
@@ -110,12 +110,10 @@ dependencies {
 	minecraft "com.mojang:minecraft:$mcVersion"
 	mappings "net.fabricmc:yarn:$mcVersion+build.7"
     modImplementation "net.fabricmc:fabric-loader:0.4.8+build.155"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.183"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.184"
 	
-	modImplementation "grondag:canvas:0.7.0+pre.314"
+	modImplementation "grondag:canvas:0.7.0+alpha.+"
 
-	compile "com.google.code.findbugs:jsr305:3.0.2"
-		
     modImplementation "grondag:fermion:0.6.+"
     include "grondag:fermion:0.6.+"
 	
@@ -124,8 +122,12 @@ dependencies {
     
 	// For dev env testing 
 	modImplementation "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modImplementation "io.github.prospector.modmenu:ModMenu:1.5.4-85"
+	modImplementation "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 	
+    //modImplementation "cloth-config:ClothConfig:0.2.1.14"
+    // included now in fermion
+    // include "cloth-config:ClothConfig:0.2.1.14"
+    
 	//modCompile "cloth:ClothEvents:0.3.1.23" // for REI
 	//modCompile "roughly-enough-items:RoughlyEnoughItems:2.7.11.97"
 	

@@ -16,6 +16,7 @@
 
 package grondag.jmx.json.ext;
 
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
 import net.fabricmc.api.EnvType;
@@ -36,20 +37,19 @@ public class FaceExtData {
         jmx_material = null;
         jmx_texData0 = null;
         jmx_texData1 = null;
-        
     }
     
-    private FaceExtData(JsonObject jsonObj) {
+    private FaceExtData(JsonObject jsonObj, JsonDeserializationContext context) {
         jmx_tag = JsonHelper.getInt(jsonObj, "jmx_tag", 0);
         jmx_tex0 = JsonHelper.getString(jsonObj, "jmx_tex0", null);
         jmx_tex1 = JsonHelper.getString(jsonObj, "jmx_tex1", null);
         jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
-        jmx_texData0 = null;
-        jmx_texData1 = null;
+        jmx_texData0 = null; //(ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
+        jmx_texData1 = null; //(ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
     }
 
-    public static void deserialize(JsonObject jsonObj) {
-        TRANSFER.set(new FaceExtData(jsonObj));
+    public static void deserialize(JsonObject jsonObj, JsonDeserializationContext context) {
+        TRANSFER.set(new FaceExtData(jsonObj, context));
     }
     
     public final int jmx_tag;

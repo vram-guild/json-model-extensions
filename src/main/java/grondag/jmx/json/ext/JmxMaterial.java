@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
+import grondag.fermion.color.ColorHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.TriState;
@@ -35,10 +36,14 @@ public class JmxMaterial {
     public final TriState diffuse0;
     public final TriState ao0;
     public final TriState emissive0;
+    public final TriState colorIndex0;
     
     public final TriState diffuse1;
     public final TriState ao1;
     public final TriState emissive1;
+    public final TriState colorIndex1;
+    public final int color0;
+    public final int color1;
     
     public final BlockRenderLayer layer0;
     public final BlockRenderLayer layer1;
@@ -54,6 +59,10 @@ public class JmxMaterial {
         diffuse1 = TriState.DEFAULT;
         emissive0 = TriState.DEFAULT;
         emissive1 = TriState.DEFAULT;
+        colorIndex0 = TriState.DEFAULT;
+        colorIndex1 = TriState.DEFAULT;
+        color0 = 0xFFFFFFFF;
+        color1 = 0xFFFFFFFF;
         layer0 = null;
         layer1 = null;
         depth = 1;
@@ -68,6 +77,10 @@ public class JmxMaterial {
         diffuse1 = asTriState(JsonHelper.getString(jsonObj, "diffuse1", null));
         emissive0 = asTriState(JsonHelper.getString(jsonObj, "emissive0", null));
         emissive1 = asTriState(JsonHelper.getString(jsonObj, "emissive1", null));
+        colorIndex0 = asTriState(JsonHelper.getString(jsonObj, "colorIndex0", null));
+        colorIndex1 = asTriState(JsonHelper.getString(jsonObj, "colorIndex1", null));
+        color0 = color(JsonHelper.getString(jsonObj, "color0", "0xFFFFFFFF"));
+        color1 = color(JsonHelper.getString(jsonObj, "color1", "0xFFFFFFFF"));
         layer0 = asLayer(JsonHelper.getString(jsonObj, "layer0", null));
         layer1 = asLayer(JsonHelper.getString(jsonObj, "layer1", null));
         
@@ -78,6 +91,11 @@ public class JmxMaterial {
         }
         this.depth = depth;
     };
+    
+    private static int color(String str) {
+        final int result = str.startsWith("0x") ? Integer.parseUnsignedInt(str.substring(2), 16) : Integer.parseInt(str);
+        return ColorHelper.swapRedBlue(result);
+    }
     
     private static BlockRenderLayer asLayer(String property) {
         if (property == null || property.isEmpty()) {

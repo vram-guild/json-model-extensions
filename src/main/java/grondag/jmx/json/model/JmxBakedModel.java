@@ -202,11 +202,19 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
                 emitter.tag(extData.jmx_tag);
             }
             QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+            final int color0 = jmxMat.color0;
+            if(color0 != 0xFFFFFFFF) {
+                emitter.spriteColor(0, color0, color0, color0, color0);
+            }
             
             if(FREX_ACTIVE) {
                 if(jmxMat.depth == 2) {
                     sprite = spriteFunc.apply(extData.jmx_tex1);
                     QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, sprite, face, bakeProps);
+                    final int color1 = jmxMat.color1;
+                    if(color1 != 0xFFFFFFFF) {
+                        emitter.spriteColor(1, color1, color1, color1, color1);
+                    }
                 }
                 // With FREX will emit both sprites as one quad
                 emitter.emit();
@@ -217,6 +225,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
                     emitter.cullFace(cullFace);
                     sprite = spriteFunc.apply(extData.jmx_tex1);
                     QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+                    final int color1 = jmxMat.color1;
+                    if(color1 != 0xFFFFFFFF) {
+                        emitter.spriteColor(0, color1, color1, color1, color1);
+                    }
                     emitter.emit();
                 }
             }
@@ -230,18 +242,20 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             }
             
             final MaterialFinder finder = this.finder.clear();
-            finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse0.get());
-            finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : jmxMat.ao0.get());
+            finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get());
+            finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
             finder.emissive(0, jmxMat.emissive0.get());
+            if(jmxMat.colorIndex0 == TriState.FALSE) finder.disableColorIndex(0, true);
             if(jmxMat.layer0 != null) {
                 finder.blendMode(0, jmxMat.layer0);
             }
             
             if(FREX_ACTIVE && jmxMat.depth == 2) {
                 finder.spriteDepth(2);
-                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
-                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
+                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
                 finder.emissive(1, jmxMat.emissive1.get());
+                if(jmxMat.colorIndex1 == TriState.FALSE) finder.disableColorIndex(1, true);
                 if(jmxMat.layer1 != null) {
                     finder.blendMode(1, jmxMat.layer1);
                 }
@@ -256,9 +270,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
         private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
              final MaterialFinder finder = this.finder.clear();
              finder.clear();
-             finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : jmxMat.diffuse1.get());
-             finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : jmxMat.ao1.get());
+             finder.disableDiffuse(0, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
+             finder.disableAo(0, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
              finder.emissive(0, jmxMat.emissive1.get());
+             if(jmxMat.colorIndex1 == TriState.FALSE) finder.disableColorIndex(0, true);
              if(jmxMat.layer1 != null) {
                  finder.blendMode(0, jmxMat.layer1);
              }
