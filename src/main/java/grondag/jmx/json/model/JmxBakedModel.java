@@ -53,6 +53,7 @@ import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
+import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
@@ -201,7 +202,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             if(jmxMat.tag != 0) {
                 emitter.tag(jmxMat.tag);
             }
-            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+            
+            ModelElementTexture tex = extData.jmx_texData0 == null ? elementFace.textureData : extData.jmx_texData0;
+            
+            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps);
             final int color0 = jmxMat.color0;
             if(color0 != 0xFFFFFFFF) {
                 emitter.spriteColor(0, color0, color0, color0, color0);
@@ -209,8 +213,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             
             if(FREX_ACTIVE) {
                 if(jmxMat.depth == 2) {
+                    tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
                     sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, sprite, face, bakeProps);
+                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps);
                     final int color1 = jmxMat.color1;
                     if(color1 != 0xFFFFFFFF) {
                         emitter.spriteColor(1, color1, color1, color1, color1);
@@ -221,13 +226,14 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
             } else {
                 emitter.emit();
                 if(jmxMat.depth == 2) {
+                    tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
                     if(jmxMat.tag != 0) {
                         emitter.tag(jmxMat.tag);
                     }
                     emitter.material(getSecondaryMaterial(jmxMat, element));
                     emitter.cullFace(cullFace);
                     sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, sprite, face, bakeProps);
+                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps);
                     final int color1 = jmxMat.color1;
                     if(color1 != 0xFFFFFFFF) {
                         emitter.spriteColor(0, color1, color1, color1, color1);

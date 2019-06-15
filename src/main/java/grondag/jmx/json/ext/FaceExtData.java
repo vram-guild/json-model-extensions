@@ -16,6 +16,8 @@
 
 package grondag.jmx.json.ext;
 
+import javax.annotation.Nullable;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
@@ -42,20 +44,27 @@ public class FaceExtData {
         jmx_tex0 = JsonHelper.getString(jsonObj, "jmx_tex0", null);
         jmx_tex1 = JsonHelper.getString(jsonObj, "jmx_tex1", null);
         jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
-        jmx_texData0 = null; //(ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
-        jmx_texData1 = null; //(ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
+        jmx_texData0 = deserializeJmxTexData(jsonObj, context, "jmx_uv_rot0");
+        jmx_texData1 = deserializeJmxTexData(jsonObj, context, "jmx_uv_rot1");
     }
 
     public static void deserialize(JsonObject jsonObj, JsonDeserializationContext context) {
         TRANSFER.set(new FaceExtData(jsonObj, context));
     }
     
+    private static @Nullable ModelElementTexture deserializeJmxTexData(JsonObject jsonObj, JsonDeserializationContext context, String tag) {
+        if(jsonObj.has(tag)) {
+            JsonObject texObj = JsonHelper.getObject(jsonObj, tag);
+            if(!texObj.isJsonNull()) {
+                return (ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
+            }
+        }
+        return null;
+    }
+    
     public final String jmx_tex0;
     public final String jmx_tex1;
     public final String jmx_material;
-    
-  //TODO:  uv per layer
-  //TODO:  rotation per layer
     public final ModelElementTexture jmx_texData0;
     public final ModelElementTexture jmx_texData1;
     

@@ -54,17 +54,18 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     protected abstract void method_3460(int[] ints_1, int int_1, int int_2, Vector3f vector3f_1, int int_3, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
    
     @Override
-    public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
+    public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
         final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
         final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
-        ModelElementTexture tex = elementFace.textureData;
         if (bakeProps.isUvLocked()) {
             tex = uvLock(elementFace.textureData, face, bakeProps.getRotation());
         }
 
+        // preserve tex data in case needed again (can have two passes)
         final float[] uvs = help.uv;
         System.arraycopy(tex.uvs, 0, uvs, 0, BakedQuadFactoryHelper.UV_LEN);
+
         float uCent = (float)sprite.getWidth() / (sprite.getMaxU() - sprite.getMinU());
         float vCent = (float)sprite.getHeight() / (sprite.getMaxV() - sprite.getMinV());
         float uvCent = 4.0F / Math.max(vCent, uCent);
@@ -76,7 +77,10 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
         tex.uvs[3] = MathHelper.lerp(uvCent, tex.uvs[3], vAdj);
         int[] vertexData = buildVertexData(help.data, tex, sprite, face, normalizePos(help.pos, element.from, element.to), bakeProps.getRotation(), modelRotation);
         Direction nominalFace = BakedQuadFactory.method_3467(vertexData);
+        
+        // restore tex data
         System.arraycopy(uvs, 0, tex.uvs, 0, BakedQuadFactoryHelper.UV_LEN);
+        
         if (modelRotation == null) {
             method_3462(vertexData, nominalFace);
         }
