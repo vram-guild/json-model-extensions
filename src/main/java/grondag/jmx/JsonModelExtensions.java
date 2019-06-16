@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-//TODO: add JMX jsons for crop, cross, template, slabs, stem_fruit, stairs, orientable and thin block root models
 @Environment(EnvType.CLIENT)
 public class JsonModelExtensions {
     public static final Logger LOG = LogManager.getLogger("JMX");

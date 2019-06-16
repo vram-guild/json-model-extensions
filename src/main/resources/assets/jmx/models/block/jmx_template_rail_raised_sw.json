@@ -1,0 +1,28 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#rail"
+    },
+    "jmx": {
+    	"textures": {
+	    	"particle": "#jmx_tex_particle"
+    	}
+	},
+    "elements": [
+        {   "from": [ 0, 9, 0 ],
+            "to": [ 16, 9, 16 ],
+            "rotation": {
+                "origin": [ 8, 9, 8 ],
+                "axis": "x",
+                "angle": -45,
+                "rescale": true
+            },
+            "faces": {
+                "down":  { "uv": [ 0, 16, 16,  0 ], "texture": "#rail",
+                	"jmx_tex0": "#jmx_tex_rail0", "jmx_tex1": "#jmx_tex_rail1", "jmx_material": "#jmx_mat_rail" },
+                "up":    { "uv": [ 0,  0, 16, 16 ], "texture": "#rail",
+                	"jmx_tex0": "#jmx_tex_rail0", "jmx_tex1": "#jmx_tex_rail1", "jmx_material": "#jmx_mat_rail" }
+            }
+        }
+    ]
+}
