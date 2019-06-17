@@ -28,6 +28,8 @@ import com.google.common.collect.ImmutableList;
 
 import grondag.frex.Frex;
 import grondag.frex.api.material.MaterialLoader;
+import grondag.jmx.api.TransformableModel;
+import grondag.jmx.api.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxMaterial;
@@ -44,8 +46,10 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.BakedQuadFactory;
@@ -57,6 +61,7 @@ import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -64,7 +69,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
-public class JmxBakedModel implements BakedModel, FabricBakedModel {
+public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
     protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
     protected static final boolean FREX_ACTIVE = Frex.isAvailable();
     
@@ -76,15 +81,40 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel {
     protected final ModelTransformation transformation;
     protected final ModelItemPropertyOverrideList itemPropertyOverrides;
 
-    public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList ttemPropertyOverrides) {
+    public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides) {
         this.mesh = mesh;
         this.usesAo = usesAo;
         this.depthInGui = depthInGui;
         this.particleSprite = particleSprite;
         this.transformation = transformation;
-        this.itemPropertyOverrides = ttemPropertyOverrides;
+        this.itemPropertyOverrides = itemPropertyOverrides;
     }
 
+    @Override
+    public BakedModel transform(TransformableModelContext context) {
+        final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getSpriteAtlas();
+        final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
+        final QuadEmitter emitter = meshBuilder.getEmitter();
+        final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
+        final QuadTransform transform = context.quadTransform();
+        
+        this.mesh.forEach(q -> {
+            emitter.material(q.material());
+            q.copyTo(emitter);
+            if(transform.transform(emitter)) {
+                emitter.emit();
+            }
+        });
+        
+        return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, newParticleSprite, transformation, 
+                transformItemProperties(context, atlas, meshBuilder));
+    }
+    
+    private ModelItemPropertyOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
+        //TODO: Implement
+        return itemPropertyOverrides;
+    }
+    
     @Override
     public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
         List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();

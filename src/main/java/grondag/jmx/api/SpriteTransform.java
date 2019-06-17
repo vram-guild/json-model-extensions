@@ -14,12 +14,17 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.json.ext;
+package grondag.jmx.api;
 
-import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 
-public interface ModelEntryAccess {
-    BakedModel jmx_getModel();
-
-    int jmx_getWeight();
+@FunctionalInterface
+public interface SpriteTransform {
+    Identifier mapId(Identifier from);
+    
+    default Sprite mapSprite(Sprite from, SpriteAtlasTexture atlas) {
+        return atlas.getSprite(mapId(from.getId()));
+    }
 }

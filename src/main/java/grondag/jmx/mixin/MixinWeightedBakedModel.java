@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import grondag.jmx.api.TransformableModel;
+import grondag.jmx.api.TransformableModelContext;
 import grondag.jmx.json.ext.ModelEntryAccess;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,11 +40,24 @@ import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
-public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel {
+public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
     @SuppressWarnings("rawtypes")
     @Shadow private List models;
     @Shadow private int totalWeight;
     @Shadow private BakedModel defaultModel;
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public BakedModel transform(TransformableModelContext context) {
+        WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
+        models.forEach(m -> {
+            ModelEntryAccess me = (ModelEntryAccess)m;
+            BakedModel template = me.jmx_getModel();
+            BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel)template).transform(context) : template;
+            builder.add(mNew, me.jmx_getWeight());
+        });
+        return builder.getFirst();
+    }
     
     @Override
     public boolean isVanillaAdapter() {

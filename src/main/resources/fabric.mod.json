@@ -18,6 +18,7 @@
 
   "environment": "client",
   "entrypoints": {
+    "client": [ "grondag.jmx.JsonModelExtensions" ],
     "modmenu": [ "grondag.jmx.ModMenuHelper" ]
   },
   "mixins": [

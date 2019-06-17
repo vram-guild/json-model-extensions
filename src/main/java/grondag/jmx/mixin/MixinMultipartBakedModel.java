@@ -16,6 +16,7 @@
 
 package grondag.jmx.mixin;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import grondag.jmx.api.InverseStateMap;
+import grondag.jmx.api.TransformableModel;
+import grondag.jmx.api.TransformableModelContext;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -45,7 +49,7 @@ import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultipartBakedModel.class)
-public class MixinMultipartBakedModel implements FabricBakedModel {
+public class MixinMultipartBakedModel implements FabricBakedModel, TransformableModel {
     @Shadow private List<Pair<Predicate<BlockState>, BakedModel>> components;
     @Shadow private Map<BlockState, BitSet> field_5431 = new Object2ObjectOpenCustomHashMap<>(SystemUtil.identityHashStrategy());
     
@@ -55,6 +59,20 @@ public class MixinMultipartBakedModel implements FabricBakedModel {
     private void onInit(List<Pair<Predicate<BlockState>, BakedModel>> list, CallbackInfo ci) {
         BakedModel defaultModel = list.iterator().next().getRight();
         isVanilla = ((FabricBakedModel)defaultModel).isVanillaAdapter();
+    }
+    
+    @Override
+    public BakedModel transform(TransformableModelContext context) {
+        List<Pair<Predicate<BlockState>, BakedModel>> newComponents = new ArrayList<>();
+        components.forEach(c -> {
+            final BakedModel template = c.getRight();
+            final BakedModel newModel = (template instanceof TransformableModel) ? ((TransformableModel)template).transform(context) : template;
+            final Predicate<BlockState> oldPredicate = c.getLeft();
+            final InverseStateMap stateInverter = context.inverseStateMap()::invert;
+            final Predicate<BlockState> newPredicate = s -> oldPredicate.test(stateInverter.invert(s));
+            newComponents.add(Pair.of(newPredicate, newModel));
+        });
+        return new MultipartBakedModel(newComponents);
     }
     
     @Override

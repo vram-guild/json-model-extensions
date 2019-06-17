@@ -23,15 +23,25 @@ import grondag.jmx.json.ext.ModelEntryAccess;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.util.WeightedPicker;
 
 @Environment(EnvType.CLIENT)
 @Mixin(targets = {"net/minecraft/client/render/model/WeightedBakedModel$ModelEntry"})
-public abstract class MixinWeightedBakedModelEntry implements ModelEntryAccess {
+public abstract class MixinWeightedBakedModelEntry extends WeightedPicker.Entry implements ModelEntryAccess {
+    public MixinWeightedBakedModelEntry(int weight) {
+        super(weight);
+    }
+    
     @Shadow
     protected BakedModel model;
 
     @Override
     public BakedModel jmx_getModel() {
         return model;
+    }
+    
+    @Override
+    public int jmx_getWeight() {
+        return weight;
     }
 }

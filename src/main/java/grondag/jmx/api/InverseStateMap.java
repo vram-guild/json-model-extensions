@@ -14,12 +14,16 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.json.ext;
+package grondag.jmx.api;
 
-import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.block.BlockState;
 
-public interface ModelEntryAccess {
-    BakedModel jmx_getModel();
-
-    int jmx_getWeight();
+/** 
+ * Used in transformed multi-part models to map the new model's block
+ * states back to the original model's block states so that the original
+ * model's predicate functions can be reused without modification.
+ */
+@FunctionalInterface
+public interface InverseStateMap {
+    BlockState invert(BlockState fromState);
 }

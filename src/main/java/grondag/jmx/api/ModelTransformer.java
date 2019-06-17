@@ -14,12 +14,15 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.json.ext;
+package grondag.jmx.api;
+
+import java.util.Collection;
 
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.util.Identifier;
 
-public interface ModelEntryAccess {
-    BakedModel jmx_getModel();
+public interface ModelTransformer {
+    public Collection<Identifier> textures();
 
-    int jmx_getWeight();
+    public BakedModel transform(BakedModel model);
 }
