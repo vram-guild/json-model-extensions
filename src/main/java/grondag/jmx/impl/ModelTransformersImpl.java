@@ -20,6 +20,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.api.ModelTransformer;
 import grondag.jmx.api.ModelTransformerRegistry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -76,6 +77,7 @@ public class ModelTransformersImpl implements ModelTransformerRegistry, ModelVar
 
     @Override
     public ModelVariantProvider apply(ResourceManager resourceManager) {
+        JsonModelExtensions.initializeEndpointsOnce();
         return this;
     }
 }
