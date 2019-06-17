@@ -41,9 +41,8 @@ public class Configurator {
 
     @SuppressWarnings("hiding")
     static class ConfigData {
-        @Comment("Load all model as meshes.")
-        //TODO: change back or make dynamic per use of remappers?
-        boolean loadVanillaModels = true;
+        @Comment("Load all model as meshes. Ignored (and true) if any model transformers are in use.")
+        boolean loadVanillaModels = false;
     }
     
     static final ConfigData DEFAULTS = new ConfigData();
@@ -57,7 +56,6 @@ public class Configurator {
     
     private static File configFile;
     
-    //TODO: actually call this
     public static void init() {
         configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.json5");
         if(configFile.exists()) {

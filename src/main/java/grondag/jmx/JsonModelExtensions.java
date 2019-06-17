@@ -33,6 +33,7 @@ public class JsonModelExtensions implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        Configurator.init();
         ModelLoadingRegistry.INSTANCE.registerVariantProvider(ModelTransformersImpl.INSTANCE);
     }
 }

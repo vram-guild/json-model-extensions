@@ -156,7 +156,6 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
         return result;
     }
 
-
     @Override
     public QuadTransform quadTransform() {
         return this::transform;
