@@ -121,8 +121,8 @@ dependencies {
     include "grondag:frex:0.7.1+"
     
 	// For dev env testing 
-	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modRuntime "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+	//modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
+	modApi "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 	
     //modImplementation "cloth-config:ClothConfig:0.2.1.14"
     // included now in fermion
@@ -131,7 +131,7 @@ dependencies {
 	//modCompile "cloth:ClothEvents:0.3.1.23" // for REI
 	//modCompile "roughly-enough-items:RoughlyEnoughItems:2.9.4.129"
 	
-	modRuntime "grondag:instruments:0.0.1+build.3"
+	//modRuntime "grondag:instruments:0.0.1+build.3"
 	
 	// dev env annotation support
 	compile "org.apiguardian:apiguardian-api:1.0.0"
