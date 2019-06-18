@@ -16,29 +16,36 @@
 
 package grondag.jmx.api;
 
+import org.apiguardian.api.API;
+
 import grondag.jmx.impl.RexturedModelBuilderImpl;
 import net.minecraft.util.Identifier;
 
+/**
+ * Use to create models by re-texturing existing JSON block and or item models.
+ * Blocks and Items with re-textured models do NOT need JSON files.  They will 
+ * automatically be assigned a model that is a functional copy of the "template"
+ * block/item with textured replaced as specified using this registry.<p>
+ * 
+ * The "target block/item must have properties that match the template block/item.
+ */
+@API(status = API.Status.MAINTAINED)
 public interface RetexturedModelBuilder {
-    
-    public static RetexturedModelBuilder create(String sourceModel, String targetModel) {
-        return RexturedModelBuilderImpl.create(sourceModel, targetModel);
+    public static RetexturedModelBuilder builder(String sourceModel, String targetModel) {
+        return builder(new Identifier(sourceModel), new Identifier(targetModel));
     }
     
     public static RetexturedModelBuilder builder(Identifier sourceModel, Identifier targetModel) {
-        return RexturedModelBuilderImpl.create(sourceModel, targetModel);
+        return RexturedModelBuilderImpl.builder(sourceModel, targetModel);
     }
 
     RetexturedModelBuilder mapSprite(Identifier from, Identifier to);
 
     RetexturedModelBuilder mapSprite(String from, String to);
 
-    ModelTransformer build();
-    
-    public void complete();
+    public void completeBlockWithItem();
 
     void completeBlock();
 
     void completeItem();
-
 }

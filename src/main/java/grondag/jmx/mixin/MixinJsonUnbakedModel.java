@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 import grondag.jmx.Configurator;
 import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.impl.ModelTransformersImpl;
+import grondag.jmx.impl.DerivedModelRegistryImpl;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxModelExt;
@@ -205,7 +205,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
         // if no JMX extensions, cannot be a template model for transforms
         // and not using JMX for vanilla, then use vanilla builder
-        if (jmxModelExt == null || (!Configurator.loadVanillaModels && ModelTransformersImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
+        if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
             boolean isVanilla = true;
             Iterator<ModelElement> elements = me.getElements().iterator();
             while (isVanilla && elements.hasNext()) {

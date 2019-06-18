@@ -20,8 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import grondag.jmx.api.JmxEntryPoint;
-import grondag.jmx.api.ModelTransformerRegistry;
-import grondag.jmx.impl.ModelTransformersImpl;
+import grondag.jmx.impl.DerivedModelRegistryImpl;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -39,13 +38,13 @@ public class JsonModelExtensions implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Configurator.init();
-        ModelLoadingRegistry.INSTANCE.registerVariantProvider(ModelTransformersImpl.INSTANCE);
+        ModelLoadingRegistry.INSTANCE.registerVariantProvider(DerivedModelRegistryImpl.INSTANCE);
     }
     
     public static void initializeEndpointsOnce() {
         if(isEndpointInitializationNeeded) {
             FabricLoader.getInstance().getEntrypoints("jmx", JmxEntryPoint.class).forEach(
-                    api -> api.initalizeJmx(ModelTransformerRegistry.INSTANCE));
+                    api -> api.initalizeJmx());
             
             isEndpointInitializationNeeded = false;
         }

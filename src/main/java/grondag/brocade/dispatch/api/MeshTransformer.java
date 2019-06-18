@@ -14,15 +14,16 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.api;
+package grondag.brocade.dispatch.api;
 
-import java.util.Collection;
+import java.util.function.Consumer;
 
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.Identifier;
 
-public interface ModelTransformer {
-    public Collection<Identifier> textures();
-
-    public BakedModel transform(BakedModel model);
+/** 
+ * Transforms a base mesh (or generates it) when models are requested.
+ * Immutable and fully thread-safe. Instantiated per base (blockstate) model.
+ */
+public interface MeshTransformer {
+    void produceRequiredTextures(Consumer<Identifier> consumer);
 }

@@ -21,8 +21,6 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 
 import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.api.ModelTransformer;
-import grondag.jmx.api.ModelTransformerRegistry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
@@ -31,13 +29,13 @@ import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.resource.ResourceManager;
 
-public class ModelTransformersImpl implements ModelTransformerRegistry, ModelVariantProvider, Function<ResourceManager, ModelVariantProvider> {
-    private ModelTransformersImpl() {}
+public class DerivedModelRegistryImpl implements DerivedModelRegistry, ModelVariantProvider, Function<ResourceManager, ModelVariantProvider> {
+    private DerivedModelRegistryImpl() {}
     
-    public static final ModelTransformersImpl INSTANCE = new ModelTransformersImpl();
+    public static final DerivedModelRegistryImpl INSTANCE = new DerivedModelRegistryImpl();
     
-    private final Object2ObjectOpenHashMap<String, Pair<String, ModelTransformer>> blockTargets = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectOpenHashMap<String, Pair<String, ModelTransformer>> itemTargets = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectOpenHashMap<String, Pair<String, ModelTransformer>> blockModels = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectOpenHashMap<String, Pair<String, ModelTransformer>> itemModels = new Object2ObjectOpenHashMap<>();
     private boolean isEmpty = true;
     
     public boolean isEmpty() {
@@ -47,17 +45,17 @@ public class ModelTransformersImpl implements ModelTransformerRegistry, ModelVar
     @Override
     public void addBlock(String targetModel, String sourceModel, ModelTransformer transform) {
         isEmpty = false;
-        blockTargets.put(targetModel, Pair.of(sourceModel, transform));
+        blockModels.put(targetModel, Pair.of(sourceModel, transform));
     }
     
     @Override
     public void addItem(String targetModel, String sourceModel, ModelTransformer transform) {
         isEmpty = false;
-        itemTargets.put(targetModel, Pair.of(sourceModel, transform));
+        itemModels.put(targetModel, Pair.of(sourceModel, transform));
     }
     
     @Override
-    public void add(String targetModel, String sourceModel, ModelTransformer transform) {
+    public void addBlockWithItem(String targetModel, String sourceModel, ModelTransformer transform) {
         addBlock(targetModel, sourceModel, transform);
         addItem(targetModel, sourceModel, transform);
     }
@@ -66,7 +64,7 @@ public class ModelTransformersImpl implements ModelTransformerRegistry, ModelVar
     public UnbakedModel loadModelVariant(ModelIdentifier modelId, ModelProviderContext context) throws ModelProviderException {
         final String fromString = modelId.getNamespace() + ":" + modelId.getPath();
         final Pair<String, ModelTransformer> match  = modelId.getVariant().equals("inventory")
-                ? itemTargets.get(fromString) :  blockTargets.get(fromString);
+                ? itemModels.get(fromString) :  blockModels.get(fromString);
                 
         if(match != null) {
             ModelIdentifier templateId = new ModelIdentifier(match.getLeft(), modelId.getVariant());

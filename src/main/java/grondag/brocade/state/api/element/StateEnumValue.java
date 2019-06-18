@@ -14,12 +14,11 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.api;
+package grondag.brocade.state.api.element;
 
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+import grondag.brocade.state.api.MeshState;
 
-public interface TransformableModelContext {
-    SpriteTransform spriteTransform();
-    QuadTransform quadTransform();
-    InverseStateMap inverseStateMap();
+public interface StateEnumValue<V extends Enum<?>> extends StateValue {
+    V get(MeshState state);
+    void set(MeshState state, V val);
 }

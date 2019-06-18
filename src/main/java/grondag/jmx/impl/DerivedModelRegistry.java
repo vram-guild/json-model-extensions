@@ -14,16 +14,14 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.api;
+package grondag.jmx.impl;
 
-import net.minecraft.block.BlockState;
-
-/** 
- * Used in transformed multi-part models to map the new model's block
- * states back to the original model's block states so that the original
- * model's predicate functions can be reused without modification.
- */
-@FunctionalInterface
-public interface InverseStateMap {
-    BlockState invert(BlockState fromState);
+public interface DerivedModelRegistry {
+    public static DerivedModelRegistry INSTANCE = DerivedModelRegistryImpl.INSTANCE;
+    
+    void addBlock(String targetModel, String sourceModel, ModelTransformer transform);
+    
+    void addItem(String targetModel, String sourceModel, ModelTransformer transform);
+    
+    void addBlockWithItem(String targetModel, String sourceModel, ModelTransformer transform);
 }

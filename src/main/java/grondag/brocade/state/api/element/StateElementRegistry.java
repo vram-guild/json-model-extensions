@@ -14,10 +14,8 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.api;
+package grondag.brocade.state.api.element;
 
-import net.minecraft.client.render.model.BakedModel;
+public interface StateElementRegistry {
 
-public interface TransformableModel {
-    BakedModel transform(TransformableModelContext context);
 }

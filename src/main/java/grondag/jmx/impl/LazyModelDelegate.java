@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import grondag.frex.api.model.LazyForwardingBakedModel;
-import grondag.jmx.api.ModelTransformer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;

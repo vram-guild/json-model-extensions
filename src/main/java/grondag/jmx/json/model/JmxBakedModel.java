@@ -28,8 +28,8 @@ import com.google.common.collect.ImmutableList;
 
 import grondag.frex.Frex;
 import grondag.frex.api.material.MaterialLoader;
-import grondag.jmx.api.TransformableModel;
-import grondag.jmx.api.TransformableModelContext;
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxMaterial;
@@ -91,7 +91,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
     }
 
     @Override
-    public BakedModel transform(TransformableModelContext context) {
+    public BakedModel derive(TransformableModelContext context) {
         final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getSpriteAtlas();
         final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
         final QuadEmitter emitter = meshBuilder.getEmitter();

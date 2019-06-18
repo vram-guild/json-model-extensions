@@ -31,9 +31,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import grondag.jmx.api.InverseStateMap;
-import grondag.jmx.api.TransformableModel;
-import grondag.jmx.api.TransformableModelContext;
+import grondag.jmx.impl.InverseStateMap;
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,7 +49,7 @@ import net.minecraft.world.ExtendedBlockView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultipartBakedModel.class)
-public class MixinMultipartBakedModel implements FabricBakedModel, TransformableModel {
+public abstract class MixinMultipartBakedModel implements FabricBakedModel, TransformableModel {
     @Shadow private List<Pair<Predicate<BlockState>, BakedModel>> components;
     @Shadow private Map<BlockState, BitSet> field_5431 = new Object2ObjectOpenCustomHashMap<>(SystemUtil.identityHashStrategy());
     
@@ -62,11 +62,11 @@ public class MixinMultipartBakedModel implements FabricBakedModel, Transformable
     }
     
     @Override
-    public BakedModel transform(TransformableModelContext context) {
+    public BakedModel derive(TransformableModelContext context) {
         List<Pair<Predicate<BlockState>, BakedModel>> newComponents = new ArrayList<>();
         components.forEach(c -> {
             final BakedModel template = c.getRight();
-            final BakedModel newModel = (template instanceof TransformableModel) ? ((TransformableModel)template).transform(context) : template;
+            final BakedModel newModel = (template instanceof TransformableModel) ? ((TransformableModel)template).derive(context) : template;
             final Predicate<BlockState> oldPredicate = c.getLeft();
             final InverseStateMap stateInverter = context.inverseStateMap()::invert;
             final Predicate<BlockState> newPredicate = s -> oldPredicate.test(stateInverter.invert(s));

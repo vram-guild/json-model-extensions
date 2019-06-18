@@ -23,8 +23,8 @@ import java.util.function.Supplier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import grondag.jmx.api.TransformableModel;
-import grondag.jmx.api.TransformableModelContext;
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.ModelEntryAccess;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -48,12 +48,12 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
     
     @SuppressWarnings("unchecked")
     @Override
-    public BakedModel transform(TransformableModelContext context) {
+    public BakedModel derive(TransformableModelContext context) {
         WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
         models.forEach(m -> {
             ModelEntryAccess me = (ModelEntryAccess)m;
             BakedModel template = me.jmx_getModel();
-            BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel)template).transform(context) : template;
+            BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel)template).derive(context) : template;
             builder.add(mNew, me.jmx_getWeight());
         });
         return builder.getFirst();

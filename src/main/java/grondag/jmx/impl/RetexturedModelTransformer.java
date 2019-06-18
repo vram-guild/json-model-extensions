@@ -22,11 +22,6 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
 
-import grondag.jmx.api.InverseStateMap;
-import grondag.jmx.api.ModelTransformer;
-import grondag.jmx.api.SpriteTransform;
-import grondag.jmx.api.TransformableModel;
-import grondag.jmx.api.TransformableModelContext;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
@@ -65,12 +60,8 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
     @Override
     public BakedModel transform(BakedModel model) {
         return model instanceof TransformableModel 
-                ? ((TransformableModel)model).transform(this)
+                ? ((TransformableModel)model).derive(this)
                 : MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
-    }
-    
-    public static Builder builder(String sourceModel, String targetModel) {
-        return new Builder(new Identifier(sourceModel), new Identifier(targetModel));
     }
     
     public static Builder builder(Identifier sourceModel, Identifier targetModel) {
@@ -167,7 +158,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
     }
 
     @Override
-    public SpriteTransform spriteTransform() {
+    public SpriteMap spriteTransform() {
         return textureMap::get;
     }
 }

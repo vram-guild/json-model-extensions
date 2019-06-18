@@ -14,16 +14,12 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.api;
+package grondag.jmx.impl;
 
-import grondag.jmx.impl.ModelTransformersImpl;
-
-public interface ModelTransformerRegistry {
-    public static ModelTransformerRegistry INSTANCE = ModelTransformersImpl.INSTANCE;
+public class ModelTransformerRegistryImpl {
+    private ModelTransformerRegistryImpl() {}
     
-    void addBlock(String targetModel, String sourceModel, ModelTransformer transform);
+    public static final ModelTransformerRegistryImpl INSTANCE = new ModelTransformerRegistryImpl();
     
-    void addItem(String targetModel, String sourceModel, ModelTransformer transform);
     
-    void add(String targetModel, String sourceModel, ModelTransformer transform);
 }
