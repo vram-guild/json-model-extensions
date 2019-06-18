@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.1.4+alpha." + project.getVersionCode();
+version = version = "0.2.0+alpha." + project.getVersionCode();
 
 minecraft {
 }
@@ -129,7 +129,7 @@ dependencies {
     // include "cloth-config:ClothConfig:0.2.1.14"
     
 	//modCompile "cloth:ClothEvents:0.3.1.23" // for REI
-	//modCompile "roughly-enough-items:RoughlyEnoughItems:2.7.11.97"
+	//modCompile "roughly-enough-items:RoughlyEnoughItems:2.9.4.129"
 	
 	modImplementation "grondag:instruments:0.0.1+build.3"
 	

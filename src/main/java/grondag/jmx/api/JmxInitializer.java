@@ -24,10 +24,10 @@ import org.apiguardian.api.API;
  * fabric.mod.json that points to the implementation. <p>
  * 
  * Every mod that implements this interface and declares and end point will receive 
- * exactly one call to {@link #initalizeJmx()}.<p>
+ * exactly one call to {@link #onInitalizeJmx()}.<p>
  * 
  * To maintain an optional dependency, all calls to JMX methods must be isolated to 
- * the JmxEntryPoint instance or to classes that are only loaded if {@link #initalizeJmx()}
+ * the JmxEntryPoint instance or to classes that are only loaded if {@link #onInitalizeJmx()}
  * is called.<p>
  * 
  * Note that it is NOT necessary to implement this interface and register a
@@ -35,7 +35,8 @@ import org.apiguardian.api.API;
  * Such mods can safely handle JMX registration in their client initialize instance.
  */
 @API(status = API.Status.MAINTAINED)
-public interface JmxEntryPoint {
+
+public interface JmxInitializer {
     /**
      * Signals mods that maintain an optional dependency on JMX that JMX is
      * loaded. Such mod should handle initialization activities that reference
@@ -45,5 +46,5 @@ public interface JmxEntryPoint {
      * It will be called exactly once per game start - subsequent resource or renderer
      * reloads will not cause it to be called again.
      */
-    void initalizeJmx();
+    void onInitalizeJmx();
 }
