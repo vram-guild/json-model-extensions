@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.2.0+alpha." + project.getVersionCode();
+version = version = "0.2.1+alpha." + project.getVersionCode();
 
 minecraft {
 }
@@ -112,13 +112,13 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.4.8+build.155"
     modCompile "net.fabricmc.fabric-api:fabric-api:0.3.0+build.185"
 	
-	modImplementation "grondag:canvas:0.7.1+alpha.+"
+	//modImplementation "grondag:canvas:0.7.1+alpha.+"
 
-    modImplementation "grondag:fermion:0.6.+"
-    include "grondag:fermion:0.6.+"
+    modImplementation "grondag:fermion:0.6.1+"
+    include "grondag:fermion:0.6.1+"
 	
-	modImplementation "grondag:frex:0.7.1+"
-    include "grondag:frex:0.7.1+"
+	modImplementation "grondag:frex:0.7.2+"
+    include "grondag:frex:0.7.2+"
     
 	// For dev env testing 
 	//modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"

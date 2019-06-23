@@ -64,7 +64,7 @@ public class RexturedModelBuilderImpl implements RetexturedModelBuilder {
     @Override
     public void completeItem() {
         RetexturedModelTransformer transform = build();
-        DerivedModelRegistryImpl.INSTANCE.addBlock(transform.targetModel.toString(), transform.sourceModel.toString(), transform);
+        DerivedModelRegistryImpl.INSTANCE.addItem(transform.targetModel.toString(), transform.sourceModel.toString(), transform);
     }
 
     @Override
