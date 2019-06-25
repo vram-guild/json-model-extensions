@@ -27,9 +27,9 @@ import com.google.gson.GsonBuilder;
 import grondag.fermion.shadow.jankson.Comment;
 import grondag.fermion.shadow.jankson.Jankson;
 import grondag.fermion.shadow.jankson.JsonObject;
-import me.shedaniel.cloth.api.ConfigScreenBuilder;
-import me.shedaniel.cloth.api.ConfigScreenBuilder.SavedConfig;
-import me.shedaniel.cloth.gui.entries.BooleanListEntry;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigCategory;
+import me.shedaniel.clothconfig2.gui.entries.BooleanListEntry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -103,18 +103,17 @@ public class Configurator {
     }
     
     private static Screen display() {
-        ConfigScreenBuilder builder = ConfigScreenBuilder.create(screenIn, "config.jmx.title", null);
+        ConfigBuilder builder = ConfigBuilder.create()
+                .setParentScreen(screenIn).setTitle("config.jmx.title").setSavingRunnable(Configurator::saveUserInput);
         
         // FEATURES
-        ConfigScreenBuilder.CategoryBuilder features = builder.addCategory("config.jmx.category.features");
+        ConfigCategory features = builder.getOrCreateCategory("config.jmx.category.features");
         
-        features.addOption(new BooleanListEntry("config.jmx.value.load_vanilla", loadVanillaModels, "config.jmx.reset", 
+        features.addEntry(new BooleanListEntry("config.jmx.value.load_vanilla", loadVanillaModels, "config.jmx.reset", 
                 () -> DEFAULTS.loadVanillaModels, b -> loadVanillaModels = b, 
                 () -> Optional.of(I18n.translate("config.jmx.help.load_vanilla").split(";"))));
         
         builder.setDoesConfirmSave(false);
-        
-        builder.setOnSave(Configurator::saveUserInput);
         
         return builder.build();
     }
@@ -129,7 +128,7 @@ public class Configurator {
         return display();
     }
     
-    private static void saveUserInput(SavedConfig config) {
+    private static void saveUserInput() {
         saveConfig();
     }
 }
