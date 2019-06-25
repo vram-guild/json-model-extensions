@@ -117,8 +117,8 @@ dependencies {
     modImplementation "grondag:fermion:0.6.3+build.33"
     include "grondag:fermion:0.6.3+build.33"
 	
-	modImplementation "grondag:frex:0.7.3+build.64"
-    include "grondag:frex:0.7.3+build.64"
+	modImplementation "grondag:frex:0.7.3+build.65"
+    include "grondag:frex:0.7.3+build.65"
 	
 	// For dev env testing 
 	//modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
