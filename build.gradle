@@ -114,24 +114,24 @@ dependencies {
 	
 	//modRuntime "grondag:canvas:0.7.1+alpha.+"
 
-    modImplementation "grondag:fermion:0.6.3+build.33"
-    include "grondag:fermion:0.6.3+build.33"
+    modImplementation "grondag:fermion:0.6.3+build.37"
+    include "grondag:fermion:0.6.3+build.37"
 	
-	modImplementation "grondag:frex:0.7.3+build.66"
-    include "grondag:frex:0.7.3+build.66"
+	modImplementation "grondag:frex:0.7.3+build.71"
+    include "grondag:frex:0.7.3+build.71"
 	
 	// For dev env testing 
-	//modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
+	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
 	modApi "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 	
 	modApi "cloth-config:ClothConfig2:0.2.0"
     include "cloth-config:ClothConfig2:0.2.0"
         
-    compile "org.joml:joml:1.9.15"
-	include "org.joml:joml:1.9.15"
+    //compile "org.joml:joml:1.9.15"
+	//include "org.joml:joml:1.9.15"
 	
-    compile "blue.endless:jankson:1.1.0"
-    include "blue.endless:jankson:1.1.0"
+    //compile "blue.endless:jankson:1.1.0"
+    //include "blue.endless:jankson:1.1.0"
     
 	//modRuntime "cloth:ClothEvents:0.3.1.23" // for REI
 	//modRuntime "roughly-enough-items:RoughlyEnoughItems:2.9.4.129"
