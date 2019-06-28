@@ -110,7 +110,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:$mcVersion"
 	mappings "net.fabricmc:yarn:$mcVersion+build.1"
     modImplementation "net.fabricmc:fabric-loader:0.4.8+build.155"
-    modCompile "net.fabricmc.fabric-api:fabric-api:0.3.0+build.187"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.187"
 	
 	//modRuntime "grondag:canvas:0.7.1+alpha.+"
 
@@ -122,9 +122,9 @@ dependencies {
 	
 	// For dev env testing 
 	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modApi "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+	modImplementation "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 	
-	modApi "cloth-config:ClothConfig2:0.2.0"
+	modImplementation "cloth-config:ClothConfig2:0.2.0"
     include "cloth-config:ClothConfig2:0.2.0"
         
     //compile "org.joml:joml:1.9.15"
