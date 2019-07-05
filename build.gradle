@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.2.3+build." + project.getVersionCode();
+version = version = "0.2.4+build." + project.getVersionCode();
 
 minecraft {
 }
@@ -146,9 +146,10 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-			artifact(jar.archivePath) {
+			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
 	    		builtBy remapJar
 			}
+			
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
