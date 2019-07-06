@@ -24,7 +24,7 @@ ext.getVersionCode = { ->
 
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "0.2.4+build." + project.getVersionCode();
+version = version = "0.2.5+build." + project.getVersionCode();
 
 minecraft {
 }
@@ -114,11 +114,11 @@ dependencies {
 	
 	//modRuntime "grondag:canvas:0.7.1+alpha.+"
 
-    modImplementation "grondag:fermion:0.6.3+build.37"
-    include "grondag:fermion:0.6.3+build.37"
+	modImplementation "grondag:frex:0.8+"
+    include "grondag:frex:0.8+"
 	
-	modImplementation "grondag:frex:0.7.3+build.71"
-    include "grondag:frex:0.7.3+build.71"
+	modImplementation "blue.endless:jankson:1.1.2"
+	include "blue.endless:jankson:1.1.2" //{ transitive = false }
 	
 	// For dev env testing 
 	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
@@ -146,8 +146,14 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") {
-	    		builtBy remapJar
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") { 
+				classifier null
+				builtBy remapJar
+			}
+
+			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") { 
+				classifier "dev"
+				builtBy remapJar
 			}
 			
 			artifact(sourcesJar) {
