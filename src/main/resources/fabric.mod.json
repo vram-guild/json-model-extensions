@@ -18,13 +18,15 @@
 
   "environment": "client",
   "entrypoints": {
-    "client": [ "grondag.jmx.JsonModelExtensions" ],
-    "modmenu": [ "grondag.jmx.ModMenuHelper" ]
+    "client": [ "grondag.jmx.JsonModelExtensions" ]
   },
   "mixins": [
-    "jmx.mixins.json"
+	    "jmx.mixins.json"
   ],
-
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:clientsideOnly": true
+  },
   "requires": {
     "fabricloader": ">=0.4.8",
     "fabric": "*"

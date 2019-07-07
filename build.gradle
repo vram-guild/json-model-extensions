@@ -1,7 +1,5 @@
 plugins {
 	id 'fabric-loom' version '0.2.4-SNAPSHOT'
-	//id 'java'
-	//id 'maven'
 	id 'maven-publish'
 }
 
@@ -36,7 +34,7 @@ repositories {
     //}
     
     maven { url "https://tehnut.info/maven"}
-    maven { url "http://maven.sargunv.s3-website-us-west-2.amazonaws.com/" }
+    //maven { url "http://maven.sargunv.s3-website-us-west-2.amazonaws.com/" }
     maven { url "https://minecraft.curseforge.com/api/maven" }
     maven { url "https://maven.fabricmc.net/io/github/prospector/modmenu/ModMenu/" }
     maven { url "https://maven.jamieswhiteshirt.com/libs-release/"}
@@ -117,16 +115,10 @@ dependencies {
 	modImplementation "grondag:frex:0.8+"
     include "grondag:frex:0.8+"
 	
-	modImplementation "blue.endless:jankson:1.1.2"
-	include "blue.endless:jankson:1.1.2" //{ transitive = false }
-	
 	// For dev env testing 
 	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modImplementation "io.github.prospector.modmenu:ModMenu:1.6.2-92"
+	modRuntime "io.github.prospector.modmenu:ModMenu:1.6.2-92"
 	
-	modImplementation "cloth-config:ClothConfig2:0.2.0"
-    include "cloth-config:ClothConfig2:0.2.0"
-        
     //compile "org.joml:joml:1.9.15"
 	//include "org.joml:joml:1.9.15"
 	
