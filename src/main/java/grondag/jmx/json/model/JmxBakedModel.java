@@ -243,6 +243,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
             if(color0 != 0xFFFFFFFF) {
                 emitter.spriteColor(0, color0, color0, color0, color0);
             }
+            emitter.colorIndex(elementFace.tintIndex);
             
             if(FREX_RENDERER) {
                 if(jmxMat.depth == 2) {
@@ -271,6 +272,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                     if(color1 != 0xFFFFFFFF) {
                         emitter.spriteColor(0, color1, color1, color1, color1);
                     }
+                    emitter.colorIndex(elementFace.tintIndex);
                     emitter.emit();
                 }
             }
@@ -287,7 +289,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
             finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
             finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
             finder.emissive(0, jmxMat.emissive0.get());
-            if(jmxMat.colorIndex0 == TriState.FALSE) finder.disableColorIndex(0, true);
+            if(jmxMat.colorIndex0 == TriState.FALSE) {
+            	finder.disableColorIndex(0, true);
+            }
             if(jmxMat.layer0 != null) {
                 finder.blendMode(0, jmxMat.layer0);
             }
@@ -297,7 +301,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                 finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
                 finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
                 finder.emissive(1, jmxMat.emissive1.get());
-                if(jmxMat.colorIndex1 == TriState.FALSE) finder.disableColorIndex(1, true);
+                if(jmxMat.colorIndex1 == TriState.FALSE) {
+                	finder.disableColorIndex(1, true);
+                }
                 if(jmxMat.layer1 != null) {
                     finder.blendMode(1, jmxMat.layer1);
                 }
@@ -314,7 +320,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
              finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get()));
              finder.disableAo(0, isItem || (jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get()));
              finder.emissive(0, jmxMat.emissive1.get());
-             if(jmxMat.colorIndex1 == TriState.FALSE) finder.disableColorIndex(0, true);
+             if(jmxMat.colorIndex1 == TriState.FALSE) {
+            	 finder.disableColorIndex(0, true);
+             }
              if(jmxMat.layer1 != null) {
                  finder.blendMode(0, jmxMat.layer1);
              }

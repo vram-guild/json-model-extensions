@@ -87,7 +87,6 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
         
         if(spriteIndex == 0) {
             q.fromVanilla(vertexData, 0, false);
-            q.colorIndex( elementFace.tintIndex);
         } else {
             q.sprite(0, spriteIndex, Float.intBitsToFloat(vertexData[4]), Float.intBitsToFloat(vertexData[5]));
             q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[11]), Float.intBitsToFloat(vertexData[12]));
