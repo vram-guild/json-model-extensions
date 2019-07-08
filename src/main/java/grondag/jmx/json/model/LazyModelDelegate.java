@@ -22,11 +22,13 @@ import java.util.Set;
 import java.util.function.Function;
 
 import grondag.jmx.impl.ModelTransformer;
+import grondag.jmx.impl.RetexturedModelTransformer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
+import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
@@ -53,6 +55,16 @@ public class LazyModelDelegate extends LazyForwardingModel implements UnbakedMod
 
     @Override
     public BakedModel bake(ModelLoader modelLoader, Function<Identifier, Sprite> spriteFunc, ModelBakeSettings bakeProps) {
+        if(transformer instanceof RetexturedModelTransformer) {
+        	final UnbakedModel template = modelLoader.getOrLoadModel(templateId);
+            if(template instanceof JsonUnbakedModel) {
+            	final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel)template;
+            	if(((JsonUnbakedModel) template).getRootModel() == ModelLoader.GENERATION_MARKER) {
+            		final JsonUnbakedModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer)transformer).textureMap);
+            		return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.create(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps);
+                }
+            } 
+        }
         return this;
     }
 

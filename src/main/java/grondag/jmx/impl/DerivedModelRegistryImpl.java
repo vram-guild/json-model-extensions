@@ -21,18 +21,14 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 
 import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import grondag.jmx.json.model.JsonUnbakedModelHelper;
 import grondag.jmx.json.model.LazyModelDelegate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
 import net.fabricmc.fabric.api.client.model.ModelVariantProvider;
 import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
 
 public class DerivedModelRegistryImpl implements DerivedModelRegistry, ModelVariantProvider, Function<ResourceManager, ModelVariantProvider> {
     private DerivedModelRegistryImpl() {}
@@ -69,18 +65,10 @@ public class DerivedModelRegistryImpl implements DerivedModelRegistry, ModelVari
     public UnbakedModel loadModelVariant(ModelIdentifier modelId, ModelProviderContext context) throws ModelProviderException {
         final String fromString = modelId.getNamespace() + ":" + modelId.getPath();
         final Pair<String, ModelTransformer> match  = modelId.getVariant().equals("inventory")
-                ? itemModels.get(fromString) :  blockModels.get(fromString);
+        		? itemModels.get(fromString) :  blockModels.get(fromString);
                 
         if(match != null) {
             final ModelIdentifier templateId = new ModelIdentifier(match.getLeft(), modelId.getVariant());
-            final UnbakedModel template = context.loadModel(templateId);
-            if(template instanceof JsonUnbakedModel) {
-            	final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel)template;
-            	final Identifier parentId = ((JsonUnbakedModelExt)template).jmx_parentId();
-                if (parentId.getNamespace().equals("minecraft") && parentId.getPath().equals("item/generated") && match.getRight() instanceof RetexturedModelTransformer) {
-                	return JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer)match.getRight()).textureMap);
-                }
-            } 
             return new LazyModelDelegate(templateId, match.getRight());
         }
         return null;

@@ -20,12 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
+import net.minecraft.client.render.model.json.ItemModelGenerator;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.util.Identifier;
 
 public class JsonUnbakedModelHelper {
 	private JsonUnbakedModelHelper() {}
 	
+	public static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
+
 	public static JsonUnbakedModel remap(JsonUnbakedModel template, Map<Identifier, Identifier> textureMap) {
 		JsonUnbakedModelExt ext = (JsonUnbakedModelExt)template;
 		
