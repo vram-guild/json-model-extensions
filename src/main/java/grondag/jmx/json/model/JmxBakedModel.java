@@ -26,14 +26,13 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.collect.ImmutableList;
 
-import grondag.frex.Frex;
-import grondag.frex.api.material.MaterialLoader;
 import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxMaterial;
 import grondag.jmx.json.ext.JmxModelExt;
+import grondag.jmx.target.FrexHolder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -71,7 +70,7 @@ import net.minecraft.world.ExtendedBlockView;
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
     protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
-    protected static final boolean FREX_ACTIVE = Frex.isAvailable();
+    protected static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
     
     protected final Mesh mesh;
     protected WeakReference<List<BakedQuad>[]> quadLists = null;
@@ -241,7 +240,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                 emitter.spriteColor(0, color0, color0, color0, color0);
             }
             
-            if(FREX_ACTIVE) {
+            if(FREX_RENDERER) {
                 if(jmxMat.depth == 2) {
                     tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
                     sprite = spriteFunc.apply(extData.jmx_tex1);
@@ -274,9 +273,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
         }
         
         private RenderMaterial getPrimaryMaterial(JmxMaterial jmxMat, ModelElement element) {
-            if(FREX_ACTIVE && jmxMat.preset != null) {
+            if(FREX_RENDERER && jmxMat.preset != null) {
                 RenderMaterial mat = null;
-                mat = MaterialLoader.loadMaterial(new Identifier(jmxMat.preset));
+                mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
                 if(mat != null) return mat;
             }
             
@@ -289,7 +288,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                 finder.blendMode(0, jmxMat.layer0);
             }
             
-            if(FREX_ACTIVE && jmxMat.depth == 2) {
+            if(FREX_RENDERER && jmxMat.depth == 2) {
                 finder.spriteDepth(2);
                 finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
                 finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());

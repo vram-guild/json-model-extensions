@@ -14,14 +14,14 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.impl;
+package grondag.jmx.json.model;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
-import grondag.frex.api.model.LazyForwardingBakedModel;
+import grondag.jmx.impl.ModelTransformer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
@@ -31,7 +31,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
-public class LazyModelDelegate extends LazyForwardingBakedModel implements UnbakedModel {
+public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
 
     private final ModelTransformer transformer;
     private final ModelIdentifier templateId;

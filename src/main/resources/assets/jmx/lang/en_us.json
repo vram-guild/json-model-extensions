@@ -1,8 +1,0 @@
-{
-	"config.jmx.button" : "JMX",
-	"config.jmx.title" : "JSON Model Extensions",
-	"config.jmx.reset" : "Reset",
-	"config.jmx.category.features" : "Features",
-	"config.jmx.value.load_vanilla" : "Load Vanilla Models",
-	"config.jmx.help.load_vanilla" : "Load all JSON models as JMX models.;May save memory. Ignored (and true);if any model transformers are present."
-}

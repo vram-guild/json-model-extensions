@@ -23,18 +23,18 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import grondag.frex.Frex;
+import grondag.jmx.target.FrexHolder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public final class JmxTexturesExt {
-    private static final boolean FREX = Frex.isAvailable();
+    private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
     /** prevents "unable to resolve" errors when 2nd texture layer isn't used */
     private static final String DUMMY_TEX = "minecraft:block/cobblestone";
     
     public static void handleJmxTextures(JsonObject jsonObj, Map<String,String> map) {
-        if(FREX && jsonObj.has("frex")) {
+        if(FREX_RENDERER && jsonObj.has("frex")) {
             handleJmxTexturesInner(jsonObj.getAsJsonObject("frex"), map);
         } else if(jsonObj.has("jmx")) {
             handleJmxTexturesInner(jsonObj.getAsJsonObject("jmx"), map);

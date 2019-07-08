@@ -23,14 +23,14 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import grondag.frex.Frex;
 import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.target.FrexHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public class JmxModelExt {
     public static final ThreadLocal<JmxModelExt> TRANSFER  = new ThreadLocal<>();
 
-    private static final boolean FREX = Frex.isAvailable();
+    private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
     
     public JmxModelExt parent;
     
@@ -89,7 +89,7 @@ public class JmxModelExt {
     }
 
     public static void deserialize(JsonObject jsonObjIn) {
-        if(FREX && jsonObjIn.has("frex")) {
+        if(FREX_RENDERER && jsonObjIn.has("frex")) {
             deserializeInner(jsonObjIn.getAsJsonObject("frex"));
         } else if(jsonObjIn.has("jmx")) {
             deserializeInner(jsonObjIn.getAsJsonObject("jmx"));

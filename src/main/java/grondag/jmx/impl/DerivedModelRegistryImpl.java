@@ -21,6 +21,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 
 import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.json.model.LazyModelDelegate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
