@@ -80,9 +80,8 @@ public class DerivedModelRegistryImpl implements DerivedModelRegistry, ModelVari
                 if (parentId.getNamespace().equals("minecraft") && parentId.getPath().equals("item/generated") && match.getRight() instanceof RetexturedModelTransformer) {
                 	return JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer)match.getRight()).textureMap);
                 }
-            } else {
-            	return new LazyModelDelegate(templateId, match.getRight());
-            }
+            } 
+            return new LazyModelDelegate(templateId, match.getRight());
         }
         return null;
     }
