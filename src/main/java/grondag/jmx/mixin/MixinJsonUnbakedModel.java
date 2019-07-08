@@ -19,6 +19,7 @@ package grondag.jmx.mixin;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -67,6 +68,9 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
     @Shadow
     protected Identifier parentId;
 
+    @Shadow
+    protected Map<String, String> textureMap;
+    
     private JsonUnbakedModelExt jmxParent;
     private JmxModelExt jmxModelExt;
 
@@ -93,6 +97,11 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
         }
     }
 
+    @Override
+    public Map<String, String> jmx_textureMap() {
+    	return textureMap;
+    }
+    
     /**
      * We use a threadlocal populated just before initialization vs trying to hook
      * initialization directly.

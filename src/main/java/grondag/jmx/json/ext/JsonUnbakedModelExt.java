@@ -16,6 +16,8 @@
 
 package grondag.jmx.json.ext;
 
+import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
@@ -29,4 +31,6 @@ public interface JsonUnbakedModelExt {
     Identifier jmx_parentId();
 
     void jmx_parent(JsonUnbakedModelExt parent);
+    
+    Map<String, String> jmx_textureMap();
 }

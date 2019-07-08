@@ -42,7 +42,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
     public final Identifier targetModel; 
     public final Identifier sourceModel;
     
-    private final ImmutableMap<Identifier, Identifier> textureMap;
+    public final ImmutableMap<Identifier, Identifier> textureMap;
     
     private Object2ObjectOpenHashMap<BlockState, BlockState> inverseStateMap = null;
     
