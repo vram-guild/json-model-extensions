@@ -18,7 +18,8 @@
 
   "environment": "client",
   "entrypoints": {
-    "client": [ "grondag.jmx.JsonModelExtensions" ]
+    "client": [ "grondag.jmx.JsonModelExtensions" ],
+    "frex": [ "grondag.jmx.target.FrexHelper" ]
   },
   "mixins": [
 	    "jmx.mixins.json"
