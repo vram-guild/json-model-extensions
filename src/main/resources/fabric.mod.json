@@ -28,7 +28,7 @@
     "modmenu:api": true,
     "modmenu:clientsideOnly": true
   },
-  "requires": {
+  "depends": {
     "fabricloader": ">=0.4.8",
     "fabric": "*"
   }
