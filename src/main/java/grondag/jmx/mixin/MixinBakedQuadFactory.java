@@ -113,12 +113,12 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     }
 
     private static float[] normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
-        targets[CubeFace.DirectionIds.WEST] = vector3f_1.x() / 16.0F;
-        targets[CubeFace.DirectionIds.DOWN] = vector3f_1.y() / 16.0F;
-        targets[CubeFace.DirectionIds.NORTH] = vector3f_1.z() / 16.0F;
-        targets[CubeFace.DirectionIds.EAST] = vector3f_2.x() / 16.0F;
-        targets[CubeFace.DirectionIds.UP] = vector3f_2.y() / 16.0F;
-        targets[CubeFace.DirectionIds.SOUTH] = vector3f_2.z() / 16.0F;
+        targets[CubeFace.DirectionIds.WEST] = vector3f_1.getX() / 16.0F;
+        targets[CubeFace.DirectionIds.DOWN] = vector3f_1.getY() / 16.0F;
+        targets[CubeFace.DirectionIds.NORTH] = vector3f_1.getZ() / 16.0F;
+        targets[CubeFace.DirectionIds.EAST] = vector3f_2.getX() / 16.0F;
+        targets[CubeFace.DirectionIds.UP] = vector3f_2.getY() / 16.0F;
+        targets[CubeFace.DirectionIds.SOUTH] = vector3f_2.getZ() / 16.0F;
         return targets;
     }
 }
