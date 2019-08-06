@@ -1,37 +1,33 @@
 plugins {
-	id 'fabric-loom' version '0.2.4-SNAPSHOT'
+	id 'fabric-loom' version '0.2.5-SNAPSHOT'
 	id 'maven-publish'
+	id "org.ajoberstar.grgit" version "3.1.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-ext.getVersionCode = { ->
-    try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-list', '--first-parent', '--count', 'origin/master'
-            standardOutput = stdout
-        }
-        return Integer.parseInt(stdout.toString().trim())
-    }
-    catch (ignored) {
-        return -1;
-    }
-}
-
 archivesBaseName = "jmx"
 group = "grondag"
-version = version = "1.0.0+build." + project.getVersionCode();
+def version_tag = 'jmx_version'
+
+if (grgit == null) {
+	version = '99.0.0-nogit'
+} else if (project.hasProperty(version_tag)) {
+	if(grgit.status().isClean()) {
+		version = project.getProperty(version_tag) + '.' + grgit.log().size() + '+' + project.minecraft_version
+	} else {
+		version = project.getProperty(version_tag) + '.' + (grgit.log().size() + 1) + '-snapshot+' + project.minecraft_version
+	}
+} else {
+	version = '99.0.0-local'
+}
 
 minecraft {
 }
 
 repositories {
-	//mavenLocal()
-    //flatDir {
-    //    dirs '../fabric/build/libs'
-    //}
+	mavenLocal()
     
     maven { url "https://tehnut.info/maven"}
     //maven { url "http://maven.sargunv.s3-website-us-west-2.amazonaws.com/" }
@@ -102,32 +98,20 @@ sourceSets {
     }
 }
 
-def mcVersion = "1.14.3"
-
 dependencies {
-	minecraft "com.mojang:minecraft:$mcVersion"
-	mappings "net.fabricmc:yarn:$mcVersion+build.1"
-    modImplementation "net.fabricmc:fabric-loader:0.4.8+build.155"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.3.0+build.191"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
 	//modRuntime "grondag:canvas:0.7.1+alpha.+"
 
-	modApi "grondag:frex:0.8.1+"
+	modImplementation "grondag:frex:${project.frex_version}+"
+    include "grondag:frex:${project.frex_version}+"
 	
 	// For dev env testing 
-	modRuntime "com.jamieswhiteshirt:developer-mode:1.0.11"
-	modRuntime "io.github.prospector.modmenu:ModMenu:1.6.2-92"
-	
-    //compile "org.joml:joml:1.9.15"
-	//include "org.joml:joml:1.9.15"
-	
-    //compile "blue.endless:jankson:1.1.0"
-    //include "blue.endless:jankson:1.1.0"
-    
-	//modRuntime "cloth:ClothEvents:0.3.1.23" // for REI
-	//modRuntime "roughly-enough-items:RoughlyEnoughItems:2.9.4.129"
-	
-	//modRuntime "grondag:instruments:0.0.1+build.3"
+	modRuntime "com.jamieswhiteshirt:developer-mode:${project.devmode_version}"
+	modRuntime "io.github.prospector:modmenu:${project.modmenu_version}"
 	
 	// dev env annotation support
 	compile "org.apiguardian:apiguardian-api:1.0.0"
@@ -135,29 +119,23 @@ dependencies {
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar") { 
-				classifier null
+	publications {
+		mavenJava(MavenPublication) {
+			artifact(remapJar) {
 				builtBy remapJar
 			}
-
-			artifact ("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-dev.jar") { 
-				classifier "dev"
-				builtBy remapJar
-			}
-			
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
-        }
-    }
+		}
+	}
 
-    repositories {
-        maven {
+	repositories {
+		mavenLocal()
+		maven {
             url "https://grondag-repo.appspot.com"
             credentials {
-            	if (project.hasProperty('maven_user')){
+				if (project.hasProperty('maven_user')){
 					username = project.getProperty('maven_user')
 				}
 				if (project.hasProperty('maven_password')){
@@ -165,5 +143,5 @@ publishing {
 				}
 			}
         }
-    }
+	}
 }
