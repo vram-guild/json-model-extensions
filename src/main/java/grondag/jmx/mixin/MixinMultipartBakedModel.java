@@ -45,7 +45,7 @@ import net.minecraft.client.render.model.MultipartBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SystemUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ExtendedBlockView;
+import net.minecraft.world.BlockRenderView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultipartBakedModel.class)
@@ -81,7 +81,7 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
     }
 
     @Override
-    public void emitBlockQuads(ExtendedBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
         if (state == null) {
             return;
          } else {

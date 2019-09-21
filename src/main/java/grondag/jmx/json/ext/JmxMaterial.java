@@ -22,8 +22,8 @@ import com.google.gson.JsonObject;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.util.JsonHelper;
 
 @Environment(EnvType.CLIENT)
@@ -44,8 +44,8 @@ public class JmxMaterial {
     public final int color0;
     public final int color1;
     
-    public final BlockRenderLayer layer0;
-    public final BlockRenderLayer layer1;
+    public final BlendMode layer0;
+    public final BlendMode layer1;
     
     public final int depth;
     public final int tag;
@@ -98,19 +98,19 @@ public class JmxMaterial {
         return str.startsWith("0x") ? Integer.parseUnsignedInt(str.substring(2), 16) : Integer.parseInt(str);
     }
     
-    private static BlockRenderLayer asLayer(String property) {
+    private static BlendMode asLayer(String property) {
         if (property == null || property.isEmpty()) {
             return null;
         } else {
             switch (property.toLowerCase(Locale.ROOT)) {
             case "solid":
-                return BlockRenderLayer.SOLID;
+                return BlendMode.SOLID;
             case "cutout":
-                return BlockRenderLayer.CUTOUT;
+                return BlendMode.CUTOUT;
             case "cutout_mipped":
-                return BlockRenderLayer.CUTOUT_MIPPED;
+                return BlendMode.CUTOUT_MIPPED;
             case "translucent":
-                return BlockRenderLayer.TRANSLUCENT;
+                return BlendMode.TRANSLUCENT;
             default:
                 return null;
         }

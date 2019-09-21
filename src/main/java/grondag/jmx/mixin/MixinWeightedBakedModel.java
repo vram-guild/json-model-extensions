@@ -36,7 +36,7 @@ import net.minecraft.client.render.model.WeightedBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedPicker;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ExtendedBlockView;
+import net.minecraft.world.BlockRenderView;
 
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
@@ -65,7 +65,7 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
     }
 
     @Override
-    public void emitBlockQuads(ExtendedBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
         final BakedModel model = getModel(randomSupplier.get());
         ((FabricBakedModel)model).emitBlockQuads(blockView, state, pos, randomSupplier, context);
     }
