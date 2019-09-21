@@ -104,14 +104,16 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-	//modRuntime "grondag:canvas:0.7.1+alpha.+"
-
-	modImplementation "grondag:frex:${project.frex_version}+"
-    include "grondag:frex:${project.frex_version}+"
-	
+	modImplementation ("grondag:frex:${project.frex_version}.+") {
+        exclude group :"grondag"
+        exclude group :"net.fabricmc.fabric-api"
+    }
+    include "grondag:frex:${project.frex_version}.+"
+    
 	// For dev env testing 
 	modRuntime "com.jamieswhiteshirt:developer-mode:${project.devmode_version}"
 	modRuntime "io.github.prospector:modmenu:${project.modmenu_version}"
+	modRuntime "grondag:canvas:${project.canvas_version}+"
 	
 	// dev env annotation support
 	compile "org.apiguardian:apiguardian-api:1.0.0"
@@ -130,12 +132,11 @@ publishing {
 		}
 	}
 
-	repositories {
-		mavenLocal()
-		maven {
+    repositories {
+        maven {
             url "https://grondag-repo.appspot.com"
             credentials {
-				if (project.hasProperty('maven_user')){
+            	if (project.hasProperty('maven_user')){
 					username = project.getProperty('maven_user')
 				}
 				if (project.hasProperty('maven_password')){
@@ -143,5 +144,5 @@ publishing {
 				}
 			}
         }
-	}
+    }
 }
