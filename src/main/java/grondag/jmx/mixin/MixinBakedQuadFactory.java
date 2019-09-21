@@ -89,10 +89,10 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
             q.fromVanilla(vertexData, 0, false);
         } else {
             q.sprite(0, spriteIndex, Float.intBitsToFloat(vertexData[4]), Float.intBitsToFloat(vertexData[5]));
-            q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[11]), Float.intBitsToFloat(vertexData[12]));
-            q.sprite(2, spriteIndex, Float.intBitsToFloat(vertexData[18]), Float.intBitsToFloat(vertexData[19]));
-            q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[25]), Float.intBitsToFloat(vertexData[26]));
-            q.spriteColor(spriteIndex, vertexData[3], vertexData[10], vertexData[17], vertexData[24]);
+            q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[12]), Float.intBitsToFloat(vertexData[13]));
+            q.sprite(2, spriteIndex, Float.intBitsToFloat(vertexData[20]), Float.intBitsToFloat(vertexData[21]));
+            q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[28]), Float.intBitsToFloat(vertexData[29]));
+            q.spriteColor(spriteIndex, vertexData[3], vertexData[11], vertexData[19], vertexData[27]);
         }
     }
 
