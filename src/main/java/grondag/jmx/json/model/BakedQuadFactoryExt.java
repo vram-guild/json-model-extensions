@@ -24,9 +24,10 @@ import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 @Environment(EnvType.CLIENT)
 public interface BakedQuadFactoryExt {
-    void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings modelBakeSettings_1);
+    void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings modelBakeSettings, Identifier modelId);
 }

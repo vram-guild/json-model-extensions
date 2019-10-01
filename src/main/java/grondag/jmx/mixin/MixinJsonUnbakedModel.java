@@ -202,9 +202,9 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
     }
 
     @SuppressWarnings("unchecked")
-    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
     public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<Identifier, Sprite> spriteFunc,
-            ModelBakeSettings bakeProps, CallbackInfoReturnable<BakedModel> ci) {
+            ModelBakeSettings bakeProps, Identifier modelId, CallbackInfoReturnable<BakedModel> ci) {
         final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
         // leave vanilla logic for built-ins
@@ -255,10 +255,10 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
                 Sprite sprite = spriteFuncInner.apply(tex0);
                 if (elementFace.cullFace == null) {
-                    builder.addQuad(null, jmxModelExt, spriteFuncInner, element, elementFace, sprite, face, bakeProps);
+                    builder.addQuad(null, jmxModelExt, spriteFuncInner, element, elementFace, sprite, face, bakeProps, modelId);
                 } else {
-                    builder.addQuad(bakeProps.getRotation().apply(elementFace.cullFace), jmxModelExt, spriteFuncInner,
-                            element, elementFace, sprite, face, bakeProps);
+                	Direction roatedCullFace = Direction.method_23225(bakeProps.getRotation().method_22936(), elementFace.cullFace);
+                    builder.addQuad(roatedCullFace, jmxModelExt, spriteFuncInner, element, elementFace, sprite, face, bakeProps, modelId);
                 }
             }
         }

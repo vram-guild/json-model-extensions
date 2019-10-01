@@ -222,7 +222,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
         /**
          * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
          */
-        public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
+        public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
             @SuppressWarnings("unchecked")
             FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
             JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
@@ -238,7 +238,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
             
             ModelElementTexture tex = extData.jmx_texData0 == null ? elementFace.textureData : extData.jmx_texData0;
             
-            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps);
+            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
             final int color0 = jmxMat.color0;
             if(color0 != 0xFFFFFFFF) {
                 emitter.spriteColor(0, color0, color0, color0, color0);
@@ -249,7 +249,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                 if(jmxMat.depth == 2) {
                     tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
                     sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps);
+                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps, modelId);
                     final int color1 = jmxMat.color1;
                     if(color1 != 0xFFFFFFFF) {
                         emitter.spriteColor(1, color1, color1, color1, color1);
@@ -267,7 +267,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                     emitter.material(getSecondaryMaterial(jmxMat, element));
                     emitter.cullFace(cullFace);
                     sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps);
+                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
                     final int color1 = jmxMat.color1;
                     if(color1 != 0xFFFFFFFF) {
                         emitter.spriteColor(0, color1, color1, color1, color1);

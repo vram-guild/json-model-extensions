@@ -26,15 +26,16 @@ import grondag.jmx.json.model.BakedQuadFactoryHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.minecraft.class_4590;
 import net.minecraft.client.render.model.BakedQuadFactory;
 import net.minecraft.client.render.model.CubeFace;
 import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.ModelRotation;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
@@ -42,24 +43,21 @@ import net.minecraft.util.math.MathHelper;
 @Mixin(BakedQuadFactory.class)
 public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     @Shadow
-    protected abstract ModelElementTexture uvLock(ModelElementTexture tex, Direction face, net.minecraft.client.render.model.ModelRotation rotation);
-
-    @Shadow
     protected abstract void method_3463(Vector3f vector3f_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation_1);
 
     @Shadow
     protected abstract void method_3462(int[] data, Direction face);
     
     @Shadow
-    protected abstract void method_3460(int[] ints_1, int int_1, int int_2, Vector3f vector3f_1, int int_3, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
+    protected abstract void method_3460(int[] ints_1, int int_1, Vector3f vector3f_1, int int_2, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
    
     @Override
-    public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps) {
+    public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
         final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
         final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
         if (bakeProps.isUvLocked()) {
-            tex = uvLock(elementFace.textureData, face, bakeProps.getRotation());
+            tex = BakedQuadFactory.uvLock(elementFace.textureData, face, bakeProps.getRotation(), modelId);
         }
 
         // preserve tex data in case needed again (can have two passes)
@@ -96,7 +94,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
         }
     }
 
-    private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, ModelRotation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+    private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, class_4590 texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
         for(int i = 0; i < 4; ++i) {
             bakeVertex(target, i, face, tex, pos, sprite, texRotation, modelRotation);
         }
@@ -104,12 +102,12 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
     }
     
     /** like method_3461 but doesn't apply diffuse shading */
-    private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, ModelRotation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+    private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, class_4590 modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
         CubeFace.Corner cubeFace$Corner_1 = CubeFace.method_3163(face).getCorner(vertexIn);
         Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
         method_3463(pos, modelRotation);
-        int vertexOut = ((BakedQuadFactory)(Object)this).method_3455(pos, face, vertexIn, modelRotation_1);
-        method_3460(data, vertexOut, vertexIn, pos, -1, sprite, tex);
+        ((BakedQuadFactory)(Object)this).method_3455(pos, modelRotation_1);
+        method_3460(data, vertexIn, pos, -1, sprite, tex);
     }
 
     private static float[] normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {

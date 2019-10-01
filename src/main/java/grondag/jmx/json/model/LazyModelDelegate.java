@@ -54,14 +54,14 @@ public class LazyModelDelegate extends LazyForwardingModel implements UnbakedMod
     }
 
     @Override
-    public BakedModel bake(ModelLoader modelLoader, Function<Identifier, Sprite> spriteFunc, ModelBakeSettings bakeProps) {
+    public BakedModel bake(ModelLoader modelLoader, Function<Identifier, Sprite> spriteFunc, ModelBakeSettings bakeProps, Identifier modelId) {
         if(transformer instanceof RetexturedModelTransformer) {
         	final UnbakedModel template = modelLoader.getOrLoadModel(templateId);
             if(template instanceof JsonUnbakedModel) {
             	final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel)template;
             	if(((JsonUnbakedModel) template).getRootModel() == ModelLoader.GENERATION_MARKER) {
             		final JsonUnbakedModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer)transformer).textureMap);
-            		return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.create(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps);
+            		return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.create(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps, modelId);
                 }
             } 
         }

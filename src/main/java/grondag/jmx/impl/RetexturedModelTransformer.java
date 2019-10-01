@@ -32,7 +32,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.state.StateFactory;
+import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -96,11 +96,16 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 
     private static void remapSprite(MutableQuadView q, Sprite oldSprite, Sprite newSprite, int spriteIndex) {
         for(int i = 0; i < 4; i++) {
-            float u = q.spriteU(i, spriteIndex);
-            float v = q.spriteV(i, spriteIndex);
-            u = newSprite.getU((double)oldSprite.getXFromU(u));
-            v = newSprite.getV((double)oldSprite.getYFromV(v));
-            q.sprite(i, spriteIndex, u, v);
+            final float u = q.spriteU(i, spriteIndex);
+            final float v = q.spriteV(i, spriteIndex);
+            
+            final float uSpan = oldSprite.getMaxU() - oldSprite.getMinU();
+            final float x = (u - oldSprite.getMinU()) / uSpan * 16.0F;
+            
+            final float vSpan = oldSprite.getMaxV() - oldSprite.getMinV();
+            final float y = (v - oldSprite.getMinV()) / vSpan * 16.0F;
+            
+            q.sprite(i, spriteIndex, newSprite.getU(x), newSprite.getV(y));
         }
     }
     
@@ -126,7 +131,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
             final Object2ObjectOpenHashMap<BlockState, BlockState> newMap = new Object2ObjectOpenHashMap<>();
             final BlockState defaultState = Registry.BLOCK.get(targetModel).getDefaultState();
             
-            StateFactory<Block, BlockState> factory = Registry.BLOCK.get(sourceModel).getStateFactory();
+            StateManager<Block, BlockState> factory = Registry.BLOCK.get(sourceModel).getStateFactory();
             factory.getStates().forEach(s -> {
                 BlockState targetState = defaultState;
                 final ImmutableMap<Property<?>, Comparable<?>> props = s.getEntries();
