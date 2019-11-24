@@ -22,18 +22,23 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 
 import grondag.jmx.target.FrexHolder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.SpriteIdentifier;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public final class JmxTexturesExt {
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 	/** prevents "unable to resolve" errors when 2nd texture layer isn't used */
-	private static final String DUMMY_TEX = "minecraft:block/cobblestone";
+	private static final Either<SpriteIdentifier, String> DUMMY_TEX = Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, new Identifier("minecraft:block/cobblestone")));
 
-	public static void handleJmxTextures(JsonObject jsonObj, Map<String,String> map) {
+	public static void handleJmxTextures(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(FREX_RENDERER && jsonObj.has("frex")) {
 			handleJmxTexturesInner(jsonObj.getAsJsonObject("frex"), map);
 		} else if(jsonObj.has("jmx")) {
@@ -41,14 +46,31 @@ public final class JmxTexturesExt {
 		}
 	}
 
-	private static void handleJmxTexturesInner(JsonObject jsonObj, Map<String,String> map) {
+	private static void handleJmxTexturesInner(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(jsonObj.has("textures")) {
 			final JsonObject job = jsonObj.getAsJsonObject("textures");
 			final Iterator<Entry<String, JsonElement>> it = job.entrySet().iterator();
 
 			while(it.hasNext()) {
 				final Entry<String, JsonElement> entry = it.next();
-				map.put(entry.getKey(), entry.getValue().isJsonNull() ? DUMMY_TEX : entry.getValue().getAsString());
+
+				if(entry.getValue().isJsonNull()) {
+					map.put(entry.getKey(), DUMMY_TEX);
+				} else {
+					final String val = entry.getValue().getAsString();
+
+					if (val.charAt(0) == '#') {
+						map.put(entry.getKey(), Either.right(val.substring(1)));
+					} else {
+						final Identifier id = Identifier.tryParse(val);
+
+						if (id == null) {
+							throw new JsonParseException(val + " is not valid resource location");
+						} else {
+							map.put(entry.getKey(), Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, id)));
+						}
+					}
+				}
 			}
 		}
 	}

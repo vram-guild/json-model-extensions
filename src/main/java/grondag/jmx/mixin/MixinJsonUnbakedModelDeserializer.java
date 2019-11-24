@@ -25,18 +25,20 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Either;
 
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.json.ext.JmxTexturesExt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.SpriteIdentifier;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.Deserializer.class)
 public class MixinJsonUnbakedModelDeserializer {
 	@Inject(at = @At("RETURN"), method = "deserializeTextures")
-	private void onDeserializeTextures(JsonObject jsonObj, CallbackInfoReturnable<Map<String, String>> ci) {
+	private void onDeserializeTextures(JsonObject jsonObj, CallbackInfoReturnable<Map<String, Either<SpriteIdentifier, String>>> ci) {
 		JmxTexturesExt.handleJmxTextures(jsonObj, ci.getReturnValue());
 	}
 
