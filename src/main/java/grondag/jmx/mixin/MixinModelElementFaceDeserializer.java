@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -37,12 +37,12 @@ import net.minecraft.util.math.Direction;
 @Environment(EnvType.CLIENT)
 @Mixin(ModelElementFace.Deserializer.class)
 public class MixinModelElementFaceDeserializer {
-    @Inject(method = "method_3397", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
-            at = @At(
-                    value = "INVOKE",
-                    ordinal = 0, 
-                    target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
-    private void wut(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
-        FaceExtData.deserialize(jsonObj, context);
-    }
+	@Inject(method = "method_3397", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+			at = @At(
+					value = "INVOKE",
+					ordinal = 0,
+					target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
+	private void wut(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
+		FaceExtData.deserialize(jsonObj, context);
+	}
 }

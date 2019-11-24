@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -23,29 +23,29 @@ import net.minecraft.util.Identifier;
 
 /**
  * Use to create models by re-texturing existing JSON block and or item models.
- * Blocks and Items with re-textured models do NOT need JSON files.  They will 
+ * Blocks and Items with re-textured models do NOT need JSON files.  They will
  * automatically be assigned a model that is a functional copy of the "template"
  * block/item with textured replaced as specified using this registry.<p>
- * 
+ *
  * The "target block/item must have properties that match the template block/item.
  */
 @API(status = API.Status.MAINTAINED)
 public interface RetexturedModelBuilder {
-    public static RetexturedModelBuilder builder(String sourceModel, String targetModel) {
-        return builder(new Identifier(sourceModel), new Identifier(targetModel));
-    }
-    
-    public static RetexturedModelBuilder builder(Identifier sourceModel, Identifier targetModel) {
-        return RexturedModelBuilderImpl.builder(sourceModel, targetModel);
-    }
+	static RetexturedModelBuilder builder(String sourceModel, String targetModel) {
+		return builder(new Identifier(sourceModel), new Identifier(targetModel));
+	}
 
-    RetexturedModelBuilder mapSprite(Identifier from, Identifier to);
+	static RetexturedModelBuilder builder(Identifier sourceModel, Identifier targetModel) {
+		return RexturedModelBuilderImpl.builder(sourceModel, targetModel);
+	}
 
-    RetexturedModelBuilder mapSprite(String from, String to);
+	RetexturedModelBuilder mapSprite(Identifier from, Identifier to);
 
-    public void completeBlockWithItem();
+	RetexturedModelBuilder mapSprite(String from, String to);
 
-    void completeBlock();
+	void completeBlockWithItem();
 
-    void completeItem();
+	void completeBlock();
+
+	void completeItem();
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -30,23 +30,23 @@ import net.fabricmc.loader.api.FabricLoader;
 @Environment(EnvType.CLIENT)
 public class Configurator {
 
-    public static final boolean loadVanillaModels;
-    
-    static {
-		File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.properties");
-		Properties properties = new Properties();
+	public static final boolean loadVanillaModels;
+
+	static {
+		final File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.properties");
+		final Properties properties = new Properties();
 		if (configFile.exists()) {
 			try (FileInputStream stream = new FileInputStream(configFile)) {
 				properties.load(stream);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				JsonModelExtensions.LOG.warn("[JMX] Could not read property file '" + configFile.getAbsolutePath() + "'", e);
 			}
 		}
 		loadVanillaModels = ((String)properties.computeIfAbsent("load-vanilla-models", (a) -> "false")).toLowerCase(Locale.ROOT).equals("true");
 		try (FileOutputStream stream = new FileOutputStream(configFile)) {
 			properties.store(stream, "JMX properties file");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			JsonModelExtensions.LOG.warn("[JMX] Could not store property file '" + configFile.getAbsolutePath() + "'", e);
 		}
-    }
+	}
 }

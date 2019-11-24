@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -38,67 +38,69 @@ import net.minecraft.world.BlockRenderView;
  * Avoids boilerplate code for pass-through methods.}.
  */
 public abstract class LazyForwardingModel implements BakedModel, FabricBakedModel {
-    protected BakedModel lazyWrapped;
-    
-    /** MUST BE THREAD-SAFE AND INVARIANT */
-    protected abstract BakedModel createWrapped();
-    
-    protected BakedModel wrapped() {
-        BakedModel wrapped = lazyWrapped;
-        if(wrapped == null) {
-            wrapped = createWrapped();
-            lazyWrapped = wrapped;
-        }
-        return wrapped;
-    }
-    
-    @Override
-    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        ((FabricBakedModel)wrapped()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
-    }
+	protected BakedModel lazyWrapped;
 
-    @Override
-    public boolean isVanillaAdapter() {
-        return ((FabricBakedModel)wrapped()).isVanillaAdapter();
-    }
+	/** MUST BE THREAD-SAFE AND INVARIANT */
+	protected abstract BakedModel createWrapped();
 
-    @Override
-    public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-        ((FabricBakedModel)wrapped()).emitItemQuads(stack, randomSupplier, context);
-    }
+	protected BakedModel wrapped() {
+		BakedModel wrapped = lazyWrapped;
 
-    @Override
-    public List<BakedQuad> getQuads(BlockState blockState, Direction face, Random rand) {
-        return wrapped().getQuads(blockState, face, rand);
-    }
+		if(wrapped == null) {
+			wrapped = createWrapped();
+			lazyWrapped = wrapped;
+		}
 
-    @Override
-    public boolean useAmbientOcclusion() {
-        return wrapped().useAmbientOcclusion();
-    }
+		return wrapped;
+	}
 
-    @Override
-    public boolean hasDepthInGui() {
-        return wrapped().hasDepthInGui();
-    }
+	@Override
+	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+		((FabricBakedModel)wrapped()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+	}
 
-    @Override
-    public boolean isBuiltin() {
-        return wrapped().isBuiltin();
-    }
+	@Override
+	public boolean isVanillaAdapter() {
+		return ((FabricBakedModel)wrapped()).isVanillaAdapter();
+	}
 
-    @Override
-    public Sprite getSprite() {
-        return wrapped().getSprite();
-    }
+	@Override
+	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+		((FabricBakedModel)wrapped()).emitItemQuads(stack, randomSupplier, context);
+	}
 
-    @Override
-    public ModelTransformation getTransformation() {
-        return wrapped().getTransformation();
-    }
+	@Override
+	public List<BakedQuad> getQuads(BlockState blockState, Direction face, Random rand) {
+		return wrapped().getQuads(blockState, face, rand);
+	}
 
-    @Override
-    public ModelItemPropertyOverrideList getItemPropertyOverrides() {
-        return wrapped().getItemPropertyOverrides();
-    }
+	@Override
+	public boolean useAmbientOcclusion() {
+		return wrapped().useAmbientOcclusion();
+	}
+
+	@Override
+	public boolean hasDepthInGui() {
+		return wrapped().hasDepthInGui();
+	}
+
+	@Override
+	public boolean isBuiltin() {
+		return wrapped().isBuiltin();
+	}
+
+	@Override
+	public Sprite getSprite() {
+		return wrapped().getSprite();
+	}
+
+	@Override
+	public ModelTransformation getTransformation() {
+		return wrapped().getTransformation();
+	}
+
+	@Override
+	public ModelItemPropertyOverrideList getItemPropertyOverrides() {
+		return wrapped().getItemPropertyOverrides();
+	}
 }

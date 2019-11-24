@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -69,265 +69,285 @@ import net.minecraft.world.BlockRenderView;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
-    protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
-    protected static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
-    
-    protected final Mesh mesh;
-    protected WeakReference<List<BakedQuad>[]> quadLists = null;
-    protected final boolean usesAo;
-    protected final boolean depthInGui;
-    protected final Sprite particleSprite;
-    protected final ModelTransformation transformation;
-    protected final ModelItemPropertyOverrideList itemPropertyOverrides;
-    protected final boolean isItem;
+	protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
+	protected static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
-    public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
-        this.mesh = mesh;
-        this.usesAo = usesAo;
-        this.depthInGui = depthInGui;
-        this.particleSprite = particleSprite;
-        this.transformation = transformation;
-        this.itemPropertyOverrides = itemPropertyOverrides;
-        this.isItem = isItem;
-    }
+	protected final Mesh mesh;
+	protected WeakReference<List<BakedQuad>[]> quadLists = null;
+	protected final boolean usesAo;
+	protected final boolean depthInGui;
+	protected final Sprite particleSprite;
+	protected final ModelTransformation transformation;
+	protected final ModelItemPropertyOverrideList itemPropertyOverrides;
+	protected final boolean isItem;
 
-    @Override
-    public BakedModel derive(TransformableModelContext context) {
-        final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getSpriteAtlas();
-        final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
-        final QuadEmitter emitter = meshBuilder.getEmitter();
-        final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
-        final QuadTransform transform = context.quadTransform();
-        
-        this.mesh.forEach(q -> {
-            emitter.material(q.material());
-            q.copyTo(emitter);
-            if(transform.transform(emitter)) {
-                emitter.emit();
-            }
-        });
-        
-        return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, newParticleSprite, transformation, 
-                transformItemProperties(context, atlas, meshBuilder), this.isItem);
-    }
-    
-    private ModelItemPropertyOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
-        //TODO: Implement
-        return itemPropertyOverrides;
-    }
-    
-    @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
-        List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
-        if(lists == null) {
-            lists = ModelHelper.toQuadLists(this.mesh);
-            quadLists = new WeakReference<>(lists);
-        }
-        List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
-        return result == null ? ImmutableList.of() : result;
-    }
+	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
+		this.mesh = mesh;
+		this.usesAo = usesAo;
+		this.depthInGui = depthInGui;
+		this.particleSprite = particleSprite;
+		this.transformation = transformation;
+		this.itemPropertyOverrides = itemPropertyOverrides;
+		this.isItem = isItem;
+	}
 
-    @Override
-    public boolean useAmbientOcclusion() {
-        return this.usesAo;
-    }
+	@Override
+	public BakedModel derive(TransformableModelContext context) {
+		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
+		final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
+		final QuadEmitter emitter = meshBuilder.getEmitter();
+		final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
+		final QuadTransform transform = context.quadTransform();
 
-    @Override
-    public boolean hasDepthInGui() {
-        return this.depthInGui;
-    }
+		mesh.forEach(q -> {
+			emitter.material(q.material());
+			q.copyTo(emitter);
+			if(transform.transform(emitter)) {
+				emitter.emit();
+			}
+		});
 
-    @Override
-    public boolean isBuiltin() {
-        return false;
-    }
+		return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, newParticleSprite, transformation,
+				transformItemProperties(context, atlas, meshBuilder), isItem);
+	}
 
-    @Override
-    public Sprite getSprite() {
-        return this.particleSprite;
-    }
+	private ModelItemPropertyOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
+		//TODO: Implement
+		return itemPropertyOverrides;
+	}
 
-    @Override
-    public ModelTransformation getTransformation() {
-        return this.transformation;
-    }
+	@Override
+	public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
+		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
+		if(lists == null) {
+			lists = ModelHelper.toQuadLists(mesh);
+			quadLists = new WeakReference<>(lists);
+		}
+		final List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
+		return result == null ? ImmutableList.of() : result;
+	}
 
-    @Override
-    public ModelItemPropertyOverrideList getItemPropertyOverrides() {
-        return this.itemPropertyOverrides;
-    }
-    
-    @Override
-    public boolean isVanillaAdapter() {
-        return false;
-    }
+	@Override
+	public boolean useAmbientOcclusion() {
+		return usesAo;
+	}
 
-    @Override
-    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        if(mesh != null) {
-            context.meshConsumer().accept(mesh);
-        }
-    }
+	@Override
+	public boolean hasDepthInGui() {
+		return depthInGui;
+	}
 
-    @Override
-    public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-        if(mesh != null) {
-            context.meshConsumer().accept(mesh);
-        }
-    }
+	@Override
+	public boolean isBuiltin() {
+		return false;
+	}
 
-    @Environment(EnvType.CLIENT)
-    public static class Builder {
-        private final MeshBuilder meshBuilder;
-        private final MaterialFinder finder;
-        private final QuadEmitter emitter;
-        private final ModelItemPropertyOverrideList itemPropertyOverrides;
-        private final boolean usesAo;
-        private Sprite particleTexture;
-        private final boolean depthInGui;
-        private final ModelTransformation transformation;
-        private final boolean isItem;
+	@Override
+	public Sprite getSprite() {
+		return particleSprite;
+	}
 
-        public Builder(JsonUnbakedModel unbakedModel, ModelItemPropertyOverrideList itemPropertyOverrides) {
-            this(unbakedModel.useAmbientOcclusion(), unbakedModel.hasDepthInGui(), unbakedModel.getTransformations(), itemPropertyOverrides, unbakedModel.id.contains(":item/"));
-        }
+	@Override
+	public ModelTransformation getTransformation() {
+		return transformation;
+	}
 
-        private Builder(boolean usesAo, boolean depthInGui, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
-            this.meshBuilder = RENDERER.meshBuilder();
-            this.finder = RENDERER.materialFinder();
-            this.emitter = meshBuilder.getEmitter();
-            this.itemPropertyOverrides = itemPropertyOverrides;
-            this.usesAo = usesAo;
-            this.depthInGui = depthInGui;
-            this.transformation = transformation;
-            this.isItem = isItem;
-        }
+	@Override
+	public ModelItemPropertyOverrideList getItemPropertyOverrides() {
+		return itemPropertyOverrides;
+	}
 
-        public JmxBakedModel.Builder setParticle(Sprite sprite) {
-            this.particleTexture = sprite;
-            return this;
-        }
+	@Override
+	public boolean isVanillaAdapter() {
+		return false;
+	}
 
-        public BakedModel build() {
-            if (this.particleTexture == null) {
-                throw new RuntimeException("Missing particle!");
-            } else {
-                return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, particleTexture, transformation, itemPropertyOverrides, isItem);
-            }
-        }
+	@Override
+	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+		if(mesh != null) {
+			context.meshConsumer().accept(mesh);
+		}
+	}
 
-        private static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
-        private static final BakedQuadFactoryExt QUADFACTORY_EXT = (BakedQuadFactoryExt)QUADFACTORY;
-        
-        /**
-         * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
-         */
-        public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
-            @SuppressWarnings("unchecked")
-            FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
-            JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
-            
-            RenderMaterial mat = getPrimaryMaterial(jmxMat, element);
-            
-            final QuadEmitter emitter = this.emitter;
-            emitter.material(mat);
-            emitter.cullFace(cullFace);
-            if(jmxMat.tag != 0) {
-                emitter.tag(jmxMat.tag);
-            }
-            
-            ModelElementTexture tex = extData.jmx_texData0 == null ? elementFace.textureData : extData.jmx_texData0;
-            
-            QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
-            final int color0 = jmxMat.color0;
-            if(color0 != 0xFFFFFFFF) {
-                emitter.spriteColor(0, color0, color0, color0, color0);
-            }
-            emitter.colorIndex(elementFace.tintIndex);
-            
-            if(FREX_RENDERER) {
-                if(jmxMat.depth == 2) {
-                    tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
-                    sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps, modelId);
-                    final int color1 = jmxMat.color1;
-                    if(color1 != 0xFFFFFFFF) {
-                        emitter.spriteColor(1, color1, color1, color1, color1);
-                    }
-                }
-                // With FREX will emit both sprites as one quad
-                emitter.emit();
-            } else {
-                emitter.emit();
-                if(jmxMat.depth == 2) {
-                    tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
-                    if(jmxMat.tag != 0) {
-                        emitter.tag(jmxMat.tag);
-                    }
-                    emitter.material(getSecondaryMaterial(jmxMat, element));
-                    emitter.cullFace(cullFace);
-                    sprite = spriteFunc.apply(extData.jmx_tex1);
-                    QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
-                    final int color1 = jmxMat.color1;
-                    if(color1 != 0xFFFFFFFF) {
-                        emitter.spriteColor(0, color1, color1, color1, color1);
-                    }
-                    emitter.colorIndex(elementFace.tintIndex);
-                    emitter.emit();
-                }
-            }
-        }
-        
-        private RenderMaterial getPrimaryMaterial(JmxMaterial jmxMat, ModelElement element) {
-            if(FREX_RENDERER && jmxMat.preset != null) {
-                RenderMaterial mat = null;
-                mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
-                if(mat != null) return mat;
-            }
-            
-            final MaterialFinder finder = this.finder.clear();
-            finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
-            finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
-            finder.emissive(0, jmxMat.emissive0.get());
-            if(jmxMat.colorIndex0 == TriState.FALSE) {
-            	finder.disableColorIndex(0, true);
-            }
-            if(jmxMat.layer0 != null) {
-                finder.blendMode(0, jmxMat.layer0);
-            }
-            
-            if(FREX_RENDERER && jmxMat.depth == 2) {
-                finder.spriteDepth(2);
-                finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
-                finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
-                finder.emissive(1, jmxMat.emissive1.get());
-                if(jmxMat.colorIndex1 == TriState.FALSE) {
-                	finder.disableColorIndex(1, true);
-                }
-                if(jmxMat.layer1 != null) {
-                    finder.blendMode(1, jmxMat.layer1);
-                }
-            }
-            
-            return finder.find();
-        }
-        
-        /** 
-         * Material used for 2nd layer when FREX renderer not available.
-         */
-        private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
-             final MaterialFinder finder = this.finder.clear();
-             finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get()));
-             finder.disableAo(0, isItem || (jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get()));
-             finder.emissive(0, jmxMat.emissive1.get());
-             if(jmxMat.colorIndex1 == TriState.FALSE) {
-            	 finder.disableColorIndex(0, true);
-             }
-             if(jmxMat.layer1 != null) {
-                 finder.blendMode(0, jmxMat.layer1);
-             }
-             return finder.find();
-         }
-    }
+	@Override
+	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+		if(mesh != null) {
+			context.meshConsumer().accept(mesh);
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
+	public static class Builder {
+		private final MeshBuilder meshBuilder;
+		private final MaterialFinder finder;
+		private final QuadEmitter emitter;
+		private final ModelItemPropertyOverrideList itemPropertyOverrides;
+		private final boolean usesAo;
+		private Sprite particleTexture;
+		private final boolean depthInGui;
+		private final ModelTransformation transformation;
+		private final boolean isItem;
+
+		public Builder(JsonUnbakedModel unbakedModel, ModelItemPropertyOverrideList itemPropertyOverrides) {
+			this(unbakedModel.useAmbientOcclusion(), unbakedModel.hasDepthInGui(), unbakedModel.getTransformations(), itemPropertyOverrides, unbakedModel.id.contains(":item/"));
+		}
+
+		private Builder(boolean usesAo, boolean depthInGui, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
+			meshBuilder = RENDERER.meshBuilder();
+			finder = RENDERER.materialFinder();
+			emitter = meshBuilder.getEmitter();
+			this.itemPropertyOverrides = itemPropertyOverrides;
+			this.usesAo = usesAo;
+			this.depthInGui = depthInGui;
+			this.transformation = transformation;
+			this.isItem = isItem;
+		}
+
+		public JmxBakedModel.Builder setParticle(Sprite sprite) {
+			particleTexture = sprite;
+			return this;
+		}
+
+		public BakedModel build() {
+			if (particleTexture == null) {
+				throw new RuntimeException("Missing particle!");
+			} else {
+				return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, particleTexture, transformation, itemPropertyOverrides, isItem);
+			}
+		}
+
+		private static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
+		private static final BakedQuadFactoryExt QUADFACTORY_EXT = (BakedQuadFactoryExt)QUADFACTORY;
+
+		/**
+		 * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
+		 */
+		public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
+			@SuppressWarnings("unchecked")
+			final
+			FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
+			final JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
+
+			final RenderMaterial mat = getPrimaryMaterial(jmxMat, element);
+
+			final QuadEmitter emitter = this.emitter;
+			emitter.material(mat);
+			emitter.cullFace(cullFace);
+
+			if(jmxMat.tag != 0) {
+				emitter.tag(jmxMat.tag);
+			}
+
+			ModelElementTexture tex = extData.jmx_texData0 == null ? elementFace.textureData : extData.jmx_texData0;
+
+			QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
+			final int color0 = jmxMat.color0;
+
+			if(color0 != 0xFFFFFFFF) {
+				emitter.spriteColor(0, color0, color0, color0, color0);
+			}
+			emitter.colorIndex(elementFace.tintIndex);
+
+			if(FREX_RENDERER) {
+				if(jmxMat.depth == 2) {
+					tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
+					sprite = spriteFunc.apply(extData.jmx_tex1);
+					QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps, modelId);
+					final int color1 = jmxMat.color1;
+
+					if(color1 != 0xFFFFFFFF) {
+						emitter.spriteColor(1, color1, color1, color1, color1);
+					}
+				}
+
+				// With FREX will emit both sprites as one quad
+				emitter.emit();
+			} else {
+				emitter.emit();
+
+				if(jmxMat.depth == 2) {
+					tex = extData.jmx_texData1 == null ? elementFace.textureData : extData.jmx_texData1;
+
+					if(jmxMat.tag != 0) {
+						emitter.tag(jmxMat.tag);
+					}
+
+					emitter.material(getSecondaryMaterial(jmxMat, element));
+					emitter.cullFace(cullFace);
+					sprite = spriteFunc.apply(extData.jmx_tex1);
+					QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
+					final int color1 = jmxMat.color1;
+
+					if(color1 != 0xFFFFFFFF) {
+						emitter.spriteColor(0, color1, color1, color1, color1);
+					}
+
+					emitter.colorIndex(elementFace.tintIndex);
+					emitter.emit();
+				}
+			}
+		}
+
+		private RenderMaterial getPrimaryMaterial(JmxMaterial jmxMat, ModelElement element) {
+			if(FREX_RENDERER && jmxMat.preset != null) {
+				RenderMaterial mat = null;
+				mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
+
+				if(mat != null) {
+					return mat;
+				}
+			}
+
+			final MaterialFinder finder = this.finder.clear();
+			finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
+			finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
+			finder.emissive(0, jmxMat.emissive0.get());
+
+			if(jmxMat.colorIndex0 == TriState.FALSE) {
+				finder.disableColorIndex(0, true);
+			}
+
+			if(jmxMat.layer0 != null) {
+				finder.blendMode(0, jmxMat.layer0);
+			}
+
+			if(FREX_RENDERER && jmxMat.depth == 2) {
+				finder.spriteDepth(2);
+				finder.disableDiffuse(1, jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get());
+				finder.disableAo(1, jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get());
+				finder.emissive(1, jmxMat.emissive1.get());
+
+				if(jmxMat.colorIndex1 == TriState.FALSE) {
+					finder.disableColorIndex(1, true);
+				}
+
+				if(jmxMat.layer1 != null) {
+					finder.blendMode(1, jmxMat.layer1);
+				}
+			}
+
+			return finder.find();
+		}
+
+		/**
+		 * Material used for 2nd layer when FREX renderer not available.
+		 */
+		private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
+			final MaterialFinder finder = this.finder.clear();
+			finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get()));
+			finder.disableAo(0, isItem || (jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get()));
+			finder.emissive(0, jmxMat.emissive1.get());
+
+			if(jmxMat.colorIndex1 == TriState.FALSE) {
+				finder.disableColorIndex(0, true);
+			}
+
+			if(jmxMat.layer1 != null) {
+				finder.blendMode(0, jmxMat.layer1);
+			}
+
+			return finder.find();
+		}
+	}
 }
 

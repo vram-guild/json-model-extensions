@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -34,6 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 
 import grondag.jmx.Configurator;
 import grondag.jmx.JsonModelExtensions;
@@ -45,6 +47,7 @@ import grondag.jmx.json.ext.JsonUnbakedModelExt;
 import grondag.jmx.json.model.JmxBakedModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.SpriteIdentifier;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -61,208 +64,215 @@ import net.minecraft.util.math.Direction;
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.class)
 public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
-    @Shadow
-    protected abstract ModelItemPropertyOverrideList compileOverrides(ModelLoader modelLoader,
-            JsonUnbakedModel jsonUnbakedModel);
+	@Shadow
+	protected abstract ModelItemPropertyOverrideList compileOverrides(ModelLoader modelLoader,
+			JsonUnbakedModel jsonUnbakedModel);
 
-    @Shadow
-    protected Identifier parentId;
+	@Shadow
+	protected Identifier parentId;
 
-    @Shadow
-    protected Map<String, String> textureMap;
-    
-    private JsonUnbakedModelExt jmxParent;
-    private JmxModelExt jmxModelExt;
+	@Shadow
+	protected Map<String, Either<SpriteIdentifier, String>> textureMap;
 
-    @Override
-    public JmxModelExt jmx_modelExt() {
-        return jmxModelExt;
-    }
+	private JsonUnbakedModelExt jmxParent;
+	private JmxModelExt jmxModelExt;
 
-    @Override
-    public JsonUnbakedModelExt jmx_parent() {
-        return jmxParent;
-    }
+	@Override
+	public JmxModelExt jmx_modelExt() {
+		return jmxModelExt;
+	}
 
-    @Override
-    public Identifier jmx_parentId() {
-        return parentId;
-    }
+	@Override
+	public JsonUnbakedModelExt jmx_parent() {
+		return jmxParent;
+	}
 
-    @Override
-    public void jmx_parent(JsonUnbakedModelExt parent) {
-        jmxParent = parent;
-        if (jmxModelExt != null) {
-            jmxModelExt.parent = parent.jmx_modelExt();
-        }
-    }
+	@Override
+	public Identifier jmx_parentId() {
+		return parentId;
+	}
 
-    @Override
-    public Map<String, String> jmx_textureMap() {
-    	return textureMap;
-    }
-    
-    /**
-     * We use a threadlocal populated just before initialization vs trying to hook
-     * initialization directly.
-     */
-    @Inject(at = @At("RETURN"), method = "<init>")
-    private void onInit(CallbackInfo ci) {
-        jmxModelExt = JmxModelExt.TRANSFER.get();
-    }
+	@Override
+	public void jmx_parent(JsonUnbakedModelExt parent) {
+		jmxParent = parent;
 
-    /**
-     * Appends JMX texture dependencies and computes material dependencies.
-     */
-    @SuppressWarnings("unlikely-arg-type")
-    @Inject(at = @At("RETURN"), method = "getTextureDependencies")
-    private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<String> errors,
-            CallbackInfoReturnable<Collection<Identifier>> ci) {
-        
-        if (jmxTextureDeps != null) {
-            ci.getReturnValue().addAll(jmxTextureDeps);
-        }
+		if (jmxModelExt != null) {
+			jmxModelExt.parent = parent.jmx_modelExt();
+		}
+	}
 
-        if (jmxTextureErrors != null) {
-            errors.addAll(jmxTextureErrors);
-        }
+	@Override
+	public Map<String, Either<SpriteIdentifier, String>> jmx_textureMap() {
+		return textureMap;
+	}
 
-        // We don't need the collection of material dependencies - this is just to map
-        // parent relationships.
-        Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
-        for (JsonUnbakedModelExt model = (JsonUnbakedModelExt) (Object) this; model.jmx_parentId() != null
-                && model.jmx_parent() == null; model = model.jmx_parent()) {
-            set.add(model);
-            UnbakedModel parentModel = (UnbakedModel) modelFunc.apply(model.jmx_parentId());
-            if (parentModel == null) {
-                JsonModelExtensions.LOG.warn("No parent '{}' while loading model '{}'", parentId, model);
-            }
+	/**
+	 * We use a threadlocal populated just before initialization vs trying to hook
+	 * initialization directly.
+	 */
+	@Inject(at = @At("RETURN"), method = "<init>")
+	private void onInit(CallbackInfo ci) {
+		jmxModelExt = JmxModelExt.TRANSFER.get();
+	}
 
-            if (set.contains(parentModel)) {
-                JsonModelExtensions.LOG.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", model,
-                        set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), parentId);
-                parentModel = null;
-            }
+	/**
+	 * Appends JMX texture dependencies and computes material dependencies.
+	 */
+	@SuppressWarnings("unlikely-arg-type")
+	@Inject(at = @At("RETURN"), method = "getTextureDependencies")
+	private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors,
+			CallbackInfoReturnable<Collection<SpriteIdentifier>> ci) {
 
-            if (parentModel != null && !(parentModel instanceof JsonUnbakedModel)) {
-                throw new IllegalStateException("BlockModel parent has to be a block model.");
-            }
+		if (jmxTextureDeps != null) {
+			ci.getReturnValue().addAll(jmxTextureDeps);
+		}
 
-            model.jmx_parent((JsonUnbakedModelExt) parentModel);
-        }
-    }
+		if (jmxTextureErrors != null) {
+			errors.addAll(jmxTextureErrors);
+		}
 
-    private HashSet<Identifier> jmxTextureDeps = null;
+		// We don't need the collection of material dependencies - this is just to map
+		// parent relationships.
+		final Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
+		for (JsonUnbakedModelExt model = this; model.jmx_parentId() != null
+				&& model.jmx_parent() == null; model = model.jmx_parent()) {
+			set.add(model);
+			UnbakedModel parentModel = modelFunc.apply(model.jmx_parentId());
+			if (parentModel == null) {
+				JsonModelExtensions.LOG.warn("No parent '{}' while loading model '{}'", parentId, model);
+			}
 
-    private HashSet<Identifier> getOrCreateJmxTextureDeps() {
-        HashSet<Identifier> result = jmxTextureDeps;
-        if (result == null) {
-            result = new HashSet<>();
-            jmxTextureDeps = result;
-        }
-        return result;
-    }
+			if (set.contains(parentModel)) {
+				JsonModelExtensions.LOG.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", model,
+						set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), parentId);
+				parentModel = null;
+			}
 
-    private HashSet<String> jmxTextureErrors = null;
+			if (parentModel != null && !(parentModel instanceof JsonUnbakedModel)) {
+				throw new IllegalStateException("BlockModel parent has to be a block model.");
+			}
 
-    private HashSet<String> getOrCreateJmxTextureErrors() {
-        HashSet<String> result = jmxTextureErrors;
-        if (result == null) {
-            result = new HashSet<>();
-            jmxTextureErrors = result;
-        }
-        return result;
-    }
+			model.jmx_parent((JsonUnbakedModelExt) parentModel);
+		}
+	}
 
-    @ModifyVariable(method = "getTextureDependencies", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
-    private ModelElementFace hookTextureDeps(ModelElementFace face) {
-        @SuppressWarnings("unchecked")
-        FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
-        JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
-        if (jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
-            String tex = me.resolveTexture(jmxData.jmx_tex0);
-            if (Objects.equals(tex, MissingSprite.getMissingSpriteId().toString())) {
-                getOrCreateJmxTextureErrors().add(String.format("%s in %s", jmxData.jmx_tex0, me.id));
-            } else {
-                getOrCreateJmxTextureDeps().add(new Identifier(tex));
-            }
-        }
+	private HashSet<SpriteIdentifier> jmxTextureDeps = null;
 
-        if (jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
-            String tex = me.resolveTexture(jmxData.jmx_tex1);
-            if (Objects.equals(tex, MissingSprite.getMissingSpriteId().toString())) {
-                getOrCreateJmxTextureErrors().add(String.format("%s in %s", jmxData.jmx_tex1, me.id));
-            } else {
-                getOrCreateJmxTextureDeps().add(new Identifier(tex));
-            }
-        }
+	private HashSet<SpriteIdentifier> getOrCreateJmxTextureDeps() {
+		HashSet<SpriteIdentifier> result = jmxTextureDeps;
+		if (result == null) {
+			result = new HashSet<>();
+			jmxTextureDeps = result;
+		}
+		return result;
+	}
 
-        return face;
-    }
+	private HashSet<Pair<String, String>> jmxTextureErrors = null;
 
-    @SuppressWarnings("unchecked")
-    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
-    public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<Identifier, Sprite> spriteFunc,
-            ModelBakeSettings bakeProps, Identifier modelId, CallbackInfoReturnable<BakedModel> ci) {
-        final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
+	private HashSet<Pair<String, String>> getOrCreateJmxTextureErrors() {
+		HashSet<Pair<String, String>> result = jmxTextureErrors;
+		if (result == null) {
+			result = new HashSet<>();
+			jmxTextureErrors = result;
+		}
+		return result;
+	}
 
-        // leave vanilla logic for built-ins
-        if (me.getRootModel() == ModelLoader.BLOCK_ENTITY_MARKER) {
-            return;
-        }
+	@ModifyVariable(method = "getTextureDependencies", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
+	private ModelElementFace hookTextureDeps(ModelElementFace face) {
+		@SuppressWarnings("unchecked")
+		final
+		FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
+		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
-        // if no JMX extensions, cannot be a template model for transforms
-        // and not using JMX for vanilla, then use vanilla builder
-        if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
-            boolean isVanilla = true;
-            Iterator<ModelElement> elements = me.getElements().iterator();
-            while (isVanilla && elements.hasNext()) {
-                ModelElement element = elements.next();
-                Iterator<ModelElementFace> faces = element.faces.values().iterator();
+		if (jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
+			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex0);
 
-                while (faces.hasNext()) {
-                    ModelElementFace face = faces.next();
-                    FaceExtData faceExt = ((JmxExtension<FaceExtData>) face).jmx_ext();
-                    if(faceExt != null && !faceExt.isEmpty()) {
-                        isVanilla = false;
-                        break;
-                    }
-                }
-            }
+			if (Objects.equals(tex.textureId(), MissingSprite.getMissingSpriteId())) {
+				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex0, me.id));
+			} else {
+				getOrCreateJmxTextureDeps().add(tex);
+			}
+		}
 
-            if (isVanilla) {
-                return;
-            }
-        }
+		if (jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
+			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex1);
 
-        // build and return JMX model
-        Function<String, Sprite> spriteFuncInner = s -> spriteFunc.apply(new Identifier(me.resolveTexture(s)));
-        Sprite particleSprite = spriteFuncInner.apply("particle");
-        JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel)))
-                .setParticle(particleSprite);
-        Iterator<ModelElement> elements = me.getElements().iterator();
-        while (elements.hasNext()) {
-            ModelElement element = elements.next();
-            Iterator<Direction> faces = element.faces.keySet().iterator();
+			if (Objects.equals(tex.textureId(), MissingSprite.getMissingSpriteId())) {
+				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex1, me.id));
+			} else {
+				getOrCreateJmxTextureDeps().add(tex);
+			}
+		}
 
-            while (faces.hasNext()) {
-                Direction face = faces.next();
-                ModelElementFace elementFace = element.faces.get(face);
-                FaceExtData extData = ((JmxExtension<FaceExtData>) elementFace).jmx_ext();
+		return face;
+	}
 
-                String tex0 = extData.jmx_tex0 == null ? elementFace.textureId : extData.jmx_tex0;
+	@SuppressWarnings("unchecked")
+	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
+	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> spriteFunc,
+			ModelBakeSettings bakeProps, Identifier modelId, CallbackInfoReturnable<BakedModel> ci) {
+		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
-                Sprite sprite = spriteFuncInner.apply(tex0);
-                if (elementFace.cullFace == null) {
-                    builder.addQuad(null, jmxModelExt, spriteFuncInner, element, elementFace, sprite, face, bakeProps, modelId);
-                } else {
-                	Direction roatedCullFace = Direction.method_23225(bakeProps.getRotation().method_22936(), elementFace.cullFace);
-                    builder.addQuad(roatedCullFace, jmxModelExt, spriteFuncInner, element, elementFace, sprite, face, bakeProps, modelId);
-                }
-            }
-        }
+		// leave vanilla logic for built-ins
+		if (me.getRootModel() == ModelLoader.BLOCK_ENTITY_MARKER) {
+			return;
+		}
 
-        ci.setReturnValue(builder.build());
-    }
+		// if no JMX extensions, cannot be a template model for transforms
+		// and not using JMX for vanilla, then use vanilla builder
+		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
+			boolean isVanilla = true;
+			final Iterator<ModelElement> elements = me.getElements().iterator();
+			while (isVanilla && elements.hasNext()) {
+				final ModelElement element = elements.next();
+				final Iterator<ModelElementFace> faces = element.faces.values().iterator();
+
+				while (faces.hasNext()) {
+					final ModelElementFace face = faces.next();
+					final FaceExtData faceExt = ((JmxExtension<FaceExtData>) face).jmx_ext();
+					if(faceExt != null && !faceExt.isEmpty()) {
+						isVanilla = false;
+						break;
+					}
+				}
+			}
+
+			if (isVanilla) {
+				return;
+			}
+		}
+
+		// build and return JMX model
+		final Sprite particleSprite = spriteFunc.apply(me.method_24077("particle"));
+		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.method_24077(s));
+
+		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel)))
+				.setParticle(particleSprite);
+		final Iterator<ModelElement> elements = me.getElements().iterator();
+		while (elements.hasNext()) {
+			final ModelElement element = elements.next();
+			final Iterator<Direction> faces = element.faces.keySet().iterator();
+
+			while (faces.hasNext()) {
+				final Direction face = faces.next();
+				final ModelElementFace elementFace = element.faces.get(face);
+				final FaceExtData extData = ((JmxExtension<FaceExtData>) elementFace).jmx_ext();
+
+				final String tex0 = extData.jmx_tex0 == null ? elementFace.textureId : extData.jmx_tex0;
+
+				final Sprite sprite = spriteFunc.apply(me.method_24077(tex0));
+
+				if (elementFace.cullFace == null) {
+					builder.addQuad(null, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
+				} else {
+					final Direction roatedCullFace = Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
+					builder.addQuad(roatedCullFace, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
+				}
+			}
+		}
+
+		ci.setReturnValue(builder.build());
+	}
 }
