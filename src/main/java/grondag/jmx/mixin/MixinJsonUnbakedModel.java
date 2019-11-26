@@ -47,7 +47,6 @@ import grondag.jmx.json.ext.JsonUnbakedModelExt;
 import grondag.jmx.json.model.JmxBakedModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.SpriteIdentifier;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -58,6 +57,7 @@ import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -189,7 +189,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		if (jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
 			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex0);
 
-			if (Objects.equals(tex.textureId(), MissingSprite.getMissingSpriteId())) {
+			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
 				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex0, me.id));
 			} else {
 				getOrCreateJmxTextureDeps().add(tex);
@@ -199,7 +199,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		if (jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
 			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex1);
 
-			if (Objects.equals(tex.textureId(), MissingSprite.getMissingSpriteId())) {
+			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
 				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex1, me.id));
 			} else {
 				getOrCreateJmxTextureDeps().add(tex);

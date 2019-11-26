@@ -37,12 +37,12 @@ import net.minecraft.util.math.Direction;
 @Environment(EnvType.CLIENT)
 @Mixin(ModelElementFace.Deserializer.class)
 public class MixinModelElementFaceDeserializer {
-	@Inject(method = "method_3397", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
+	@Inject(method = "deserialize", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			at = @At(
 					value = "INVOKE",
 					ordinal = 0,
 					target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
-	private void wut(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
+	private void hookDeserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
 		FaceExtData.deserialize(jsonObj, context);
 	}
 }

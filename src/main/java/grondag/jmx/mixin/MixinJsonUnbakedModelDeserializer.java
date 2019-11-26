@@ -31,8 +31,8 @@ import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.json.ext.JmxTexturesExt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.SpriteIdentifier;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.util.SpriteIdentifier;
 
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.Deserializer.class)
@@ -42,7 +42,7 @@ public class MixinJsonUnbakedModelDeserializer {
 		JmxTexturesExt.handleJmxTextures(jsonObj, ci.getReturnValue());
 	}
 
-	@ModifyVariable(method = "method_3451", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
+	@ModifyVariable(method = "deserialize", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
 	private JsonObject hookDeserialize(JsonObject jsonObj) {
 		JmxModelExt.deserialize(jsonObj);
 		return jsonObj;

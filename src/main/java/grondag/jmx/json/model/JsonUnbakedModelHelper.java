@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import net.minecraft.client.render.SpriteIdentifier;
 import net.minecraft.client.render.model.json.ItemModelGenerator;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
 public class JsonUnbakedModelHelper {
@@ -50,15 +50,14 @@ public class JsonUnbakedModelHelper {
 		final Map<String, Either<SpriteIdentifier, String>> result = new HashMap<>();
 
 		for(final Map.Entry<String, Either<SpriteIdentifier, String>> entry : mapIn.entrySet()) {
-
 			if(entry.getValue().left().isPresent()) {
 				final SpriteIdentifier oldId  = entry.getValue().left().get();
 
 				if(oldId != null) {
-					final Identifier remapId = textureMap.get(oldId.textureId());
+					final Identifier remapId = textureMap.get(oldId.getTextureId());
 
 					if (remapId != null) {
-						result.put(entry.getKey(), Either.left(new SpriteIdentifier(oldId.atlasId(), remapId)));
+						result.put(entry.getKey(), Either.left(new SpriteIdentifier(oldId.getAtlasId(), remapId)));
 						continue;
 					}
 				}

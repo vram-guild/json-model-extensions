@@ -22,7 +22,7 @@ import com.mojang.datafixers.util.Either;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.SpriteIdentifier;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
