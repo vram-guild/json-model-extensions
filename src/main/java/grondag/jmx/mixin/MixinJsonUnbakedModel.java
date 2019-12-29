@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,20 +36,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
-
-import grondag.jmx.Configurator;
-import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.impl.DerivedModelRegistryImpl;
-import grondag.jmx.json.ext.FaceExtData;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import grondag.jmx.json.model.JmxBakedModel;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -60,6 +49,18 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import grondag.jmx.Configurator;
+import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.impl.DerivedModelRegistryImpl;
+import grondag.jmx.json.ext.FaceExtData;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JmxModelExt;
+import grondag.jmx.json.ext.JsonUnbakedModelExt;
+import grondag.jmx.json.model.JmxBakedModel;
 
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.class)
@@ -187,7 +188,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
 		if (jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
-			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex0);
+			final SpriteIdentifier tex = me.resolveSprite(jmxData.jmx_tex0);
 
 			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
 				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex0, me.id));
@@ -197,7 +198,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 
 		if (jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
-			final SpriteIdentifier tex = me.method_24077(jmxData.jmx_tex1);
+			final SpriteIdentifier tex = me.resolveSprite(jmxData.jmx_tex1);
 
 			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
 				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex1, me.id));
@@ -245,8 +246,8 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 
 		// build and return JMX model
-		final Sprite particleSprite = spriteFunc.apply(me.method_24077("particle"));
-		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.method_24077(s));
+		final Sprite particleSprite = spriteFunc.apply(me.resolveSprite("particle"));
+		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.resolveSprite(s));
 
 		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel)))
 				.setParticle(particleSprite);
@@ -262,7 +263,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 				final String tex0 = extData.jmx_tex0 == null ? elementFace.textureId : extData.jmx_tex0;
 
-				final Sprite sprite = spriteFunc.apply(me.method_24077(tex0));
+				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex0));
 
 				if (elementFace.cullFace == null) {
 					builder.addQuad(null, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
