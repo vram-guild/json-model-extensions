@@ -22,31 +22,9 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.google.common.collect.ImmutableList;
-
-import grondag.jmx.impl.TransformableModel;
-import grondag.jmx.impl.TransformableModelContext;
-import grondag.jmx.json.ext.FaceExtData;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxMaterial;
-import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.target.FrexHolder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
@@ -66,6 +44,29 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockRenderView;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+import net.fabricmc.fabric.api.util.TriState;
+
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
+import grondag.jmx.json.ext.FaceExtData;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JmxMaterial;
+import grondag.jmx.json.ext.JmxModelExt;
+import grondag.jmx.target.FrexHolder;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
@@ -243,9 +244,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
 			final int color0 = jmxMat.color0;
 
-			if(color0 != 0xFFFFFFFF) {
-				emitter.spriteColor(0, color0, color0, color0, color0);
-			}
+			emitter.spriteColor(0, color0, color0, color0, color0);
 			emitter.colorIndex(elementFace.tintIndex);
 
 			if(FREX_RENDERER) {
@@ -254,10 +253,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 					sprite = spriteFunc.apply(extData.jmx_tex1);
 					QUADFACTORY_EXT.bake(emitter, 1, element, elementFace, tex, sprite, face, bakeProps, modelId);
 					final int color1 = jmxMat.color1;
-
-					if(color1 != 0xFFFFFFFF) {
-						emitter.spriteColor(1, color1, color1, color1, color1);
-					}
+					emitter.spriteColor(1, color1, color1, color1, color1);
 				}
 
 				// With FREX will emit both sprites as one quad
@@ -277,11 +273,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 					sprite = spriteFunc.apply(extData.jmx_tex1);
 					QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, tex, sprite, face, bakeProps, modelId);
 					final int color1 = jmxMat.color1;
-
-					if(color1 != 0xFFFFFFFF) {
-						emitter.spriteColor(0, color1, color1, color1, color1);
-					}
-
+					emitter.spriteColor(0, color1, color1, color1, color1);
 					emitter.colorIndex(elementFace.tintIndex);
 					emitter.emit();
 				}
