@@ -20,11 +20,12 @@ import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.util.JsonHelper;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.util.JsonHelper;
 
 @Environment(EnvType.CLIENT)
 public class JmxMaterial {
@@ -88,7 +89,7 @@ public class JmxMaterial {
 
 		int depth = JsonHelper.getInt(jsonObj, "depth", 1);
 		// force depth to 2 if attributes for 2nd layer are given
-		if(depth == 1 && (ao1 != TriState.DEFAULT || diffuse1 != TriState.DEFAULT || emissive1 != TriState.DEFAULT || color1 != -1)) {
+		if(depth == 1 && (layer1 != null || ao1 != TriState.DEFAULT || diffuse1 != TriState.DEFAULT || emissive1 != TriState.DEFAULT || color1 != -1)) {
 			depth = 2;
 		}
 		this.depth = depth;
