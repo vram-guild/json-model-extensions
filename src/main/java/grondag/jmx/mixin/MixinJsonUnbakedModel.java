@@ -210,10 +210,10 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		return face;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
+	@SuppressWarnings({ "unchecked", "resource" })
+	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
 	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> spriteFunc,
-			ModelBakeSettings bakeProps, Identifier modelId, CallbackInfoReturnable<BakedModel> ci) {
+			ModelBakeSettings bakeProps, Identifier modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
 		// leave vanilla logic for built-ins
@@ -226,6 +226,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
 			boolean isVanilla = true;
 			final Iterator<ModelElement> elements = me.getElements().iterator();
+
 			while (isVanilla && elements.hasNext()) {
 				final ModelElement element = elements.next();
 				final Iterator<ModelElementFace> faces = element.faces.values().iterator();
@@ -233,6 +234,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 				while (faces.hasNext()) {
 					final ModelElementFace face = faces.next();
 					final FaceExtData faceExt = ((JmxExtension<FaceExtData>) face).jmx_ext();
+
 					if(faceExt != null && !faceExt.isEmpty()) {
 						isVanilla = false;
 						break;
@@ -249,7 +251,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		final Sprite particleSprite = spriteFunc.apply(me.resolveSprite("particle"));
 		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.resolveSprite(s));
 
-		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel)))
+		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel), hasDepth))
 				.setParticle(particleSprite);
 		final Iterator<ModelElement> elements = me.getElements().iterator();
 		while (elements.hasNext()) {

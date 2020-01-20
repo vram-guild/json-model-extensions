@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Pair;
 
-import grondag.jmx.impl.ModelTransformer;
-import grondag.jmx.impl.RetexturedModelTransformer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
@@ -37,6 +35,9 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
+
+import grondag.jmx.impl.ModelTransformer;
+import grondag.jmx.impl.RetexturedModelTransformer;
 
 public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
 

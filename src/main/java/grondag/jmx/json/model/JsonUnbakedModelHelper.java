@@ -22,11 +22,12 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
 import net.minecraft.client.render.model.json.ItemModelGenerator;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
+
+import grondag.jmx.json.ext.JsonUnbakedModelExt;
 
 public class JsonUnbakedModelHelper {
 	private JsonUnbakedModelHelper() {}
@@ -41,7 +42,7 @@ public class JsonUnbakedModelHelper {
 				template.getElements(),
 				remapTextureMap(ext.jmx_textureMap(), textureMap),
 				template.useAmbientOcclusion(),
-				template.hasDepthInGui(),
+				template.getGuiLight(),
 				template.getTransformations(),
 				template.getOverrides());
 	}

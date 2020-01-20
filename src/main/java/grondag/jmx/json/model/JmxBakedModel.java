@@ -76,22 +76,23 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	protected final Mesh mesh;
 	protected WeakReference<List<BakedQuad>[]> quadLists = null;
 	protected final boolean usesAo;
-	protected final boolean depthInGui;
+	protected final boolean isSideLit;
 	protected final Sprite particleSprite;
 	protected final ModelTransformation transformation;
 	protected final ModelItemPropertyOverrideList itemPropertyOverrides;
-	protected final boolean isItem;
+	protected final boolean hasDepth;
 
-	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean depthInGui, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
+	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
 		this.mesh = mesh;
 		this.usesAo = usesAo;
-		this.depthInGui = depthInGui;
+		this.isSideLit = isSideLit;
 		this.particleSprite = particleSprite;
 		this.transformation = transformation;
 		this.itemPropertyOverrides = itemPropertyOverrides;
-		this.isItem = isItem;
+		this.hasDepth = hasDepth;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
 		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
@@ -108,8 +109,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 		});
 
-		return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, newParticleSprite, transformation,
-				transformItemProperties(context, atlas, meshBuilder), isItem);
+		return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
+				transformItemProperties(context, atlas, meshBuilder), hasDepth);
 	}
 
 	private ModelItemPropertyOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
@@ -134,8 +135,13 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	}
 
 	@Override
-	public boolean hasDepthInGui() {
-		return depthInGui;
+	public boolean hasDepth() {
+		return hasDepth;
+	}
+
+	@Override
+	public boolean isSideLit() {
+		return isSideLit;
 	}
 
 	@Override
@@ -185,23 +191,23 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		private final ModelItemPropertyOverrideList itemPropertyOverrides;
 		private final boolean usesAo;
 		private Sprite particleTexture;
-		private final boolean depthInGui;
+		private final boolean isSideLit;
 		private final ModelTransformation transformation;
-		private final boolean isItem;
+		private final boolean hasDepth;
 
-		public Builder(JsonUnbakedModel unbakedModel, ModelItemPropertyOverrideList itemPropertyOverrides) {
-			this(unbakedModel.useAmbientOcclusion(), unbakedModel.hasDepthInGui(), unbakedModel.getTransformations(), itemPropertyOverrides, unbakedModel.id.contains(":item/"));
+		public Builder(JsonUnbakedModel unbakedModel, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
+			this(unbakedModel.useAmbientOcclusion(), unbakedModel.getGuiLight().isSide(), unbakedModel.getTransformations(), itemPropertyOverrides, hasDepth);
 		}
 
-		private Builder(boolean usesAo, boolean depthInGui, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean isItem) {
+		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
 			meshBuilder = RENDERER.meshBuilder();
 			finder = RENDERER.materialFinder();
 			emitter = meshBuilder.getEmitter();
 			this.itemPropertyOverrides = itemPropertyOverrides;
 			this.usesAo = usesAo;
-			this.depthInGui = depthInGui;
+			this.isSideLit = isSideLit;
 			this.transformation = transformation;
-			this.isItem = isItem;
+			this.hasDepth = hasDepth;
 		}
 
 		public JmxBakedModel.Builder setParticle(Sprite sprite) {
@@ -213,7 +219,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			if (particleTexture == null) {
 				throw new RuntimeException("Missing particle!");
 			} else {
-				return new JmxBakedModel(meshBuilder.build(), usesAo, depthInGui, particleTexture, transformation, itemPropertyOverrides, isItem);
+				return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth);
 			}
 		}
 
@@ -291,7 +297,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			final MaterialFinder finder = this.finder.clear();
-			finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
+			finder.disableDiffuse(0, (hasDepth && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
 			finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
 			finder.emissive(0, jmxMat.emissive0.get());
 
@@ -326,8 +332,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		 */
 		private RenderMaterial getSecondaryMaterial(JmxMaterial jmxMat, ModelElement element) {
 			final MaterialFinder finder = this.finder.clear();
-			finder.disableDiffuse(0, (isItem && !FREX_RENDERER) || (jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get()));
-			finder.disableAo(0, isItem || (jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get()));
+			finder.disableDiffuse(0, (hasDepth && !FREX_RENDERER) || (jmxMat.diffuse1 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse1.get()));
+			finder.disableAo(0, hasDepth || (jmxMat.ao1 == TriState.DEFAULT ? !usesAo : !jmxMat.ao1.get()));
 			finder.emissive(0, jmxMat.emissive1.get());
 
 			if(jmxMat.colorIndex1 == TriState.FALSE) {
