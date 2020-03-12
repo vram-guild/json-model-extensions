@@ -21,11 +21,6 @@ import javax.annotation.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import grondag.jmx.json.model.BakedQuadFactoryExt;
-import grondag.jmx.json.model.BakedQuadFactoryHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.render.model.BakedQuadFactory;
 import net.minecraft.client.render.model.CubeFace;
 import net.minecraft.client.render.model.ModelBakeSettings;
@@ -39,6 +34,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+
+import grondag.jmx.json.model.BakedQuadFactoryExt;
+import grondag.jmx.json.model.BakedQuadFactoryHelper;
+
 @Environment(EnvType.CLIENT)
 @Mixin(BakedQuadFactory.class)
 public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
@@ -49,7 +51,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	protected abstract void encodeDirection(int[] data, Direction face);
 
 	@Shadow
-	protected abstract void packVertexData(int[] ints_1, int int_1, Vector3f vector3f_1, int int_2, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
+	protected abstract void packVertexData(int[] ints_1, int int_1, Vector3f vector3f_1, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
 
 	@Override
 	public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
@@ -108,7 +110,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
 		((BakedQuadFactory)(Object)this).transformVertex(pos, modelRotation_1);
-		packVertexData(data, vertexIn, pos, -1, sprite, tex);
+		packVertexData(data, vertexIn, pos, sprite, tex);
 	}
 
 	private static float[] normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
