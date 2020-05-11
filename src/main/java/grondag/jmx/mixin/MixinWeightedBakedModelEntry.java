@@ -23,7 +23,7 @@ import grondag.jmx.json.ext.ModelEntryAccess;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.util.WeightedPicker;
+import net.minecraft.util.collection.WeightedPicker;
 
 @Environment(EnvType.CLIENT)
 @Mixin(targets = {"net/minecraft/client/render/model/WeightedBakedModel$Entry"})

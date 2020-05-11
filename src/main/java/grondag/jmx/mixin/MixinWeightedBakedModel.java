@@ -34,7 +34,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.WeightedBakedModel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.WeightedPicker;
+import net.minecraft.util.collection.WeightedPicker;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 

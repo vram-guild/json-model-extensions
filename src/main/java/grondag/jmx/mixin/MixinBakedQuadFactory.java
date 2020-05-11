@@ -28,7 +28,7 @@ import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.Rotation3;
+import net.minecraft.client.util.math.AffineTransformation;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -96,7 +96,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		}
 	}
 
-	private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, Rotation3 texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+	private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		for(int i = 0; i < 4; ++i) {
 			bakeVertex(target, i, face, tex, pos, sprite, texRotation, modelRotation);
 		}
@@ -105,7 +105,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	}
 
 	/** like method_3461 but doesn't apply diffuse shading */
-	private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, Rotation3 modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+	private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, AffineTransformation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		final CubeFace.Corner cubeFace$Corner_1 = CubeFace.getFace(face).getCorner(vertexIn);
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
