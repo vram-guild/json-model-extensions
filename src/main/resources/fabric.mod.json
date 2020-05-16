@@ -29,7 +29,7 @@
     "modmenu:clientsideOnly": true
   },
   "depends": {
-    "fabricloader": ">=0.7.1",
+    "fabricloader": "\u003e\u003d0.8.2",
     "minecraft": "~1.16-alpha",
     "fabric": "*"
   }
