@@ -35,7 +35,7 @@ import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
+import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
@@ -79,10 +79,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	protected final boolean isSideLit;
 	protected final Sprite particleSprite;
 	protected final ModelTransformation transformation;
-	protected final ModelItemPropertyOverrideList itemPropertyOverrides;
+	protected final ModelOverrideList itemPropertyOverrides;
 	protected final boolean hasDepth;
 
-	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
+	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
 		this.mesh = mesh;
 		this.usesAo = usesAo;
 		this.isSideLit = isSideLit;
@@ -113,7 +113,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 				transformItemProperties(context, atlas, meshBuilder), hasDepth);
 	}
 
-	private ModelItemPropertyOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
+	private ModelOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
 		//TODO: Implement
 		return itemPropertyOverrides;
 	}
@@ -160,7 +160,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	}
 
 	@Override
-	public ModelItemPropertyOverrideList getItemPropertyOverrides() {
+	public ModelOverrideList getOverrides() {
 		return itemPropertyOverrides;
 	}
 
@@ -188,18 +188,18 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		private final MeshBuilder meshBuilder;
 		private final MaterialFinder finder;
 		private final QuadEmitter emitter;
-		private final ModelItemPropertyOverrideList itemPropertyOverrides;
+		private final ModelOverrideList itemPropertyOverrides;
 		private final boolean usesAo;
 		private Sprite particleTexture;
 		private final boolean isSideLit;
 		private final ModelTransformation transformation;
 		private final boolean hasDepth;
 
-		public Builder(JsonUnbakedModel unbakedModel, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
+		public Builder(JsonUnbakedModel unbakedModel, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
 			this(unbakedModel.useAmbientOcclusion(), unbakedModel.getGuiLight().isSide(), unbakedModel.getTransformations(), itemPropertyOverrides, hasDepth);
 		}
 
-		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelItemPropertyOverrideList itemPropertyOverrides, boolean hasDepth) {
+		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
 			meshBuilder = RENDERER.meshBuilder();
 			finder = RENDERER.materialFinder();
 			emitter = meshBuilder.getEmitter();

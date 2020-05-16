@@ -43,7 +43,7 @@ import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
+import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -66,7 +66,7 @@ import grondag.jmx.json.model.JmxBakedModel;
 @Mixin(JsonUnbakedModel.class)
 public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	@Shadow
-	protected abstract ModelItemPropertyOverrideList compileOverrides(ModelLoader modelLoader,
+	protected abstract ModelOverrideList compileOverrides(ModelLoader modelLoader,
 			JsonUnbakedModel jsonUnbakedModel);
 
 	@Shadow
