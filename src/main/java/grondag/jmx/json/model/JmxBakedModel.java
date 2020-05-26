@@ -92,7 +92,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		this.hasDepth = hasDepth;
 	}
 
-	@SuppressWarnings("resource")
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
 		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
@@ -297,7 +296,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			final MaterialFinder finder = this.finder.clear();
-			finder.disableDiffuse(0, (hasDepth && !FREX_RENDERER) || (jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get()));
+			finder.disableDiffuse(0, jmxMat.diffuse0 == TriState.DEFAULT ? !element.shade : !jmxMat.diffuse0.get());
 			finder.disableAo(0, jmxMat.ao0 == TriState.DEFAULT ? !usesAo : !jmxMat.ao0.get());
 			finder.emissive(0, jmxMat.emissive0.get());
 
