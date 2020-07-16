@@ -30,7 +30,7 @@ import net.fabricmc.loader.api.FabricLoader;
 @Environment(EnvType.CLIENT)
 public class Configurator {
 
-	public static final boolean loadVanillaModels;
+	public static boolean loadVanillaModels;
 
 	static {
 		final File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.properties");
@@ -42,7 +42,9 @@ public class Configurator {
 				JsonModelExtensions.LOG.warn("[JMX] Could not read property file '" + configFile.getAbsolutePath() + "'", e);
 			}
 		}
+
 		loadVanillaModels = ((String)properties.computeIfAbsent("load-vanilla-models", (a) -> "false")).toLowerCase(Locale.ROOT).equals("true");
+
 		try (FileOutputStream stream = new FileOutputStream(configFile)) {
 			properties.store(stream, "JMX properties file");
 		} catch (final IOException e) {
