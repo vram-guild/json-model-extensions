@@ -187,23 +187,16 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
-		if (jmxData.jmx_tex0 != null && !jmxData.jmx_tex0.isEmpty()) {
-			final SpriteIdentifier tex = me.resolveSprite(jmxData.jmx_tex0);
+		for (int spriteIndex = 0; spriteIndex < jmxData.getDepth(); spriteIndex++) {
+			String texStr = jmxData.getTex(spriteIndex);
+			if (texStr != null && !texStr.isEmpty()) {
+				final SpriteIdentifier tex = me.resolveSprite(texStr);
 
-			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
-				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex0, me.id));
-			} else {
-				getOrCreateJmxTextureDeps().add(tex);
-			}
-		}
-
-		if (jmxData.jmx_tex1 != null && !jmxData.jmx_tex1.isEmpty()) {
-			final SpriteIdentifier tex = me.resolveSprite(jmxData.jmx_tex1);
-
-			if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
-				getOrCreateJmxTextureErrors().add(Pair.of(jmxData.jmx_tex1, me.id));
-			} else {
-				getOrCreateJmxTextureDeps().add(tex);
+				if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
+					getOrCreateJmxTextureErrors().add(Pair.of(texStr, me.id));
+				} else {
+					getOrCreateJmxTextureDeps().add(tex);
+				}
 			}
 		}
 
@@ -263,9 +256,10 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 				final ModelElementFace elementFace = element.faces.get(face);
 				final FaceExtData extData = ((JmxExtension<FaceExtData>) elementFace).jmx_ext();
 
-				final String tex0 = extData.jmx_tex0 == null ? elementFace.textureId : extData.jmx_tex0;
+				final String extTex = extData.getTex(0);
+				final String tex = extTex == null ? elementFace.textureId : extTex;
 
-				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex0));
+				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex));
 
 				if (elementFace.cullFace == null) {
 					builder.addQuad(null, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);

@@ -19,7 +19,9 @@ package grondag.jmx.json.ext;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -49,29 +51,49 @@ public final class JmxTexturesExt {
 	private static void handleJmxTexturesInner(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(jsonObj.has("textures")) {
 			final JsonObject job = jsonObj.getAsJsonObject("textures");
-			final Iterator<Entry<String, JsonElement>> it = job.entrySet().iterator();
 
-			while(it.hasNext()) {
-				final Entry<String, JsonElement> entry = it.next();
+			for (Entry<String, JsonElement> entry : job.entrySet()) {
+				if (entry.getValue().isJsonArray()) {
+					final JsonArray layeredTextures = entry.getValue().getAsJsonArray();
 
-				if(entry.getValue().isJsonNull()) {
-					map.put(entry.getKey(), DUMMY_TEX);
-				} else {
-					final String val = entry.getValue().getAsString();
-
-					if (val.charAt(0) == '#') {
-						map.put(entry.getKey(), Either.right(val.substring(1)));
-					} else {
-						final Identifier id = Identifier.tryParse(val);
-
-						if (id == null) {
-							throw new JsonParseException(val + " is not valid resource location");
-						} else {
-							map.put(entry.getKey(), Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, id)));
+					for (int i = 0; i < layeredTextures.size(); i++) {
+						final int i2 = i;
+						for (Entry<String, JsonElement> layerEntry : layeredTextures.get(i).getAsJsonObject().entrySet()) {
+							handleTexture(layerEntry.getKey() + i, layerEntry.getValue(), map, x -> x + i2);
 						}
 					}
+				} else {
+					handleTexture(entry.getKey(), entry.getValue(), map, x -> x);
 				}
 			}
+		}
+	}
+
+	private static void handleTexture(String key, JsonElement value, Map<String, Either<SpriteIdentifier, String>> map, Function<String, String> getTexture) {
+		if (value.isJsonNull()) {
+			map.put(key, DUMMY_TEX);
+		} else {
+			String texture = value.getAsString();
+
+			if (isReference(texture)) {
+				map.put(key, Either.right(getTexture.apply(texture.substring(1))));
+			} else {
+				SpriteIdentifier id = tryIdentifier(texture);
+				map.put(key, Either.left(id));
+			}
+		}
+	}
+
+	private static boolean isReference(String s) {
+		return s.charAt(0) == '#';
+	}
+
+	private static SpriteIdentifier tryIdentifier(String s) {
+		final Identifier id = Identifier.tryParse(s);
+		if (id == null) {
+			throw new JsonParseException(s + " is not a valid resource location.");
+		} else {
+			return new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, id);
 		}
 	}
 }
