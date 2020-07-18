@@ -16,9 +16,12 @@
 
 package grondag.jmx.json.ext;
 
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.util.JsonHelper;
@@ -85,7 +88,51 @@ public class JmxMaterial {
 		JsonArray layers = JsonHelper.getArray(jsonObject, "layers", null);
 
 		if (layers == null) {
-			this.layers = null;
+			int depth = -1;
+			int[] propertyIndices = new int[jsonObject.entrySet().size()];
+			Arrays.fill(propertyIndices, -1);
+
+			int entryIndex = 0;
+			for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
+					continue;
+				}
+
+				for (int i = 0; i < entry.getKey().length(); i++) {
+					if (Character.isDigit(entry.getKey().charAt(i))) {
+						propertyIndices[entryIndex] = Integer.parseInt(entry.getKey().substring(i));
+
+						if (propertyIndices[entryIndex] + 1 > depth) {
+							depth = propertyIndices[entryIndex] + 1;
+						}
+
+						break;
+					}
+				}
+
+				entryIndex++;
+			}
+
+			if (JsonHelper.hasPrimitive(jsonObject, "depth") && depth > JsonHelper.getInt(jsonObject, "depth")) {
+				throw new IllegalStateException("Model defines a depth of " + JsonHelper.getInt(jsonObject, "depth") + ", but uses a depth of " + depth + ".");
+			}
+
+			if (depth != -1) {
+				this.layers = new LayerData[depth];
+
+				for (int i = 0; i < depth; i++) {
+					this.layers[i] = new LayerData(
+						asTriState(JsonHelper.getString(jsonObject, "diffuse" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "ambient_occlusion" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "emissive" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "colorIndex" + i, null)),
+						color(JsonHelper.getString(jsonObject, "color" + i, "0xFFFFFFFF")),
+						asLayer(JsonHelper.getString(jsonObject, "layer" + i, null))
+					);
+				}
+			} else {
+				this.layers = null;
+			}
 		} else {
 			int depth = layers.size();
 

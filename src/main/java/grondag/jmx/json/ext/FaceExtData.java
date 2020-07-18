@@ -20,12 +20,16 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.util.JsonHelper;
+
+import java.util.Arrays;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class FaceExtData {
@@ -61,7 +65,47 @@ public class FaceExtData {
 		JsonArray layers = JsonHelper.getArray(jsonObj, "layered_textures", null);
 
 		if (layers == null) {
-			this.layers = null;
+			int depth = -1;
+			int[] propertyIndices = new int[jsonObj.entrySet().size()];
+			Arrays.fill(propertyIndices, -1);
+
+			int entryIndex = 0;
+			for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
+					continue;
+				}
+
+				for (int i = 0; i < entry.getKey().length(); i++) {
+					if (Character.isDigit(entry.getKey().charAt(i))) {
+						propertyIndices[entryIndex] = Integer.parseInt(entry.getKey().substring(i));
+
+						if (propertyIndices[entryIndex] + 1 > depth) {
+							depth = propertyIndices[entryIndex] + 1;
+						}
+
+						break;
+					}
+				}
+
+				entryIndex++;
+			}
+
+			if (JsonHelper.hasPrimitive(jsonObj, "depth") && depth > JsonHelper.getInt(jsonObj, "depth")) {
+				throw new IllegalStateException("Model defines a depth of " + JsonHelper.getInt(jsonObj, "depth") + ", but uses a depth of " + depth + ".");
+			}
+
+			if (depth != -1) {
+				this.layers = new LayerData[depth];
+
+				for (int i = 0; i < depth; i++) {
+					this.layers[i] = new LayerData(
+						JsonHelper.getString(jsonObj, "jmx_tex" + i, null),
+						deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
+					);
+				}
+			} else {
+				this.layers = null;
+			}
 		} else {
 			int depth = layers.size();
 
