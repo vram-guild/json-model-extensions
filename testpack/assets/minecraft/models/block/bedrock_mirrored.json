@@ -1,30 +1,35 @@
 {
-    "parent": "jmx:block/jmx_cube_mirrored_all",
-    "textures": {
-        "all": "block/white_concrete"
-    },
-    "jmx": {
-	    "textures": {
-	    	"jmx_tex_particle": "minecraft:block/white_concrete",
-	        "jmx_tex_all0": "minecraft:block/white_concrete",
-	        "jmx_tex_all1": "minecraft:block/fern"
-	    },
-	    "materials": {
-	    	"jmx_mat_all": {
-	    		"layer0": "solid",
-	    		"layer1": "translucent",
-	    		"emissive0": false,
-	    		"emissive1": true,
-	    		"ambient_occlusion0": true,
-	    		"ambient_occlusion1": false,
-	    		"color0": "0xFFFF0000",
-	    		"color1": "0xFF00FFFF",
-	    		"colorIndex0": false,
-	    		"colorIndex1": false,
-	    		"diffuse0": true,
-	    		"diffuse1": false,
-	    		"depth": 2
-	    	}
-	    }
-    }
+	"parent": "jmx:block/2/jmx_cube_mirrored_all",
+	"textures": { "all": "block/white_concrete" },
+	"jmx": {
+		"textures": {
+			"jmx_tex_particle": "minecraft:block/white_concrete",
+			"layered_textures": [
+				{ "jmx_tex_all": "minecraft:block/white_concrete" },
+				{ "jmx_tex_all": "minecraft:block/fern" }
+			]
+		},
+		"materials": {
+			"jmx_mat_all": {
+				"layers": [
+					{
+						"layer": "solid",
+						"emissive": false,
+						"ambient_occlusion": true,
+						"color": "0xFFFF0000",
+						"colorIndex": false,
+						"diffuse": true
+					},
+					{
+						"layer": "translucent",
+						"emissive": true,
+						"ambient_occlusion": false,
+						"color": "0xFF00FFFF",
+						"colorIndex": false,
+						"diffuse": false
+					}
+				]
+			}
+		}
+	}
 }

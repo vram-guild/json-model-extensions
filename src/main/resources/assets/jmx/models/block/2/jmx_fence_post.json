@@ -1,0 +1,27 @@
+{
+  "textures": { "particle": "#texture" }, "jmx": { "textures": { "particle": "#jmx_tex_particle" } }, "elements": [
+  {
+    "from": [ 6, 0, 6 ], "to": [ 10, 16, 10 ], "faces": {
+    "down": {
+      "uv": [ 6, 6, 10, 10 ], "texture": "#texture", "cullface": "down", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }, "up": {
+      "uv": [ 6, 6, 10, 10 ], "texture": "#texture", "cullface": "up", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }, "north": {
+      "uv": [ 6, 0, 10, 16 ], "texture": "#texture", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }, "south": {
+      "uv": [ 6, 0, 10, 16 ], "texture": "#texture", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }, "west": {
+      "uv": [ 6, 0, 10, 16 ], "texture": "#texture", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }, "east": {
+      "uv": [ 6, 0, 10, 16 ], "texture": "#texture", "jmx_material": "#jmx_material",
+      "layered_textures": [ { "jmx_tex": "#jmx_texure" }, { "jmx_tex": "#jmx_texure" } ]
+    }
+  }, "__comment": "Center post"
+  }
+]
+}

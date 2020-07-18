@@ -16,8 +16,12 @@
 
 package grondag.jmx.json.ext;
 
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.util.JsonHelper;
@@ -27,72 +31,132 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.util.TriState;
 
+import javax.annotation.Nullable;
+
 @Environment(EnvType.CLIENT)
 public class JmxMaterial {
+	private static class LayerData {
+		public static final LayerData DEFAULT = new LayerData();
+
+		public final TriState diffuse;
+		public final TriState ao;
+		public final TriState emissive;
+		public final TriState colorIndex;
+		public final int color;
+		public final BlendMode layer;
+
+		private LayerData() {
+			diffuse = TriState.DEFAULT;
+			ao = TriState.DEFAULT;
+			emissive = TriState.DEFAULT;
+			colorIndex = TriState.DEFAULT;
+			color = 0xFFFFFFFF;
+			layer = null;
+		}
+
+		public LayerData(TriState diffuse, TriState ao, TriState emissive, TriState colorIndex, int color, BlendMode layer) {
+			this.diffuse = diffuse;
+			this.ao = ao;
+			this.emissive = emissive;
+			this.colorIndex = colorIndex;
+			this.color = color;
+			this.layer = layer;
+		}
+	}
+
 	public static final JmxMaterial DEFAULT = new JmxMaterial();
 
 	public final String id;
 	public final String preset;
-	public final TriState diffuse0;
-	public final TriState ao0;
-	public final TriState emissive0;
-	public final TriState colorIndex0;
 
-	public final TriState diffuse1;
-	public final TriState ao1;
-	public final TriState emissive1;
-	public final TriState colorIndex1;
-	public final int color0;
-	public final int color1;
+	private final LayerData[] layers;
 
-	public final BlendMode layer0;
-	public final BlendMode layer1;
-
-	public final int depth;
 	public final int tag;
 
 	private JmxMaterial() {
 		id = "DEFAULT";
 		preset = null;
-		ao0 = TriState.DEFAULT;
-		ao1 = TriState.DEFAULT;
-		diffuse0 = TriState.DEFAULT;
-		diffuse1 = TriState.DEFAULT;
-		emissive0 = TriState.DEFAULT;
-		emissive1 = TriState.DEFAULT;
-		colorIndex0 = TriState.DEFAULT;
-		colorIndex1 = TriState.DEFAULT;
-		color0 = 0xFFFFFFFF;
-		color1 = 0xFFFFFFFF;
-		layer0 = null;
-		layer1 = null;
-		depth = 1;
+		layers = new LayerData[] {LayerData.DEFAULT };
 		tag = 0;
 	}
 
-	public JmxMaterial(String id, JsonObject jsonObj) {
+	public JmxMaterial(String id, JsonObject jsonObject) {
 		this.id = id;
-		preset = JsonHelper.getString(jsonObj, "preset", null);
-		tag = JsonHelper.getInt(jsonObj, "tag", 0);
-		ao0 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion0", null));
-		ao1 = asTriState(JsonHelper.getString(jsonObj, "ambient_occlusion1", null));
-		diffuse0 = asTriState(JsonHelper.getString(jsonObj, "diffuse0", null));
-		diffuse1 = asTriState(JsonHelper.getString(jsonObj, "diffuse1", null));
-		emissive0 = asTriState(JsonHelper.getString(jsonObj, "emissive0", null));
-		emissive1 = asTriState(JsonHelper.getString(jsonObj, "emissive1", null));
-		colorIndex0 = asTriState(JsonHelper.getString(jsonObj, "colorIndex0", null));
-		colorIndex1 = asTriState(JsonHelper.getString(jsonObj, "colorIndex1", null));
-		color0 = color(JsonHelper.getString(jsonObj, "color0", "0xFFFFFFFF"));
-		color1 = color(JsonHelper.getString(jsonObj, "color1", "0xFFFFFFFF"));
-		layer0 = asLayer(JsonHelper.getString(jsonObj, "layer0", null));
-		layer1 = asLayer(JsonHelper.getString(jsonObj, "layer1", null));
+		preset = JsonHelper.getString(jsonObject, "preset", null);
+		tag = JsonHelper.getInt(jsonObject, "tag", 0);
 
-		int depth = JsonHelper.getInt(jsonObj, "depth", 1);
-		// force depth to 2 if attributes for 2nd layer are given
-		if(depth == 1 && (layer1 != null || ao1 != TriState.DEFAULT || diffuse1 != TriState.DEFAULT || emissive1 != TriState.DEFAULT || color1 != -1)) {
-			depth = 2;
+		JsonArray layers = JsonHelper.getArray(jsonObject, "layers", null);
+
+		if (layers == null) {
+			int depth = -1;
+			int[] propertyIndices = new int[jsonObject.entrySet().size()];
+			Arrays.fill(propertyIndices, -1);
+
+			int entryIndex = 0;
+			for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
+					continue;
+				}
+
+				for (int i = 0; i < entry.getKey().length(); i++) {
+					if (Character.isDigit(entry.getKey().charAt(i))) {
+						propertyIndices[entryIndex] = Integer.parseInt(entry.getKey().substring(i));
+
+						if (propertyIndices[entryIndex] + 1 > depth) {
+							depth = propertyIndices[entryIndex] + 1;
+						}
+
+						break;
+					}
+				}
+
+				entryIndex++;
+			}
+
+			if (JsonHelper.hasPrimitive(jsonObject, "depth") && depth > JsonHelper.getInt(jsonObject, "depth")) {
+				throw new IllegalStateException("Model defines a depth of " + JsonHelper.getInt(jsonObject, "depth") + ", but uses a depth of " + depth + ".");
+			}
+
+			if (depth != -1) {
+				this.layers = new LayerData[depth];
+
+				for (int i = 0; i < depth; i++) {
+					this.layers[i] = new LayerData(
+						asTriState(JsonHelper.getString(jsonObject, "diffuse" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "ambient_occlusion" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "emissive" + i, null)),
+						asTriState(JsonHelper.getString(jsonObject, "colorIndex" + i, null)),
+						color(JsonHelper.getString(jsonObject, "color" + i, "0xFFFFFFFF")),
+						asLayer(JsonHelper.getString(jsonObject, "layer" + i, null))
+					);
+				}
+			} else {
+				this.layers = null;
+			}
+		} else {
+			int depth = layers.size();
+
+			this.layers = new LayerData[depth];
+
+			for (int i = 0; i < depth; i++) {
+				JsonObject propertyObj = layers.get(i).getAsJsonObject();
+				this.layers[i] = new LayerData(
+						asTriState(JsonHelper.getString(propertyObj, "diffuse", null)),
+						asTriState(JsonHelper.getString(propertyObj, "ambient_occlusion", null)),
+						asTriState(JsonHelper.getString(propertyObj, "emissive", null)),
+						asTriState(JsonHelper.getString(propertyObj, "colorIndex", null)),
+						color(JsonHelper.getString(propertyObj, "color", "0xFFFFFFFF")),
+						asLayer(JsonHelper.getString(propertyObj, "layer", null))
+				);
+			}
 		}
-		this.depth = depth;
+	}
+
+	public int getDepth() {
+		if (layers == null) {
+			return 0;
+		}
+		return this.layers.length;
 	}
 
 	private static int color(String str) {
@@ -104,16 +168,16 @@ public class JmxMaterial {
 			return null;
 		} else {
 			switch (property.toLowerCase(Locale.ROOT)) {
-			case "solid":
-				return BlendMode.SOLID;
-			case "cutout":
-				return BlendMode.CUTOUT;
-			case "cutout_mipped":
-				return BlendMode.CUTOUT_MIPPED;
-			case "translucent":
-				return BlendMode.TRANSLUCENT;
-			default:
-				return null;
+				case "solid":
+					return BlendMode.SOLID;
+				case "cutout":
+					return BlendMode.CUTOUT;
+				case "cutout_mipped":
+					return BlendMode.CUTOUT_MIPPED;
+				case "translucent":
+					return BlendMode.TRANSLUCENT;
+				default:
+					return null;
 			}
 		}
 	}
@@ -123,19 +187,62 @@ public class JmxMaterial {
 			return TriState.DEFAULT;
 		} else {
 			switch (property.toLowerCase(Locale.ROOT)) {
-			case "true":
-			case "yes":
-			case "1":
-			case "y":
-				return TriState.TRUE;
-			case "false":
-			case "no":
-			case "0":
-			case "n":
-				return TriState.FALSE;
-			default:
-				return TriState.DEFAULT;
+				case "true":
+				case "yes":
+				case "1":
+				case "y":
+					return TriState.TRUE;
+				case "false":
+				case "no":
+				case "0":
+				case "n":
+					return TriState.FALSE;
+				default:
+					return TriState.DEFAULT;
 			}
 		}
+	}
+
+	public TriState getDiffuse(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return TriState.DEFAULT;
+		}
+		return layers[spriteIndex].diffuse;
+	}
+
+	public TriState getAo(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return TriState.DEFAULT;
+		}
+		return layers[spriteIndex].ao;
+	}
+
+	public TriState getEmissive(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return TriState.DEFAULT;
+		}
+		return layers[spriteIndex].emissive;
+	}
+
+	public TriState getColorIndex(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return TriState.DEFAULT;
+		}
+		return layers[spriteIndex].colorIndex;
+	}
+
+	public int getColor(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return 0xFFFFFFFF;
+		}
+		return layers[spriteIndex].color;
+	}
+
+	@Nullable
+	public BlendMode getLayer(int spriteIndex) {
+		if (layers == null || spriteIndex >= layers.length) {
+			return null;
+		}
+		return layers[spriteIndex].layer;
 	}
 }
