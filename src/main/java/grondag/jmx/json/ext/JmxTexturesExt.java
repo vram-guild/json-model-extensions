@@ -16,7 +16,6 @@
 
 package grondag.jmx.json.ext;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -27,12 +26,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 
-import grondag.jmx.target.FrexHolder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import grondag.jmx.target.FrexHolder;
 
 @Environment(EnvType.CLIENT)
 public final class JmxTexturesExt {
@@ -52,13 +53,13 @@ public final class JmxTexturesExt {
 		if(jsonObj.has("textures")) {
 			final JsonObject job = jsonObj.getAsJsonObject("textures");
 
-			for (Entry<String, JsonElement> entry : job.entrySet()) {
+			for (final Entry<String, JsonElement> entry : job.entrySet()) {
 				if (entry.getValue().isJsonArray()) {
 					final JsonArray layeredTextures = entry.getValue().getAsJsonArray();
 
 					for (int i = 0; i < layeredTextures.size(); i++) {
 						final int i2 = i;
-						for (Entry<String, JsonElement> layerEntry : layeredTextures.get(i).getAsJsonObject().entrySet()) {
+						for (final Entry<String, JsonElement> layerEntry : layeredTextures.get(i).getAsJsonObject().entrySet()) {
 							handleTexture(layerEntry.getKey() + i, layerEntry.getValue(), map, x -> x + i2);
 						}
 					}
@@ -73,12 +74,12 @@ public final class JmxTexturesExt {
 		if (value.isJsonNull()) {
 			map.put(key, DUMMY_TEX);
 		} else {
-			String texture = value.getAsString();
+			final String texture = value.getAsString();
 
 			if (isReference(texture)) {
 				map.put(key, Either.right(getTexture.apply(texture.substring(1))));
 			} else {
-				SpriteIdentifier id = tryIdentifier(texture);
+				final SpriteIdentifier id = tryIdentifier(texture);
 				map.put(key, Either.left(id));
 			}
 		}
