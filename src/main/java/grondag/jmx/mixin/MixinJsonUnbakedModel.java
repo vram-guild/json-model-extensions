@@ -244,7 +244,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		final Sprite particleSprite = spriteFunc.apply(me.resolveSprite("particle"));
 		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.resolveSprite(s));
 
-		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel), hasDepth))
+		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel), hasDepth, jmxModelExt.getQuadTransformId()))
 				.setParticle(particleSprite);
 		final Iterator<ModelElement> elements = me.getElements().iterator();
 		while (elements.hasNext()) {
