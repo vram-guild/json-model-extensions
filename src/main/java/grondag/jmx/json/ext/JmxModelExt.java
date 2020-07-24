@@ -110,12 +110,14 @@ public class JmxModelExt {
 
 	private static void deserializeInner(JsonObject jsonObj) {
 		final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
-		final JsonObject job = jsonObj.getAsJsonObject("materials");
-		for(final Entry<String, JsonElement> e : job.entrySet()) {
-			if(e.getValue().isJsonObject()) {
-				map.put(e.getKey(), new JmxMaterial(e.getKey(), e.getValue().getAsJsonObject()));
-			} else {
-				map.put(e.getKey(), e.getValue().getAsString());
+		if (jsonObj.has("materials")) {
+			final JsonObject job = jsonObj.getAsJsonObject("materials");
+			for (final Entry<String, JsonElement> e : job.entrySet()) {
+				if (e.getValue().isJsonObject()) {
+					map.put(e.getKey(), new JmxMaterial(e.getKey(), e.getValue().getAsJsonObject()));
+				} else {
+					map.put(e.getKey(), e.getValue().getAsString());
+				}
 			}
 		}
 		TRANSFER.set(new JmxModelExt(map));

@@ -1,0 +1,51 @@
+{
+	"parent": "jmx:block/2/jmx_slab",
+	"textures": {
+		"top": "minecraft:block/redstone_ore",
+		"bottom": "minecraft:block/redstone_ore",
+		"side": "minecraft:block/redstone_ore"
+	},
+	"jmx": {
+		"textures": {
+			"jmx_tex_particle": "minecraft:block/redstone_ore",
+			"layered_textures": [
+				{ "jmx_tex_top": "block/oak_planks", "jmx_tex_bottom": "block/oak_planks", "jmx_tex_side": "block/oak_planks" },
+				{ "jmx_tex_top": "jmx:block/redstone_ore_bits", "jmx_tex_bottom": "jmx:block/redstone_ore_bits", "jmx_tex_side": "jmx:block/redstone_ore_bits" }
+			]
+		},
+		"materials": {
+			"jmx_mat_top": {
+				"layers": [
+					{ "layer": "cutout_mipped" },
+					{ "layer": "cutout_mipped", "emissive": true, "ambient_occlusion": false, "diffuse": false }
+				]
+			},
+			"jmx_mat_bottom": {
+				"layers": [
+					{ "layer": "cutout_mipped" },
+					{ "layer": "cutout_mipped", "emissive": true, "ambient_occlusion": false, "diffuse": false }
+				]
+			},
+			"jmx_mat_side": {
+				"layers": [
+					{ "layer": "cutout_mipped" },
+					{ "layer": "cutout_mipped", "emissive": true, "ambient_occlusion": false, "diffuse": false }
+				]
+			}
+		}
+	},
+	"frex": {
+		"textures": {
+			"jmx_tex_particle": "minecraft:block/redstone_ore",
+			"layered_textures": [
+				{ "jmx_tex_all": "jmx:block/redstone_ore_shader" },
+				{ "jmx_tex_all": null }
+			]
+		},
+		"materials": {
+			"jmx_mat_top": { "preset": "jmx:redstone" },
+			"jmx_mat_bottom": { "preset": "jmx:redstone" },
+			"jmx_mat_side": { "preset": "jmx:redstone" }
+		}
+	}
+}
