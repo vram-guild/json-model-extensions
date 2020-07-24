@@ -6,7 +6,7 @@
   "name": "JSON Model Extensions",
   "description": "JSON Model Extensions for Fabric Rendering",
   "authors": [
-    "Grondag", "Pyrofab"
+    "Grondag", "alex5nader"
   ],
   "contact": {
     "sources": "https://github.com/grondag/json-model-extensions",
