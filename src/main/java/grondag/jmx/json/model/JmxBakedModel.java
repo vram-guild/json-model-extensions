@@ -256,17 +256,13 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			if (particleTexture == null) {
 				throw new RuntimeException("Missing particle!");
 			}
-			QuadTransformRegistry.QuadTransformSource quadTransformSupplier;
-			if (quadTransformId != null) {
-				quadTransformSupplier = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
-				if (quadTransformSupplier == null) {
-					throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
-				}
-			} else {
-				quadTransformSupplier = null;
+
+			QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
+			if (quadTransformSource == null) {
+				throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
 			}
 
-			return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth, quadTransformSupplier);
+			return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth, quadTransformSource);
 		}
 
 		private static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
