@@ -11,6 +11,10 @@ public class QuadTransformRegistryImpl implements QuadTransformRegistry {
 
     @Override
     public void register(Identifier id, QuadTransformSource quadTransformSource) {
+        if (id == null ){
+            throw new IllegalStateException("Cannot register a quad transform with null ID.");
+        }
+
         if (registeredQuadTransforms.containsKey(id)) {
             throw new IllegalStateException("There is already a quad transform registered with the ID " + id);
         }
