@@ -184,7 +184,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			if (this.quadTransformSource != null) {
 				quadTransform = this.quadTransformSource.getForBlock(blockView, state, pos, randomSupplier);
 			} else {
-				quadTransform = null;
+				context.meshConsumer().accept(mesh);
+				return;
 			}
 
 			if (quadTransform != null) {
@@ -204,7 +205,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			if (this.quadTransformSource != null) {
 				quadTransform = this.quadTransformSource.getForItem(stack, randomSupplier);
 			} else {
-				quadTransform = null;
+				context.meshConsumer().accept(mesh);
+				return;
 			}
 
 			if (quadTransform != null) {
