@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
+import grondag.jmx.api.QuadTransformRegistry;
 import org.apache.commons.lang3.ObjectUtils;
 
 import net.minecraft.block.BlockState;
@@ -85,8 +86,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	protected final ModelTransformation transformation;
 	protected final ModelOverrideList itemPropertyOverrides;
 	protected final boolean hasDepth;
+	protected final QuadTransformRegistry.QuadTransformSource quadTransformSource;
 
-	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
+	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, QuadTransformRegistry.QuadTransformSource quadTransformSource) {
 		this.mesh = mesh;
 		this.usesAo = usesAo;
 		this.isSideLit = isSideLit;
@@ -94,6 +96,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		this.transformation = transformation;
 		this.itemPropertyOverrides = itemPropertyOverrides;
 		this.hasDepth = hasDepth;
+		this.quadTransformSource = quadTransformSource;
 	}
 
 	@Override
@@ -112,8 +115,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 		});
 
-		return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
-				transformItemProperties(context, atlas, meshBuilder), hasDepth);
+		return new JmxBakedModel(
+			meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
+			transformItemProperties(context, atlas, meshBuilder), hasDepth, quadTransformSource
+		);
 	}
 
 	private ModelOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
@@ -175,14 +180,42 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	@Override
 	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		if(mesh != null) {
-			context.meshConsumer().accept(mesh);
+			QuadTransform quadTransform;
+			if (this.quadTransformSource != null) {
+				quadTransform = this.quadTransformSource.getForBlock(blockView, state, pos, randomSupplier);
+			} else {
+				context.meshConsumer().accept(mesh);
+				return;
+			}
+
+			if (quadTransform != null) {
+				context.pushTransform(quadTransform);
+				context.meshConsumer().accept(mesh);
+				context.popTransform();
+			} else {
+				context.meshConsumer().accept(mesh);
+			}
 		}
 	}
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
 		if(mesh != null) {
-			context.meshConsumer().accept(mesh);
+			QuadTransform quadTransform;
+			if (this.quadTransformSource != null) {
+				quadTransform = this.quadTransformSource.getForItem(stack, randomSupplier);
+			} else {
+				context.meshConsumer().accept(mesh);
+				return;
+			}
+
+			if (quadTransform != null) {
+				context.pushTransform(quadTransform);
+				context.meshConsumer().accept(mesh);
+				context.popTransform();
+			} else {
+				context.meshConsumer().accept(mesh);
+			}
 		}
 	}
 
@@ -197,12 +230,14 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		private final boolean isSideLit;
 		private final ModelTransformation transformation;
 		private final boolean hasDepth;
+		@Nullable
+		private final Identifier quadTransformId;
 
-		public Builder(JsonUnbakedModel unbakedModel, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
-			this(unbakedModel.useAmbientOcclusion(), unbakedModel.getGuiLight().isSide(), unbakedModel.getTransformations(), itemPropertyOverrides, hasDepth);
+		public Builder(JsonUnbakedModel unbakedModel, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
+			this(unbakedModel.useAmbientOcclusion(), unbakedModel.getGuiLight().isSide(), unbakedModel.getTransformations(), itemPropertyOverrides, hasDepth, quadTransformId);
 		}
 
-		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth) {
+		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
 			meshBuilder = RENDERER.meshBuilder();
 			finder = RENDERER.materialFinder();
 			emitter = meshBuilder.getEmitter();
@@ -211,6 +246,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			this.isSideLit = isSideLit;
 			this.transformation = transformation;
 			this.hasDepth = hasDepth;
+			this.quadTransformId = quadTransformId;
 		}
 
 		public JmxBakedModel.Builder setParticle(Sprite sprite) {
@@ -221,9 +257,14 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		public BakedModel build() {
 			if (particleTexture == null) {
 				throw new RuntimeException("Missing particle!");
-			} else {
-				return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth);
 			}
+
+			QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
+			if (quadTransformId != null && quadTransformSource == null) {
+				throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
+			}
+
+			return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth, quadTransformSource);
 		}
 
 		private static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();

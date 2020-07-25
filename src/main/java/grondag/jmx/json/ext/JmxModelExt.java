@@ -26,6 +26,10 @@ import com.google.gson.JsonObject;
 import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.target.FrexHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+
+import javax.annotation.Nullable;
 
 public class JmxModelExt {
 	public static final ThreadLocal<JmxModelExt> TRANSFER  = new ThreadLocal<>();
@@ -35,14 +39,22 @@ public class JmxModelExt {
 	public JmxModelExt parent;
 
 	private final Map<String, Object> materialMap;
+	@Nullable
+	private final Identifier quadTransformId;
 
 
-	private JmxModelExt(Map<String, Object> materialMap) {
+	private JmxModelExt(Map<String, Object> materialMap, @Nullable Identifier quadTransformId) {
 		this.materialMap = materialMap;
+		this.quadTransformId = quadTransformId;
 	}
 
 	public boolean isEmpty() {
-		return materialMap.isEmpty();
+		return materialMap.isEmpty() && this.getQuadTransformId() == null;
+	}
+
+	@Nullable
+	public Identifier getQuadTransformId() {
+		return this.quadTransformId == null && this.parent != null ? this.parent.getQuadTransformId() : this.quadTransformId;
 	}
 
 	public JmxMaterial resolveMaterial(String matName) {
@@ -95,7 +107,7 @@ public class JmxModelExt {
 		} else if(jsonObjIn.has("jmx")) {
 			deserializeInner(jsonObjIn.getAsJsonObject("jmx"));
 		} else {
-			TRANSFER.set(new JmxModelExt(Collections.emptyMap()));
+			TRANSFER.set(new JmxModelExt(Collections.emptyMap(), null));
 		}
 	}
 
@@ -120,6 +132,15 @@ public class JmxModelExt {
 				}
 			}
 		}
-		TRANSFER.set(new JmxModelExt(map));
+
+		final String idString = JsonHelper.getString(jsonObj, "quad_transform", null);
+		final Identifier quadTransformId;
+		if (idString != null) {
+			quadTransformId = Identifier.tryParse(idString);
+		} else {
+			quadTransformId = null;
+		}
+
+		TRANSFER.set(new JmxModelExt(map, quadTransformId));
 	}
 }
