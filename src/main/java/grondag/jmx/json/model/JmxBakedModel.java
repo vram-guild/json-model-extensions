@@ -260,7 +260,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
-			if (quadTransformSource == null) {
+			if (quadTransformId != null && quadTransformSource == null) {
 				throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
 			}
 
