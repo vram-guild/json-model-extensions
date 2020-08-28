@@ -22,8 +22,9 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
-import grondag.jmx.api.QuadTransformRegistry;
 import org.apache.commons.lang3.ObjectUtils;
 
 import net.minecraft.block.BlockState;
@@ -58,11 +59,11 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 import net.fabricmc.fabric.api.util.TriState;
 
+import grondag.jmx.api.QuadTransformRegistry;
 import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
@@ -70,8 +71,6 @@ import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxMaterial;
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.target.FrexHolder;
-
-import javax.annotation.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
@@ -116,9 +115,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		});
 
 		return new JmxBakedModel(
-			meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
-			transformItemProperties(context, atlas, meshBuilder), hasDepth, quadTransformSource
-		);
+				meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
+				transformItemProperties(context, atlas, meshBuilder), hasDepth, quadTransformSource
+				);
 	}
 
 	private ModelOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
@@ -130,11 +129,47 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
 		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
 		if(lists == null) {
-			lists = ModelHelper.toQuadLists(mesh);
+			lists = safeToQuadLists(mesh, particleSprite);
 			quadLists = new WeakReference<>(lists);
 		}
 		final List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
 		return result == null ? ImmutableList.of() : result;
+	}
+
+	/**
+	 * Workaround for Fabric helper breaking when called before the sprite atlas is created.
+	 * Triggered by AE2 when running with JSON mesh loading active.
+	 *
+	 * Only difference is we use our particle sprite instead of looking one up.
+	 */
+	private static List<BakedQuad>[] safeToQuadLists(Mesh mesh, Sprite particleSprite) {
+		@SuppressWarnings("unchecked")
+		final ImmutableList.Builder<BakedQuad>[] builders = new ImmutableList.Builder[7];
+
+		for (int i = 0; i < 7; i++) {
+			builders[i] = ImmutableList.builder();
+		}
+
+		if (mesh != null) {
+			mesh.forEach(q -> {
+				final int limit = q.material().spriteDepth();
+
+				for (int l = 0; l < limit; l++) {
+					final Direction face = q.cullFace();
+					builders[face == null ? 6 : face.getId()].add(q.toBakedQuad(l, particleSprite, false));
+				}
+			});
+		}
+
+		@SuppressWarnings("unchecked")
+		final
+		List<BakedQuad>[] result = new List[7];
+
+		for (int i = 0; i < 7; i++) {
+			result[i] = builders[i].build();
+		}
+
+		return result;
 	}
 
 	@Override
@@ -181,8 +216,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		if(mesh != null) {
 			QuadTransform quadTransform;
-			if (this.quadTransformSource != null) {
-				quadTransform = this.quadTransformSource.getForBlock(blockView, state, pos, randomSupplier);
+			if (quadTransformSource != null) {
+				quadTransform = quadTransformSource.getForBlock(blockView, state, pos, randomSupplier);
 			} else {
 				context.meshConsumer().accept(mesh);
 				return;
@@ -202,8 +237,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
 		if(mesh != null) {
 			QuadTransform quadTransform;
-			if (this.quadTransformSource != null) {
-				quadTransform = this.quadTransformSource.getForItem(stack, randomSupplier);
+			if (quadTransformSource != null) {
+				quadTransform = quadTransformSource.getForItem(stack, randomSupplier);
 			} else {
 				context.meshConsumer().accept(mesh);
 				return;
@@ -259,7 +294,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 				throw new RuntimeException("Missing particle!");
 			}
 
-			QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
+			final QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
 			if (quadTransformId != null && quadTransformSource == null) {
 				throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
 			}
@@ -281,10 +316,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 			final QuadEmitter emitter = this.emitter;
 
-			int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
+			final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
 
 			if (FREX_RENDERER) {
-				int maxDepth = ((grondag.frex.api.Renderer) RENDERER).maxSpriteDepth();
+				final int maxDepth = ((grondag.frex.api.Renderer) RENDERER).maxSpriteDepth();
 				if (depth > maxDepth) {
 					throw new IllegalStateException("Model is using " + depth + " layers when only up to " + maxDepth + " are supported.");
 				}
@@ -307,11 +342,11 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 						}
 					}
 
-					ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
 
 					QUADFACTORY_EXT.bake(emitter, spriteIndex, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
-					int color = jmxMat.getColor(spriteIndex);
+					final int color = jmxMat.getColor(spriteIndex);
 					emitter.spriteColor(spriteIndex, color, color, color, color);
 				}
 
@@ -334,11 +369,11 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 						emitter.tag(jmxMat.tag);
 					}
 
-					ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
 
 					QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
-					int color = jmxMat.getColor(spriteIndex);
+					final int color = jmxMat.getColor(spriteIndex);
 					emitter.spriteColor(0, color, color, color, color);
 
 					emitter.colorIndex(elementFace.tintIndex);
@@ -350,13 +385,13 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 		@Nullable
 		private Sprite getSprite(int spriteIndex, FaceExtData extData, Function<String, Sprite> spriteFunc) {
-			String tex = extData.getTex(spriteIndex);
+			final String tex = extData.getTex(spriteIndex);
 
 			if (tex == null) {
 				return null;
 			}
 
-			Sprite sprite = spriteFunc.apply(tex);
+			final Sprite sprite = spriteFunc.apply(tex);
 
 			if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
 				return null;
@@ -367,7 +402,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 		private RenderMaterial getFrexMaterial(JmxMaterial jmxMat, ModelElement element, int depth) {
 			if (jmxMat.preset != null) {
-				RenderMaterial mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
+				final RenderMaterial mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
 
 				if (mat != null) {
 					return mat;
@@ -379,10 +414,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			finder.spriteDepth(depth);
 
 			for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-				TriState diffuse = jmxMat.getDiffuse(spriteIndex);
+				final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
 				finder.disableDiffuse(spriteIndex, diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get());
 
-				TriState ao = jmxMat.getAo(spriteIndex);
+				final TriState ao = jmxMat.getAo(spriteIndex);
 				finder.disableAo(spriteIndex, ao == TriState.DEFAULT ? !usesAo : !ao.get());
 
 				finder.emissive(spriteIndex, jmxMat.getEmissive(spriteIndex).get());
@@ -391,7 +426,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 					finder.disableColorIndex(spriteIndex, true);
 				}
 
-				BlendMode layer = jmxMat.getLayer(spriteIndex);
+				final BlendMode layer = jmxMat.getLayer(spriteIndex);
 				if (layer != null) {
 					finder.blendMode(spriteIndex, layer);
 				}
@@ -403,12 +438,12 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		private RenderMaterial getNonFrexMaterial(JmxMaterial jmxMat, ModelElement element, int spriteIndex) {
 			final MaterialFinder finder = this.finder.clear();
 
-			TriState diffuse = jmxMat.getDiffuse(spriteIndex);
-			boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
+			final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
+			final boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
 			finder.disableDiffuse(0, disableDiffuse);
 
-			TriState ao = jmxMat.getAo(spriteIndex);
-			boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
+			final TriState ao = jmxMat.getAo(spriteIndex);
+			final boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
 			finder.disableAo(0, disableAo);
 
 			finder.emissive(0, jmxMat.getEmissive(spriteIndex).get());
@@ -417,7 +452,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 				finder.disableColorIndex(0, true);
 			}
 
-			BlendMode layer = jmxMat.getLayer(spriteIndex);
+			final BlendMode layer = jmxMat.getLayer(spriteIndex);
 			if (layer != null) {
 				finder.blendMode(0, layer);
 			}
