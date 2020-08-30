@@ -188,7 +188,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
 		for (int spriteIndex = 0; spriteIndex < jmxData.getDepth(); spriteIndex++) {
-			String texStr = jmxData.getTex(spriteIndex);
+			final String texStr = jmxData.getTex(spriteIndex);
 			if (texStr != null && !texStr.isEmpty()) {
 				final SpriteIdentifier tex = me.resolveSprite(texStr);
 
@@ -203,7 +203,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		return face;
 	}
 
-	@SuppressWarnings({ "unchecked", "resource" })
+	@SuppressWarnings("unchecked")
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
 	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> spriteFunc,
 			ModelBakeSettings bakeProps, Identifier modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {

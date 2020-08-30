@@ -50,9 +50,6 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	@Shadow
 	protected abstract void encodeDirection(int[] data, Direction face);
 
-	@Shadow
-	protected abstract void packVertexData(int[] ints_1, int int_1, Vector3f vector3f_1, Sprite sprite_1, ModelElementTexture modelElementTexture_1);
-
 	@Override
 	public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
 		final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
@@ -85,15 +82,22 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 			encodeDirection(vertexData, nominalFace);
 		}
 
-		if(spriteIndex == 0) {
-			q.fromVanilla(vertexData, 0, false);
-		} else {
-			q.sprite(0, spriteIndex, Float.intBitsToFloat(vertexData[4]), Float.intBitsToFloat(vertexData[5]));
-			q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[12]), Float.intBitsToFloat(vertexData[13]));
-			q.sprite(2, spriteIndex, Float.intBitsToFloat(vertexData[20]), Float.intBitsToFloat(vertexData[21]));
-			q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[28]), Float.intBitsToFloat(vertexData[29]));
-			q.spriteColor(spriteIndex, vertexData[3], vertexData[11], vertexData[19], vertexData[27]);
-		}
+		q.spriteColor(spriteIndex, -1, -1, -1, -1);
+		q.lightmap(0, 0, 0, 0);
+
+		q.pos(0, Float.intBitsToFloat(vertexData[0]), Float.intBitsToFloat(vertexData[1]), Float.intBitsToFloat(vertexData[2]));
+		q.sprite(0, spriteIndex, Float.intBitsToFloat(vertexData[4]), Float.intBitsToFloat(vertexData[5]));
+
+		q.pos(1, Float.intBitsToFloat(vertexData[8]), Float.intBitsToFloat(vertexData[9]), Float.intBitsToFloat(vertexData[10]));
+		q.sprite(1, spriteIndex, Float.intBitsToFloat(vertexData[12]), Float.intBitsToFloat(vertexData[13]));
+
+		q.pos(2, Float.intBitsToFloat(vertexData[16]), Float.intBitsToFloat(vertexData[17]), Float.intBitsToFloat(vertexData[18]));
+		q.sprite(2, spriteIndex, Float.intBitsToFloat(vertexData[20]), Float.intBitsToFloat(vertexData[21]));
+
+		q.pos(3, Float.intBitsToFloat(vertexData[24]), Float.intBitsToFloat(vertexData[25]), Float.intBitsToFloat(vertexData[26]));
+		q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[28]), Float.intBitsToFloat(vertexData[29]));
+
+		q.spriteBake(0, sprite, 0);
 	}
 
 	private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
@@ -104,13 +108,22 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		return target;
 	}
 
-	/** like method_3461 but doesn't apply diffuse shading */
 	private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, AffineTransformation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		final CubeFace.Corner cubeFace$Corner_1 = CubeFace.getFace(face).getCorner(vertexIn);
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
 		((BakedQuadFactory)(Object)this).transformVertex(pos, modelRotation_1);
 		packVertexData(data, vertexIn, pos, sprite, tex);
+	}
+
+	private void packVertexData(int[] vertices, int cornerIndex, Vector3f position, Sprite sprite, ModelElementTexture modelElementTexture) {
+		final int i = cornerIndex * 8;
+		vertices[i] = Float.floatToRawIntBits(position.getX());
+		vertices[i + 1] = Float.floatToRawIntBits(position.getY());
+		vertices[i + 2] = Float.floatToRawIntBits(position.getZ());
+		vertices[i + 3] = -1;
+		vertices[i + 4] = Float.floatToRawIntBits(modelElementTexture.getU(cornerIndex));
+		vertices[i + 4 + 1] = Float.floatToRawIntBits(modelElementTexture.getV(cornerIndex));
 	}
 
 	private static float[] normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
