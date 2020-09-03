@@ -344,7 +344,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
 
-					QUADFACTORY_EXT.bake(emitter, spriteIndex, element, elementFace, texData, sprite, face, bakeProps, modelId);
+					QUADFACTORY_EXT.jmx_bake(emitter, spriteIndex, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
 					final int color = jmxMat.getColor(spriteIndex);
 					emitter.spriteColor(spriteIndex, color, color, color, color);
@@ -371,7 +371,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
 
-					QUADFACTORY_EXT.bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+					QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
 					final int color = jmxMat.getColor(spriteIndex);
 					emitter.spriteColor(0, color, color, color, color);

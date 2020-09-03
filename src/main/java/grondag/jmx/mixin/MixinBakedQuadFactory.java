@@ -51,7 +51,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	protected abstract void encodeDirection(int[] data, Direction face);
 
 	@Override
-	public void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
+	public void jmx_bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
 		final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
 		final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
@@ -72,7 +72,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		tex.uvs[2] = MathHelper.lerp(uvCent, tex.uvs[2], uAdj);
 		tex.uvs[1] = MathHelper.lerp(uvCent, tex.uvs[1], vAdj);
 		tex.uvs[3] = MathHelper.lerp(uvCent, tex.uvs[3], vAdj);
-		final int[] vertexData = buildVertexData(help.data, tex, sprite, face, normalizePos(help.pos, element.from, element.to), bakeProps.getRotation(), modelRotation);
+		final int[] vertexData = jmx_buildVertexData(help.data, tex, sprite, face, jmx_normalizePos(help.pos, element.from, element.to), bakeProps.getRotation(), modelRotation);
 		final Direction nominalFace = BakedQuadFactory.decodeDirection(vertexData);
 
 		// restore tex data
@@ -101,23 +101,24 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		q.spriteBake(0, sprite, 0);
 	}
 
-	private int[] buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+	private int[] jmx_buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		for(int i = 0; i < 4; ++i) {
-			bakeVertex(target, i, face, tex, pos, sprite, texRotation, modelRotation);
+			jmx_bakeVertex(target, i, face, tex, pos, sprite, texRotation, modelRotation);
 		}
 
 		return target;
 	}
 
-	private void bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, AffineTransformation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
+	private void jmx_bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, AffineTransformation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		final CubeFace.Corner cubeFace$Corner_1 = CubeFace.getFace(face).getCorner(vertexIn);
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
 		((BakedQuadFactory)(Object)this).transformVertex(pos, modelRotation_1);
-		packVertexData(data, vertexIn, pos, sprite, tex);
+		jmx_packVertexData(data, vertexIn, pos, sprite, tex);
 	}
 
-	private void packVertexData(int[] vertices, int cornerIndex, Vector3f position, Sprite sprite, ModelElementTexture modelElementTexture) {
+	// NB: name must not conflict with vanilla names - somehow acts as an override if does, even though private
+	private void jmx_packVertexData(int[] vertices, int cornerIndex, Vector3f position, Sprite sprite, ModelElementTexture modelElementTexture) {
 		final int i = cornerIndex * 8;
 		vertices[i] = Float.floatToRawIntBits(position.getX());
 		vertices[i + 1] = Float.floatToRawIntBits(position.getY());
@@ -127,7 +128,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		vertices[i + 4 + 1] = Float.floatToRawIntBits(modelElementTexture.getV(cornerIndex));
 	}
 
-	private static float[] normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
+	private static float[] jmx_normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
 		targets[CubeFace.DirectionIds.WEST] = vector3f_1.getX() / 16.0F;
 		targets[CubeFace.DirectionIds.DOWN] = vector3f_1.getY() / 16.0F;
 		targets[CubeFace.DirectionIds.NORTH] = vector3f_1.getZ() / 16.0F;

@@ -29,5 +29,5 @@ import net.minecraft.util.math.Direction;
 
 @Environment(EnvType.CLIENT)
 public interface BakedQuadFactoryExt {
-	void bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings modelBakeSettings, Identifier modelId);
+	void jmx_bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings modelBakeSettings, Identifier modelId);
 }
