@@ -82,6 +82,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 			encodeDirection(vertexData, nominalFace);
 		}
 
+		q.nominalFace(nominalFace);
 		q.spriteColor(spriteIndex, -1, -1, -1, -1);
 		q.lightmap(0, 0, 0, 0);
 
