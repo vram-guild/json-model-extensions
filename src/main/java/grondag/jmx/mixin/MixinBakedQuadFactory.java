@@ -98,7 +98,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		q.pos(3, Float.intBitsToFloat(vertexData[24]), Float.intBitsToFloat(vertexData[25]), Float.intBitsToFloat(vertexData[26]));
 		q.sprite(3, spriteIndex, Float.intBitsToFloat(vertexData[28]), Float.intBitsToFloat(vertexData[29]));
 
-		q.spriteBake(0, sprite, 0);
+		q.spriteBake(spriteIndex, sprite, 0);
 	}
 
 	private int[] jmx_buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
