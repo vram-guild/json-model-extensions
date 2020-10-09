@@ -25,6 +25,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
+import grondag.jmx.target.FrexHolder;
 
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -33,13 +34,11 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.jmx.target.FrexHolder;
-
 @Environment(EnvType.CLIENT)
 public final class JmxTexturesExt {
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 	/** prevents "unable to resolve" errors when 2nd texture layer isn't used */
-	private static final Either<SpriteIdentifier, String> DUMMY_TEX = Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, new Identifier("minecraft:block/cobblestone")));
+	private static final Either<SpriteIdentifier, String> DUMMY_TEX = Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft:block/cobblestone")));
 
 	public static void handleJmxTextures(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(FREX_RENDERER && jsonObj.has("frex")) {
@@ -94,7 +93,7 @@ public final class JmxTexturesExt {
 		if (id == null) {
 			throw new JsonParseException(s + " is not a valid resource location.");
 		} else {
-			return new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, id);
+			return new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, id);
 		}
 	}
 }

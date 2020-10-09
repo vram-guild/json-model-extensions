@@ -16,15 +16,23 @@
 
 package grondag.jmx.json.model;
 
+import javax.annotation.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
+import grondag.jmx.api.QuadTransformRegistry;
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
+import grondag.jmx.json.ext.FaceExtData;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JmxMaterial;
+import grondag.jmx.json.ext.JmxModelExt;
+import grondag.jmx.target.FrexHolder;
 import org.apache.commons.lang3.ObjectUtils;
 
 import net.minecraft.block.BlockState;
@@ -63,15 +71,6 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 import net.fabricmc.fabric.api.util.TriState;
 
-import grondag.jmx.api.QuadTransformRegistry;
-import grondag.jmx.impl.TransformableModel;
-import grondag.jmx.impl.TransformableModelContext;
-import grondag.jmx.json.ext.FaceExtData;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxMaterial;
-import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.target.FrexHolder;
-
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
 	protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
@@ -100,7 +99,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
-		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
+		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 		final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
 		final QuadEmitter emitter = meshBuilder.getEmitter();
 		final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
@@ -115,9 +114,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		});
 
 		return new JmxBakedModel(
-				meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
-				transformItemProperties(context, atlas, meshBuilder), hasDepth, quadTransformSource
-				);
+			meshBuilder.build(), usesAo, isSideLit, newParticleSprite, transformation,
+			transformItemProperties(context, atlas, meshBuilder), hasDepth, quadTransformSource
+		);
 	}
 
 	private ModelOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {

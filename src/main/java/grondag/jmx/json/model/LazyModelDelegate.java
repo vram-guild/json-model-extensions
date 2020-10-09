@@ -23,6 +23,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Pair;
+import grondag.jmx.impl.ModelTransformer;
+import grondag.jmx.impl.RetexturedModelTransformer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
@@ -35,9 +37,6 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
-
-import grondag.jmx.impl.ModelTransformer;
-import grondag.jmx.impl.RetexturedModelTransformer;
 
 public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
 
@@ -56,7 +55,7 @@ public class LazyModelDelegate extends LazyForwardingModel implements UnbakedMod
 
 	@Override
 	public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors) {
-		return transformer.textures().stream().map(id -> new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEX, id)).collect(Collectors.toList());
+		return transformer.textures().stream().map(id -> new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, id)).collect(Collectors.toList());
 	}
 
 	@Override

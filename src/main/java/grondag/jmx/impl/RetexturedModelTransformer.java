@@ -21,11 +21,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
-import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -36,6 +33,10 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 
 public class RetexturedModelTransformer implements ModelTransformer, TransformableModelContext {
 
@@ -60,8 +61,8 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	@Override
 	public BakedModel transform(BakedModel model) {
 		return model instanceof TransformableModel
-				? ((TransformableModel)model).derive(this)
-						: MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
+		? ((TransformableModel)model).derive(this)
+		: MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
 	}
 
 	public static Builder builder(Identifier sourceModel, Identifier targetModel) {
@@ -110,7 +111,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	}
 
 	public boolean transform(MutableQuadView quad) {
-		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
+		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 		final SpriteFinder sf = SpriteFinder.get(atlas);
 		Sprite oldSprite = sf.find(quad, 0);
 		Sprite newSprite = spriteTransform().mapSprite(oldSprite, atlas);
