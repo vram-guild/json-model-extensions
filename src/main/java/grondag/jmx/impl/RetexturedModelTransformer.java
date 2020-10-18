@@ -113,17 +113,9 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	public boolean transform(MutableQuadView quad) {
 		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 		final SpriteFinder sf = SpriteFinder.get(atlas);
-		Sprite oldSprite = sf.find(quad, 0);
-		Sprite newSprite = spriteTransform().mapSprite(oldSprite, atlas);
+		final Sprite oldSprite = sf.find(quad, 0);
+		final Sprite newSprite = spriteTransform().mapSprite(oldSprite, atlas);
 		remapSprite(quad, oldSprite, newSprite, 0);
-		final int depth = quad.material().spriteDepth();
-
-		if(depth == 2) {
-			oldSprite = sf.find(quad, 1);
-			newSprite = spriteTransform().mapSprite(oldSprite, atlas);
-			remapSprite(quad, oldSprite, newSprite, 1);
-		}
-
 		return true;
 	}
 

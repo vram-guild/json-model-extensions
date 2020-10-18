@@ -123,10 +123,12 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
 		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
+
 		if(lists == null) {
 			lists = safeToQuadLists(mesh, particleSprite);
 			quadLists = new WeakReference<>(lists);
 		}
+
 		final List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
 		return result == null ? ImmutableList.of() : result;
 	}
@@ -147,18 +149,13 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 		if (mesh != null) {
 			mesh.forEach(q -> {
-				final int limit = q.material().spriteDepth();
-
-				for (int l = 0; l < limit; l++) {
-					final Direction face = q.cullFace();
-					builders[face == null ? 6 : face.getId()].add(q.toBakedQuad(l, particleSprite, false));
-				}
+				final Direction face = q.cullFace();
+				builders[face == null ? 6 : face.getId()].add(q.toBakedQuad(0, particleSprite, false));
 			});
 		}
 
 		@SuppressWarnings("unchecked")
-		final
-		List<BakedQuad>[] result = new List[7];
+		final List<BakedQuad>[] result = new List[7];
 
 		for (int i = 0; i < 7; i++) {
 			result[i] = builders[i].build();
