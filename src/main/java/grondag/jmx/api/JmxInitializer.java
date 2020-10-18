@@ -16,7 +16,6 @@
 
 package grondag.jmx.api;
 
-import org.apiguardian.api.API;
 
 /**
  * Use to make JMX an optional dependency. To do so, implement this interface
@@ -34,7 +33,6 @@ import org.apiguardian.api.API;
  * "jmx" end point for mods that nest the JMX library or have a hard dependency on JMX.
  * Such mods can safely handle JMX registration in their client initialize instance.
  */
-@API(status = API.Status.MAINTAINED)
 public interface JmxInitializer {
 	/**
 	 * Signals mods that maintain an optional dependency on JMX that JMX is

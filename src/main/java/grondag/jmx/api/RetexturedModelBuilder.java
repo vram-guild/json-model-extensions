@@ -16,9 +16,8 @@
 
 package grondag.jmx.api;
 
-import org.apiguardian.api.API;
-
 import grondag.jmx.impl.RexturedModelBuilderImpl;
+
 import net.minecraft.util.Identifier;
 
 /**
@@ -29,7 +28,6 @@ import net.minecraft.util.Identifier;
  *
  * The "target block/item must have properties that match the template block/item.
  */
-@API(status = API.Status.MAINTAINED)
 public interface RetexturedModelBuilder {
 	static RetexturedModelBuilder builder(String sourceModel, String targetModel) {
 		return builder(new Identifier(sourceModel), new Identifier(targetModel));

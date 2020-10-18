@@ -22,14 +22,13 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.target.FrexHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-
-import javax.annotation.Nullable;
 
 public class JmxModelExt {
 	public static final ThreadLocal<JmxModelExt> TRANSFER  = new ThreadLocal<>();
@@ -49,12 +48,12 @@ public class JmxModelExt {
 	}
 
 	public boolean isEmpty() {
-		return materialMap.isEmpty() && this.getQuadTransformId() == null;
+		return materialMap.isEmpty() && getQuadTransformId() == null;
 	}
 
 	@Nullable
 	public Identifier getQuadTransformId() {
-		return this.quadTransformId == null && this.parent != null ? this.parent.getQuadTransformId() : this.quadTransformId;
+		return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
 	}
 
 	public JmxMaterial resolveMaterial(String matName) {

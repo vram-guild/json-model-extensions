@@ -16,20 +16,20 @@
 
 package grondag.jmx.json.ext;
 
-import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.util.JsonHelper;
 
-import java.util.Arrays;
-import java.util.Map;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class FaceExtData {
@@ -62,15 +62,15 @@ public class FaceExtData {
 	private FaceExtData(JsonObject jsonObj, JsonDeserializationContext context) {
 		jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
 
-		JsonArray layers = JsonHelper.getArray(jsonObj, "layered_textures", null);
+		final JsonArray layers = JsonHelper.getArray(jsonObj, "layered_textures", null);
 
 		if (layers == null) {
 			int depth = -1;
-			int[] propertyIndices = new int[jsonObj.entrySet().size()];
+			final int[] propertyIndices = new int[jsonObj.entrySet().size()];
 			Arrays.fill(propertyIndices, -1);
 
 			int entryIndex = 0;
-			for (Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
+			for (final Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
 				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
 					continue;
 				}
@@ -107,19 +107,19 @@ public class FaceExtData {
 				this.layers = null;
 			}
 		} else {
-			int depth = layers.size();
+			final int depth = layers.size();
 
 			this.layers = new LayerData[depth];
 
 			for (int i = 0; i < depth; i++) {
-				JsonObject propertyObj = layers.get(i).getAsJsonObject();
+				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
 				@Nullable String tex = JsonHelper.getString(propertyObj, "jmx_tex", null);
 				if (tex != null) {
 					tex += i;
 				}
 				this.layers[i] = new LayerData(
-						tex,
-						deserializeJmxTexData(propertyObj, context, "jmx_uv_rot")
+					tex,
+					deserializeJmxTexData(propertyObj, context, "jmx_uv_rot")
 				);
 			}
 		}
@@ -154,7 +154,7 @@ public class FaceExtData {
 			return true;
 		}
 
-		for (LayerData layerData : this.layers) {
+		for (final LayerData layerData : layers) {
 			if (layerData.tex != null && !layerData.tex.isEmpty() && layerData.texData != null) {
 				return false;
 			}
@@ -164,10 +164,10 @@ public class FaceExtData {
 	}
 
 	public int getDepth() {
-		if (this.layers == null) {
+		if (layers == null) {
 			return 0;
 		}
-		return this.layers.length;
+		return layers.length;
 	}
 
 	@Nullable
@@ -187,7 +187,7 @@ public class FaceExtData {
 	}
 
 	public ModelElementTexture getTexData(int spriteIndex, ModelElementTexture backup) {
-		ModelElementTexture texData = getTexData(spriteIndex);
+		final ModelElementTexture texData = getTexData(spriteIndex);
 		return texData == null ? backup : texData;
 	}
 }

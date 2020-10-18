@@ -23,6 +23,7 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.JsonHelper;
 
@@ -30,8 +31,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.util.TriState;
-
-import javax.annotation.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class JmxMaterial {
@@ -85,15 +84,15 @@ public class JmxMaterial {
 		preset = JsonHelper.getString(jsonObject, "preset", null);
 		tag = JsonHelper.getInt(jsonObject, "tag", 0);
 
-		JsonArray layers = JsonHelper.getArray(jsonObject, "layers", null);
+		final JsonArray layers = JsonHelper.getArray(jsonObject, "layers", null);
 
 		if (layers == null) {
 			int depth = -1;
-			int[] propertyIndices = new int[jsonObject.entrySet().size()];
+			final int[] propertyIndices = new int[jsonObject.entrySet().size()];
 			Arrays.fill(propertyIndices, -1);
 
 			int entryIndex = 0;
-			for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+			for (final Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
 					continue;
 				}
@@ -134,19 +133,19 @@ public class JmxMaterial {
 				this.layers = null;
 			}
 		} else {
-			int depth = layers.size();
+			final int depth = layers.size();
 
 			this.layers = new LayerData[depth];
 
 			for (int i = 0; i < depth; i++) {
-				JsonObject propertyObj = layers.get(i).getAsJsonObject();
+				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
 				this.layers[i] = new LayerData(
-						asTriState(JsonHelper.getString(propertyObj, "diffuse", null)),
-						asTriState(JsonHelper.getString(propertyObj, "ambient_occlusion", null)),
-						asTriState(JsonHelper.getString(propertyObj, "emissive", null)),
-						asTriState(JsonHelper.getString(propertyObj, "colorIndex", null)),
-						color(JsonHelper.getString(propertyObj, "color", "0xFFFFFFFF")),
-						asLayer(JsonHelper.getString(propertyObj, "layer", null))
+					asTriState(JsonHelper.getString(propertyObj, "diffuse", null)),
+					asTriState(JsonHelper.getString(propertyObj, "ambient_occlusion", null)),
+					asTriState(JsonHelper.getString(propertyObj, "emissive", null)),
+					asTriState(JsonHelper.getString(propertyObj, "colorIndex", null)),
+					color(JsonHelper.getString(propertyObj, "color", "0xFFFFFFFF")),
+					asLayer(JsonHelper.getString(propertyObj, "layer", null))
 				);
 			}
 		}
@@ -156,7 +155,7 @@ public class JmxMaterial {
 		if (layers == null) {
 			return 0;
 		}
-		return this.layers.length;
+		return layers.length;
 	}
 
 	private static int color(String str) {

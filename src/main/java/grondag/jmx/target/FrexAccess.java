@@ -16,8 +16,14 @@
 
 package grondag.jmx.target;
 
+import grondag.jmx.json.ext.JmxMaterial;
+
+import net.minecraft.client.render.model.json.ModelElement;
+
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.util.TriState;
 
 public interface FrexAccess {
 	default boolean isFrexLoaded() {
@@ -28,7 +34,28 @@ public interface FrexAccess {
 		return false;
 	}
 
-	default RenderMaterial loadFrexMaterial(Identifier id) {
-		return null;
+	default RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterial jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
+		finder.clear();
+
+		final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
+		final boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
+		finder.disableDiffuse(0, disableDiffuse);
+
+		final TriState ao = jmxMat.getAo(spriteIndex);
+		final boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
+		finder.disableAo(0, disableAo);
+
+		finder.emissive(0, jmxMat.getEmissive(spriteIndex).get());
+
+		if (jmxMat.getColorIndex(spriteIndex) == TriState.FALSE) {
+			finder.disableColorIndex(0, true);
+		}
+
+		final BlendMode layer = jmxMat.getLayer(spriteIndex);
+		if (layer != null) {
+			finder.blendMode(0, layer);
+		}
+
+		return finder.find();
 	}
 }

@@ -16,8 +16,6 @@
 
 package grondag.jmx.json.model;
 
-import javax.annotation.Nullable;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Random;
@@ -34,6 +32,7 @@ import grondag.jmx.json.ext.JmxMaterial;
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.target.FrexHolder;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -60,16 +59,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
-import net.fabricmc.fabric.api.util.TriState;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
@@ -317,68 +313,32 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 			final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
 
-			if (FREX_RENDERER) {
-				final int maxDepth = ((grondag.frex.api.Renderer) RENDERER).maxSpriteDepth();
-				if (depth > maxDepth) {
-					throw new IllegalStateException("Model is using " + depth + " layers when only up to " + maxDepth + " are supported.");
+			for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
+				if (spriteIndex != 0) {
+					sprite = getSprite(spriteIndex, extData, spriteFunc);
+
+					if (sprite == null) {
+						continue; // don't add quads with no sprite
+					}
 				}
 
-				emitter.material(getFrexMaterial(jmxMat, element, jmxMat.getDepth()));
+				emitter.material(FrexHolder.target().loadMaterial(finder, jmxMat, element, usesAo, spriteIndex));
 				emitter.cullFace(cullFace);
 
 				if(jmxMat.tag != 0) {
 					emitter.tag(jmxMat.tag);
 				}
 
+				final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+
+				QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+
+				final int color = jmxMat.getColor(spriteIndex);
+				emitter.spriteColor(0, color, color, color, color);
+
 				emitter.colorIndex(elementFace.tintIndex);
 
-				for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-					if (spriteIndex != 0) {
-						sprite = getSprite(spriteIndex, extData, spriteFunc);
-
-						if (sprite == null) {
-							continue;
-						}
-					}
-
-					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
-
-					QUADFACTORY_EXT.jmx_bake(emitter, spriteIndex, element, elementFace, texData, sprite, face, bakeProps, modelId);
-
-					final int color = jmxMat.getColor(spriteIndex);
-					emitter.spriteColor(spriteIndex, color, color, color, color);
-				}
-
-				// With FREX will emit all sprites as one quad
 				emitter.emit();
-			} else {
-				for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-					if (spriteIndex != 0) {
-						sprite = getSprite(spriteIndex, extData, spriteFunc);
-
-						if (sprite == null) {
-							continue; // don't add quads with no sprite
-						}
-					}
-
-					emitter.material(getNonFrexMaterial(jmxMat, element, spriteIndex));
-					emitter.cullFace(cullFace);
-
-					if(jmxMat.tag != 0) {
-						emitter.tag(jmxMat.tag);
-					}
-
-					final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
-
-					QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
-
-					final int color = jmxMat.getColor(spriteIndex);
-					emitter.spriteColor(0, color, color, color, color);
-
-					emitter.colorIndex(elementFace.tintIndex);
-
-					emitter.emit();
-				}
 			}
 		}
 
@@ -397,66 +357,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			return sprite;
-		}
-
-		private RenderMaterial getFrexMaterial(JmxMaterial jmxMat, ModelElement element, int depth) {
-			if (jmxMat.preset != null) {
-				final RenderMaterial mat = FrexHolder.target().loadFrexMaterial(new Identifier(jmxMat.preset));
-
-				if (mat != null) {
-					return mat;
-				}
-			}
-
-			final MaterialFinder finder = this.finder.clear();
-
-			finder.spriteDepth(depth);
-
-			for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-				final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
-				finder.disableDiffuse(spriteIndex, diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get());
-
-				final TriState ao = jmxMat.getAo(spriteIndex);
-				finder.disableAo(spriteIndex, ao == TriState.DEFAULT ? !usesAo : !ao.get());
-
-				finder.emissive(spriteIndex, jmxMat.getEmissive(spriteIndex).get());
-
-				if (jmxMat.getColorIndex(spriteIndex) == TriState.FALSE) {
-					finder.disableColorIndex(spriteIndex, true);
-				}
-
-				final BlendMode layer = jmxMat.getLayer(spriteIndex);
-				if (layer != null) {
-					finder.blendMode(spriteIndex, layer);
-				}
-			}
-
-			return finder.find();
-		}
-
-		private RenderMaterial getNonFrexMaterial(JmxMaterial jmxMat, ModelElement element, int spriteIndex) {
-			final MaterialFinder finder = this.finder.clear();
-
-			final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
-			final boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
-			finder.disableDiffuse(0, disableDiffuse);
-
-			final TriState ao = jmxMat.getAo(spriteIndex);
-			final boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
-			finder.disableAo(0, disableAo);
-
-			finder.emissive(0, jmxMat.getEmissive(spriteIndex).get());
-
-			if (jmxMat.getColorIndex(spriteIndex) == TriState.FALSE) {
-				finder.disableColorIndex(0, true);
-			}
-
-			final BlendMode layer = jmxMat.getLayer(spriteIndex);
-			if (layer != null) {
-				finder.blendMode(0, layer);
-			}
-
-			return finder.find();
 		}
 	}
 }
