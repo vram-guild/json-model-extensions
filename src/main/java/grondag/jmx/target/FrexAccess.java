@@ -26,10 +26,6 @@ import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.util.TriState;
 
 public interface FrexAccess {
-	default boolean isFrexLoaded() {
-		return false;
-	}
-
 	default boolean isFrexRendererAvailable() {
 		return false;
 	}

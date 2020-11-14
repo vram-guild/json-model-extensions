@@ -34,17 +34,16 @@ public class FrexHelper implements FrexInitializer, FrexAccess {
 	}
 
 	@Override
-	public boolean isFrexLoaded() {
-		return true;
-	}
-
-	@Override
 	public boolean isFrexRendererAvailable() {
 		return Frex.isAvailable();
 	}
 
 	@Override
 	public RenderMaterial loadMaterial(MaterialFinder finderIn, JmxMaterial jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
+		if (!Frex.isAvailable()) {
+			return FrexAccess.super.loadMaterial(finderIn, jmxMat, element, usesAo, spriteIndex);
+		}
+
 		final grondag.frex.api.material.MaterialFinder finder = (grondag.frex.api.material.MaterialFinder) finderIn.clear();
 
 		final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
