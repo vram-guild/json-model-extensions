@@ -4,13 +4,12 @@
         "bottom": "#top"
     },
     "jmx": {
-    	"textures": {
-	    	
-	        "jmx_tex_bottom0": "#jmx_tex_top0",
-	        "jmx_tex_bottom1": "#jmx_tex_top1"
-    	},
-	    "materials": {
-	        "jmx_mat_down": "#jmx_mat_top"
-	    }
+        "textures": {
+            "jmx_tex_bottom0": "#jmx_tex_top0",
+            "jmx_tex_bottom1": "#jmx_tex_top1"
+        },
+        "materials": {
+            "jmx_mat_down": "#jmx_mat_top"
+        }
     }
 }

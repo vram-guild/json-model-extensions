@@ -9,27 +9,9 @@
 				{ "jmx_tex_all": "minecraft:block/fern" }
 			]
 		},
-		"materials": {
-			"jmx_mat_all": {
-				"layers": [
-					{
-						"layer": "solid",
-						"emissive": false,
-						"ambient_occlusion": true,
-						"color": "0xFFFF0000",
-						"colorIndex": false,
-						"diffuse": true
-					},
-					{
-						"layer": "translucent",
-						"emissive": true,
-						"ambient_occlusion": false,
-						"color": "0xFF00FFFF",
-						"colorIndex": false,
-						"diffuse": false
-					}
-				]
-			}
-		}
+		"materials": [
+			{ "jmx_mat_all": "jmx:bedrock/background" },
+			{ "jmx_mat_all": "jmx:bedrock/fern" }
+		]
 	}
 }

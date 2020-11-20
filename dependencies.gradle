@@ -9,6 +9,10 @@ repositories {
     	name = "dblsaiko"
     	url = "https://maven.dblsaiko.net/"
     }
+    maven {
+        name = "Cotton"
+        url = "https://server.bbkr.space/artifactory/libs-release/"
+    }
 }
 
 dependencies {
@@ -26,4 +30,6 @@ dependencies {
 		transitive = false
 	}
 	include "grondag:frex-${project.mc_tag}:${project.frex_version}.+"
+
+    modRuntime ("grondag:canvas-${project.mc_tag}:1.0.1128")
 }

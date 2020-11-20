@@ -23,6 +23,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.render.model.json.ModelElementTexture;
@@ -36,33 +40,35 @@ public class FaceExtData {
 	private static class LayerData {
 		public static final LayerData EMPTY = new LayerData();
 
-		public final String tex;
+		public final String texture;
+		public final String material;
 		public final ModelElementTexture texData;
 
 		private LayerData() {
-			tex = null;
+			texture = null;
+			material = null;
 			texData = null;
 		}
 
-		public LayerData(String tex, ModelElementTexture texData) {
-			this.tex = tex;
-			this.texData = texData;
+		public LayerData(String texture, String material, ModelElementTexture texData) {
+			this.texture = texture;
+            this.material = material;
+            this.texData = texData;
 		}
 	}
+
+	private static Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
 
 	public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
 
 	public static final FaceExtData EMPTY = new FaceExtData();
 
 	private FaceExtData() {
-		jmx_material = null;
 		layers = new LayerData[] {LayerData.EMPTY };
 	}
 
 	private FaceExtData(JsonObject jsonObj, JsonDeserializationContext context) {
-		jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
-
-		final JsonArray layers = JsonHelper.getArray(jsonObj, "layered_textures", null);
+		final JsonArray layers = JsonHelper.getArray(jsonObj, "jmx_layers", null);
 
 		if (layers == null) {
 			int depth = -1;
@@ -100,7 +106,8 @@ public class FaceExtData {
 				for (int i = 0; i < depth; i++) {
 					this.layers[i] = new LayerData(
 						JsonHelper.getString(jsonObj, "jmx_tex" + i, null),
-						deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
+                            null,
+                            deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
 					);
 				}
 			} else {
@@ -113,13 +120,18 @@ public class FaceExtData {
 
 			for (int i = 0; i < depth; i++) {
 				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
-				@Nullable String tex = JsonHelper.getString(propertyObj, "jmx_tex", null);
-				if (tex != null) {
-					tex += i;
+				@Nullable String texture = JsonHelper.getString(propertyObj, "texture", null);
+				if (texture != null) {
+					texture += i;
 				}
+				@Nullable String material = JsonHelper.getString(propertyObj, "material", null);
+				if (material != null) {
+				    material += i;
+                }
 				this.layers[i] = new LayerData(
-					tex,
-					deserializeJmxTexData(propertyObj, context, "jmx_uv_rot")
+					texture,
+                    material,
+                    deserializeJmxTexData(propertyObj, context, "uv_rot")
 				);
 			}
 		}
@@ -141,21 +153,15 @@ public class FaceExtData {
 		return null;
 	}
 
-	public final String jmx_material;
-
 	private final LayerData[] layers;
 
 	public boolean isEmpty() {
-		if (jmx_material != null && !jmx_material.isEmpty()) {
-			return false;
-		}
-
 		if (layers == null) {
 			return true;
 		}
 
 		for (final LayerData layerData : layers) {
-			if (layerData.tex != null && !layerData.tex.isEmpty() && layerData.texData != null) {
+			if (layerData.texture != null && !layerData.texture.isEmpty() && layerData.texData != null) {
 				return false;
 			}
 		}
@@ -171,19 +177,26 @@ public class FaceExtData {
 	}
 
 	@Nullable
-	public String getTex(int spriteIndex) {
-		if (layers == null || spriteIndex >= layers.length) {
+	public String getTex(int i) {
+		if (layers == null || i >= layers.length) {
 			return null;
 		}
-		return layers[spriteIndex].tex;
+		return layers[i].texture;
 	}
 
+	public String getMaterial(int i) {
+	    if (layers == null || i >= layers.length) {
+	        return null;
+        }
+	    return layers[i].material;
+    }
+
 	@Nullable
-	public ModelElementTexture getTexData(int spriteIndex) {
-		if (layers == null || spriteIndex >= layers.length) {
+	public ModelElementTexture getTexData(int i) {
+		if (layers == null || i >= layers.length) {
 			return null;
 		}
-		return layers[spriteIndex].texData;
+		return layers[i].texData;
 	}
 
 	public ModelElementTexture getTexData(int spriteIndex, ModelElementTexture backup) {

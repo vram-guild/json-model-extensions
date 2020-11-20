@@ -3,40 +3,150 @@
         "particle": "#texture"
     },
     "jmx": {
-    	"textures": {
-	    	"particle": "#jmx_tex_particle"
-    	}
-	},
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "elements": [
-        {   "from": [ 7, 12, 0 ],
-            "to": [ 9, 15, 9 ],
+        {
+            "from": [
+                7,
+                12,
+                0
+            ],
+            "to": [
+                9,
+                15,
+                9
+            ],
             "faces": {
-                "down":  { "uv": [ 7, 0, 9, 9 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "up":    { "uv": [ 7, 0, 9, 9 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "north": { "uv": [ 7, 1, 9, 4 ], "texture": "#texture", "cullface": "north",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "west":  { "uv": [ 0, 1, 9, 4 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "east":  { "uv": [ 0, 1, 9, 4 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" }
+                "down": {
+                    "uv": [
+                        7,
+                        0,
+                        9,
+                        9
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "up": {
+                    "uv": [
+                        7,
+                        0,
+                        9,
+                        9
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "north": {
+                    "uv": [
+                        7,
+                        1,
+                        9,
+                        4
+                    ],
+                    "texture": "#texture",
+                    "cullface": "north",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        1,
+                        9,
+                        4
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        1,
+                        9,
+                        4
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                }
             },
             "__comment": "top bar"
         },
-        {   "from": [ 7, 6, 0 ],
-            "to": [ 9, 9, 9 ],
+        {
+            "from": [
+                7,
+                6,
+                0
+            ],
+            "to": [
+                9,
+                9,
+                9
+            ],
             "faces": {
-                "down":  { "uv": [ 7, 0, 9,  9 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "up":    { "uv": [ 7, 0, 9,  9 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "north": { "uv": [ 7, 7, 9, 10 ], "texture": "#texture", "cullface": "north",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "west":  { "uv": [ 0, 7, 9, 10 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" },
-                "east":  { "uv": [ 0, 7, 9, 10 ], "texture": "#texture",
-                	"jmx_tex0": "#jmx_texure0", "jmx_tex1": "#jmx_texure1", "jmx_material": "#jmx_material" }
+                "down": {
+                    "uv": [
+                        7,
+                        0,
+                        9,
+                        9
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "up": {
+                    "uv": [
+                        7,
+                        0,
+                        9,
+                        9
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "north": {
+                    "uv": [
+                        7,
+                        7,
+                        9,
+                        10
+                    ],
+                    "texture": "#texture",
+                    "cullface": "north",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        7,
+                        9,
+                        10
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        7,
+                        9,
+                        10
+                    ],
+                    "texture": "#texture",
+                    "jmx_tex0": "#jmx_texure0",
+                    "jmx_tex1": "#jmx_texure1"
+                }
             },
             "__comment": "lower bar"
         }

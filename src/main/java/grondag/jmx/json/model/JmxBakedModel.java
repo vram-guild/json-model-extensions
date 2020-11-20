@@ -28,9 +28,9 @@ import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxMaterial;
 import grondag.jmx.json.ext.JmxModelExt;
 import grondag.jmx.target.FrexHolder;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -304,34 +304,39 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			@SuppressWarnings("unchecked")
 			final
 			FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
-			final JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
 
 			final QuadEmitter emitter = this.emitter;
 
-			final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
+			final int depth = extData.getDepth();
 
-			for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-				if (spriteIndex != 0) {
-					sprite = getSprite(spriteIndex, extData, spriteFunc);
+			for (int i = 0; i < depth; i++) {
+				if (i != 0) {
+					sprite = getSprite(i, extData, spriteFunc);
 
 					if (sprite == null) {
 						continue; // don't add quads with no sprite
 					}
 				}
 
-				emitter.material(FrexHolder.target().loadMaterial(finder, jmxMat, element, usesAo, spriteIndex));
 				emitter.cullFace(cullFace);
 
-				if(jmxMat.tag != 0) {
-					emitter.tag(jmxMat.tag);
-				}
+                if (modelExt != null) {
+                    RenderMaterial mat = modelExt.resolveMaterial(extData.getMaterial(i));
+                    emitter.material(mat);
 
-				final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+                    if (modelExt.hasTag(i)) {
+                        emitter.tag(modelExt.getTag(i));
+                    }
 
+                    //TODO why does it call spriteColor but the sprite has no color
+                    if (modelExt.hasColor(i)) {
+                        final int color = modelExt.getColor(i);
+                        emitter.spriteColor(0, color, color, color, color);
+                    }
+                }
+
+				final ModelElementTexture texData = extData.getTexData(i, elementFace.textureData);
 				QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
-
-				final int color = jmxMat.getColor(spriteIndex);
-				emitter.spriteColor(0, color, color, color, color);
 
 				emitter.colorIndex(elementFace.tintIndex);
 
@@ -340,8 +345,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		}
 
 		@Nullable
-		private Sprite getSprite(int spriteIndex, FaceExtData extData, Function<String, Sprite> spriteFunc) {
-			final String tex = extData.getTex(spriteIndex);
+		private Sprite getSprite(int i, FaceExtData extData, Function<String, Sprite> spriteFunc) {
+			final String tex = extData.getTex(i);
 
 			if (tex == null) {
 				return null;

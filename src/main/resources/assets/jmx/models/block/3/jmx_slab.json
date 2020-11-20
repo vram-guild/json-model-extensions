@@ -1,39 +1,170 @@
 {
-  "parent": "minecraft:block/block", "textures": { "particle": "#side" },
-  "jmx": { "textures": { "particle": "#jmx_tex_particle" } }, "elements": [
-  {
-    "from": [ 0, 0, 0 ], "to": [ 16, 8, 16 ], "faces": {
-    "down": {
-      "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "down", "jmx_material": "#jmx_mat_bottom",
-      "layered_textures": [
-        { "jmx_tex": "#jmx_tex_bottom" }, { "jmx_tex": "#jmx_tex_bottom" }, { "jmx_tex": "#jmx_tex_bottom" }
-      ]
-    }, "up": {
-      "uv": [ 0, 0, 16, 16 ], "texture": "#top", "jmx_material": "#jmx_mat_top", "layered_textures": [
-        { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" }
-      ]
-    }, "north": {
-      "uv": [ 0, 8, 16, 16 ], "texture": "#side", "cullface": "north", "jmx_material": "#jmx_mat_side",
-      "layered_textures": [
-        { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }
-      ]
-    }, "south": {
-      "uv": [ 0, 8, 16, 16 ], "texture": "#side", "cullface": "south", "jmx_material": "#jmx_mat_side",
-      "layered_textures": [
-        { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }
-      ]
-    }, "west": {
-      "uv": [ 0, 8, 16, 16 ], "texture": "#side", "cullface": "west", "jmx_material": "#jmx_mat_side",
-      "layered_textures": [
-        { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }
-      ]
-    }, "east": {
-      "uv": [ 0, 8, 16, 16 ], "texture": "#side", "cullface": "east", "jmx_material": "#jmx_mat_side",
-      "layered_textures": [
-        { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }, { "jmx_tex": "#jmx_tex_side" }
-      ]
-    }
-  }
-  }
-]
+    "parent": "minecraft:block/block",
+    "textures": {
+        "particle": "#side"
+    },
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                8,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "down",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom"
+                        }
+                    ]
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#top",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        }
+                    ]
+                },
+                "north": {
+                    "uv": [
+                        0,
+                        8,
+                        16,
+                        16
+                    ],
+                    "texture": "#side",
+                    "cullface": "north",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        8,
+                        16,
+                        16
+                    ],
+                    "texture": "#side",
+                    "cullface": "south",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        }
+                    ]
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        8,
+                        16,
+                        16
+                    ],
+                    "texture": "#side",
+                    "cullface": "west",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        8,
+                        16,
+                        16
+                    ],
+                    "texture": "#side",
+                    "cullface": "east",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        },
+                        {
+                            "texture": "#jmx_tex_side",
+                            "material": "#jmx_mat_side"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
 }

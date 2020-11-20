@@ -1,25 +1,126 @@
 {
-  "ambientocclusion": false, "textures": { "particle": "#top" },
-  "jmx": { "textures": { "particle": "#jmx_tex_particle" } }, "elements": [
-  {
-    "from": [ 0, 0, 0 ], "to": [ 3, 16, 16 ], "faces": {
-    "up": {
-      "uv": [ 13, 0, 16, 16 ], "texture": "#bottom", "cullface": "up", "jmx_material": "#jmx_mat_bottom",
-      "layered_textures": [ { "jmx_tex": "#jmx_tex_bottom" }, { "jmx_tex": "#jmx_tex_bottom" } ]
-    }, "north": {
-      "uv": [ 3, 0, 0, 16 ], "texture": "#top", "cullface": "north", "jmx_material": "#jmx_mat_top",
-      "layered_textures": [ { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" } ]
-    }, "south": {
-      "uv": [ 0, 0, 3, 16 ], "texture": "#top", "cullface": "south", "jmx_material": "#jmx_mat_top",
-      "layered_textures": [ { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" } ]
-    }, "west": {
-      "uv": [ 0, 0, 16, 16 ], "texture": "#top", "cullface": "west", "jmx_material": "#jmx_mat_top",
-      "layered_textures": [ { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" } ]
-    }, "east": {
-      "uv": [ 16, 0, 0, 16 ], "texture": "#top", "jmx_material": "#jmx_mat_top",
-      "layered_textures": [ { "jmx_tex": "#jmx_tex_top" }, { "jmx_tex": "#jmx_tex_top" } ]
-    }
-  }
-  }
-]
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#top"
+    },
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                3,
+                16,
+                16
+            ],
+            "faces": {
+                "up": {
+                    "uv": [
+                        13,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "up",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom"
+                        }
+                    ]
+                },
+                "north": {
+                    "uv": [
+                        3,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#top",
+                    "cullface": "north",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        3,
+                        16
+                    ],
+                    "texture": "#top",
+                    "cullface": "south",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        }
+                    ]
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#top",
+                    "cullface": "west",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#top",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
 }

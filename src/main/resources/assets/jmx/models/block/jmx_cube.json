@@ -1,15 +1,54 @@
 {
     "parent": "minecraft:block/block",
     "elements": [
-        {   "from": [ 0, 0, 0 ],
-            "to": [ 16, 16, 16 ],
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                16,
+                16
+            ],
             "faces": {
-                "down":  { "texture": "#down", "cullface": "down", "jmx_tex0": "#jmx_tex_down0", "jmx_tex1": "#jmx_tex_down1", "jmx_material": "#jmx_mat_down" },
-                "up":    { "texture": "#up", "cullface": "up", "jmx_tex0": "#jmx_tex_up0", "jmx_tex1": "#jmx_tex_up1", "jmx_material": "#jmx_mat_up" },
-                "north": { "texture": "#north", "cullface": "north", "jmx_tex0": "#jmx_tex_north0", "jmx_tex1": "#jmx_tex_north1", "jmx_material": "#jmx_mat_north" },
-                "south": { "texture": "#south", "cullface": "south", "jmx_tex0": "#jmx_tex_south0", "jmx_tex1": "#jmx_tex_south1", "jmx_material": "#jmx_mat_south" },
-                "west":  { "texture": "#west", "cullface": "west", "jmx_tex0": "#jmx_tex_west0", "jmx_tex1": "#jmx_tex_west1", "jmx_material": "#jmx_mat_west" },
-                "east":  { "texture": "#east", "cullface": "east", "jmx_tex0": "#jmx_tex_east0", "jmx_tex1": "#jmx_tex_east1", "jmx_material": "#jmx_mat_east" }
+                "down": {
+                    "texture": "#down",
+                    "cullface": "down",
+                    "jmx_tex0": "#jmx_tex_down0",
+                    "jmx_tex1": "#jmx_tex_down1"
+                },
+                "up": {
+                    "texture": "#up",
+                    "cullface": "up",
+                    "jmx_tex0": "#jmx_tex_up0",
+                    "jmx_tex1": "#jmx_tex_up1"
+                },
+                "north": {
+                    "texture": "#north",
+                    "cullface": "north",
+                    "jmx_tex0": "#jmx_tex_north0",
+                    "jmx_tex1": "#jmx_tex_north1"
+                },
+                "south": {
+                    "texture": "#south",
+                    "cullface": "south",
+                    "jmx_tex0": "#jmx_tex_south0",
+                    "jmx_tex1": "#jmx_tex_south1"
+                },
+                "west": {
+                    "texture": "#west",
+                    "cullface": "west",
+                    "jmx_tex0": "#jmx_tex_west0",
+                    "jmx_tex1": "#jmx_tex_west1"
+                },
+                "east": {
+                    "texture": "#east",
+                    "cullface": "east",
+                    "jmx_tex0": "#jmx_tex_east0",
+                    "jmx_tex1": "#jmx_tex_east1"
+                }
             }
         }
     ]

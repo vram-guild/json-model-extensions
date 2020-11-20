@@ -1,54 +1,257 @@
 {
-  "ambientocclusion": false, "textures": { "particle": "#crop" },
-  "jmx": { "textures": { "particle": "#jmx_tex_particle" } }, "elements": [
-  {
-    "from": [ 4, -1, 0 ], "to": [ 4, 15, 16 ], "shade": false, "faces": {
-    "west": {
-      "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-        { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-      ]
-    }, "east": {
-      "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-        { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-      ]
-    }
-  }
-  }, {
-    "from": [ 12, -1, 0 ], "to": [ 12, 15, 16 ], "shade": false, "faces": {
-      "west": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }, "east": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }
-    }
-  }, {
-    "from": [ 0, -1, 4 ], "to": [ 16, 15, 4 ], "shade": false, "faces": {
-      "north": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }, "south": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }
-    }
-  }, {
-    "from": [ 0, -1, 12 ], "to": [ 16, 15, 12 ], "shade": false, "faces": {
-      "north": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }, "south": {
-        "uv": [ 0, 0, 16, 16 ], "texture": "#crop", "jmx_material": "#jmx_mat_crop", "layered_textures": [
-          { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }, { "jmx_tex": "#jmx_tex_crop" }
-        ]
-      }
-    }
-  }
-]
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#crop"
+    },
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                4,
+                -1,
+                0
+            ],
+            "to": [
+                4,
+                15,
+                16
+            ],
+            "shade": false,
+            "faces": {
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "from": [
+                12,
+                -1,
+                0
+            ],
+            "to": [
+                12,
+                15,
+                16
+            ],
+            "shade": false,
+            "faces": {
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "from": [
+                0,
+                -1,
+                4
+            ],
+            "to": [
+                16,
+                15,
+                4
+            ],
+            "shade": false,
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "from": [
+                0,
+                -1,
+                12
+            ],
+            "to": [
+                16,
+                15,
+                12
+            ],
+            "shade": false,
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#crop",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        },
+                        {
+                            "texture": "#jmx_tex_crop",
+                            "material": "#jmx_mat_crop"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
 }

@@ -22,6 +22,7 @@ run
 *.iml
 *.ipr
 *.iws
+out/
 
 ## Jars
 

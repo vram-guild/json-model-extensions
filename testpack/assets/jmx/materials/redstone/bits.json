@@ -1,0 +1,6 @@
+{
+	"blendMode": "cutout_mipped",
+	"emissive": true,
+	"disableAo": true,
+	"disableDiffuse": true
+}
