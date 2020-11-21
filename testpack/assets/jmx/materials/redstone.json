@@ -1,9 +1,7 @@
 {
-	"vertexSource": "jmx:shaders/redstone.vert",
-	"fragmentSource": "jmx:shaders/redstone.frag",
-    "ambient_occlusion": true,
-    "colorIndex": true,
-    "diffuse": true,
-    "layer": "solid",
+    "disableAo": false,
+    "disableColorIndex": false,
+    "disableDiffuse": false,
+    "blendMode": "solid",
     "emissive": false
 }
