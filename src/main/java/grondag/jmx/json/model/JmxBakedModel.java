@@ -70,7 +70,6 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
 	protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
-	protected static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
 	protected final Mesh mesh;
 	protected WeakReference<List<BakedQuad>[]> quadLists = null;
@@ -331,7 +330,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
                         emitter.tag(modelExt.getTag(i));
                     }
 
-                    //TODO why does it call spriteColor but the sprite has no color
                     if (modelExt.hasColor(i)) {
                         final int color = modelExt.getColor(i);
                         emitter.spriteColor(0, color, color, color, color);

@@ -23,10 +23,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.render.model.json.ModelElementTexture;
@@ -56,8 +52,6 @@ public class FaceExtData {
             this.texData = texData;
 		}
 	}
-
-	private static Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
 
 	public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
 
