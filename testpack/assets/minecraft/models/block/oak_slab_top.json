@@ -1,0 +1,61 @@
+{
+	"parent": "jmx:block/2/jmx_slab_top",
+	"textures": {
+		"top": "minecraft:block/redstone_ore",
+		"bottom": "minecraft:block/redstone_ore",
+		"side": "minecraft:block/redstone_ore"
+	},
+	"jmx": {
+		"textures": {
+			"jmx_tex_particle": "minecraft:block/redstone_ore",
+			"layered_textures": [
+				{
+					"jmx_tex_top": "block/oak_planks",
+					"jmx_tex_bottom": "block/oak_planks",
+					"jmx_tex_side": "block/oak_planks"
+				},
+				{
+					"jmx_tex_top": "jmx:block/redstone_ore_bits",
+					"jmx_tex_bottom": "jmx:block/redstone_ore_bits",
+					"jmx_tex_side": "jmx:block/redstone_ore_bits"
+				}
+			]
+		},
+		"materials": [
+			{
+				"jmx_mat_top": "jmx:redstone/background",
+				"jmx_mat_bottom": "jmx:redstone/background",
+				"jmx_mat_side": "jmx:redstone/background"
+			},
+			{
+				"jmx_mat_top": "jmx:redstone/bits",
+				"jmx_mat_bottom": "jmx:redstone/bits",
+				"jmx_mat_side": "jmx:redstone/bits"
+			}
+		]
+	},
+	"frex": {
+		"textures": {
+			"jmx_tex_particle": "minecraft:block/redstone_ore",
+			"layered_textures": [
+				{
+					"jmx_tex_top": "jmx:block/redstone_ore_shader",
+					"jmx_tex_bottom": "jmx:block/redstone_ore_shader",
+					"jmx_tex_side": "jmx:block/redstone_ore_shader"
+				},
+				{
+					"jmx_tex_top": null,
+					"jmx_tex_bottom": null,
+					"jmx_tex_side": null
+				}
+			]
+		},
+		"materials": [
+			{
+				"jmx_mat_top": "jmx:redstone",
+				"jmx_mat_bottom": "jmx:redstone",
+				"jmx_mat_side": "jmx:redstone"
+			}
+		]
+	}
+}
