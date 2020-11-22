@@ -60,7 +60,7 @@ public class JmxModelExt {
 	}
 
 	public boolean isEmpty() {
-		return materialMap.isEmpty() && getQuadTransformId() == null;
+		return (parent == null || parent.isEmpty()) && materialMap.isEmpty() && getQuadTransformId() == null;
 	}
 
 	@Nullable

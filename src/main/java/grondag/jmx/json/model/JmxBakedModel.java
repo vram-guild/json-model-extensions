@@ -306,38 +306,49 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 			final QuadEmitter emitter = this.emitter;
 
-			final int depth = extData.getDepth();
+			final int depth = Math.max(extData.getDepth(), 1);
 
 			for (int i = 0; i < depth; i++) {
                 final @Nullable FaceExtData.LayerData layer = extData.getLayer(i);
 
-                if (layer != null) {
-                    if (i != 0) {
-                        final SpriteIdentifier spriteId = resolver.apply(layer.texture);
+                if (layer != null && i != 0) {
+                    final SpriteIdentifier spriteId = resolver.apply(layer.texture);
 
-                        // workaround for having different # of quads in "jmx" and "frex"
-                        // reference equals is OK because JmxTexturesExt inserts this same field
-                        if (spriteId == JmxTexturesExt.DUMMY_SPRITE) {
-                            continue;
-                        } else if (spriteId.getTextureId() == MissingSprite.getMissingSpriteId()) {
-                            continue;
-                        }
-
-                        sprite = textureGetter.apply(spriteId);
-                        if (sprite == null) {
-                            continue; // don't add quads with no sprite
-                        }
+                    // workaround for having different # of quads in "jmx" and "frex"
+                    // reference equals is OK because JmxTexturesExt inserts this same field
+                    if (spriteId == JmxTexturesExt.DUMMY_SPRITE) {
+                        continue;
+                    } else if (spriteId.getTextureId() == MissingSprite.getMissingSpriteId()) {
+                        continue;
                     }
 
-                    final ModelElementTexture texData = ObjectUtils.defaultIfNull(layer.texData, elementFace.textureData);
-                    QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+                    sprite = textureGetter.apply(spriteId);
+                    if (sprite == null) {
+                        continue; // don't add quads with no sprite
+                    }
+                }
 
+                final ModelElementTexture texData;
+                if (layer == null) {
+                    texData = elementFace.textureData;
+                } else {
+                    texData = ObjectUtils.defaultIfNull(layer.texData, elementFace.textureData);
+                }
+                QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+
+                if (layer != null) {
 				    if (modelExt != null) {
-                        emitter.material(modelExt.resolveMaterial(layer.material));
-                        emitter.tag(modelExt.resolveTag(layer.tag));
+				        if (layer.material != null) {
+                            emitter.material(modelExt.resolveMaterial(layer.material));
+                        }
+				        if (layer.tag != null) {
+                            emitter.tag(modelExt.resolveTag(layer.tag));
+                        }
 
-                        final int color = modelExt.resolveColor(layer.color);
-                        emitter.spriteColor(0, color, color, color, color);
+				        if (layer.color != null) {
+                            final int color = modelExt.resolveColor(layer.color);
+                            emitter.spriteColor(0, color, color, color, color);
+                        }
                     }
                 }
 
