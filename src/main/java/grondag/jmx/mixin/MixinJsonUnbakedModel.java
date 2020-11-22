@@ -205,7 +205,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 	@SuppressWarnings("unchecked")
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
-	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> spriteFunc,
+	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> textureGetter,
 			ModelBakeSettings bakeProps, Identifier modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
@@ -241,8 +241,8 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 
 		// build and return JMX model
-		final Sprite particleSprite = spriteFunc.apply(me.resolveSprite("particle"));
-		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.resolveSprite(s));
+		final Sprite particleSprite = textureGetter.apply(me.resolveSprite("particle"));
+		final Function<String, Sprite> innerSpriteFunc = s -> textureGetter.apply(me.resolveSprite(s));
 
 		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel), hasDepth, jmxModelExt.getQuadTransformId()))
 				.setParticle(particleSprite);
@@ -260,13 +260,13 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 				final String extTex = layer == null ? null : layer.texture;
 				final String tex = extTex == null ? elementFace.textureId : extTex;
 
-				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex));
+				final Sprite sprite = textureGetter.apply(me.resolveSprite(tex));
 
 				if (elementFace.cullFace == null) {
-					builder.addQuad(null, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
+					builder.addQuad(null, jmxModelExt, me::resolveSprite, textureGetter, element, elementFace, sprite, face, bakeProps, modelId);
 				} else {
 					final Direction roatedCullFace = Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
-					builder.addQuad(roatedCullFace, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
+					builder.addQuad(roatedCullFace, jmxModelExt, me::resolveSprite, textureGetter, element, elementFace, sprite, face, bakeProps, modelId);
 				}
 			}
 		}

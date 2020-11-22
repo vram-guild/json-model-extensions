@@ -38,7 +38,9 @@ import net.fabricmc.api.Environment;
 public final class JmxTexturesExt {
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 	/** prevents "unable to resolve" errors when 2nd texture layer isn't used */
-	private static final Either<SpriteIdentifier, String> DUMMY_TEX = Either.left(new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft:block/cobblestone")));
+	public static final Identifier DUMMY_ID = new Identifier("jmx", "dummy");
+	public static final SpriteIdentifier DUMMY_SPRITE = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, DUMMY_ID);
+	private static final Either<SpriteIdentifier, String> DUMMY_EITHER = Either.left(DUMMY_SPRITE);
 
 	public static void handleJmxTextures(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(FREX_RENDERER && jsonObj.has("frex")) {
@@ -69,9 +71,10 @@ public final class JmxTexturesExt {
 		}
 	}
 
-	private static void handleTexture(String key, JsonElement value, Map<String, Either<SpriteIdentifier, String>> map, Function<String, String> getTexture) {
+	private static boolean handleTexture(String key, JsonElement value, Map<String, Either<SpriteIdentifier, String>> map, Function<String, String> getTexture) {
 		if (value.isJsonNull()) {
-			map.put(key, DUMMY_TEX);
+			map.put(key, DUMMY_EITHER);
+			return true;
 		} else {
 			final String texture = value.getAsString();
 
@@ -81,6 +84,7 @@ public final class JmxTexturesExt {
 				final SpriteIdentifier id = tryIdentifier(texture);
 				map.put(key, Either.left(id));
 			}
+			return false;
 		}
 	}
 

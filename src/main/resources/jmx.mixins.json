@@ -11,6 +11,7 @@
   	"MixinModelElementFace",
   	"MixinModelElementFaceDeserializer",
   	"MixinMultipartBakedModel",
+	"MixinSpriteAtlasTexture",
   	"MixinWeightedBakedModel",
   	"MixinWeightedBakedModelEntry"
   ],

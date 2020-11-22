@@ -29,8 +29,8 @@ import grondag.jmx.impl.TransformableModelContext;
 import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.target.FrexHolder;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import grondag.jmx.json.ext.JmxTexturesExt;
+import net.minecraft.client.util.SpriteIdentifier;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -299,7 +299,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		/**
 		 * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
 		 */
-		public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
+		public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, SpriteIdentifier> resolver, Function<SpriteIdentifier, Sprite> textureGetter, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
 			@SuppressWarnings("unchecked")
 			final
 			FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
@@ -313,8 +313,17 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
                 if (layer != null) {
                     if (i != 0) {
-                        sprite = getSprite(layer.texture, spriteFunc);
+                        final SpriteIdentifier spriteId = resolver.apply(layer.texture);
 
+                        // workaround for having different # of quads in "jmx" and "frex"
+                        // reference equals is OK because JmxTexturesExt inserts this same field
+                        if (spriteId == JmxTexturesExt.DUMMY_SPRITE) {
+                            continue;
+                        } else if (spriteId.getTextureId() == MissingSprite.getMissingSpriteId()) {
+                            continue;
+                        }
+
+                        sprite = textureGetter.apply(spriteId);
                         if (sprite == null) {
                             continue; // don't add quads with no sprite
                         }
@@ -337,21 +346,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 				emitter.emit();
 			}
-		}
-
-		@Nullable
-		private Sprite getSprite(String texName, Function<String, Sprite> spriteFunc) {
-			if (texName == null) {
-				return null;
-			}
-
-			final Sprite sprite = spriteFunc.apply(texName);
-
-			if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
-				return null;
-			}
-
-			return sprite;
 		}
 	}
 }
