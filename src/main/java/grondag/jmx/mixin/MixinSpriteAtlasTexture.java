@@ -21,7 +21,6 @@ public class MixinSpriteAtlasTexture {
     )
     void blockDummySpriteLoad(Identifier id, ResourceManager resourceManager, ConcurrentLinkedQueue<Sprite.Info> queue, CallbackInfo ci) {
         if (id == JmxTexturesExt.DUMMY_ID) {
-            System.out.println("not loading dummy sprite :sunglasses:");
             ci.cancel();
         }
     }
