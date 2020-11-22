@@ -32,15 +32,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         },
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         },
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         }
                     ]
                 },
@@ -55,15 +61,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         },
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         },
                         {
                             "texture": "#jmx_tex_edge",
-                            "material": "#jmx_mat_edge"
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
                         }
                     ]
                 }

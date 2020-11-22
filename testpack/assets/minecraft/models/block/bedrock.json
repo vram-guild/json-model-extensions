@@ -14,8 +14,8 @@
 			{ "jmx_mat_all": "jmx:bedrock/fern" }
 		],
 		"colors": [
-			"0xFFFF0000",
-			"0xFF00FFFF"
+			{ "jmx_color_all": "0xFFFF0000" },
+			{ "jmx_color_all": "0xFF00FFFF" }
 		]
 	}
 }

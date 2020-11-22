@@ -187,8 +187,8 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
-		for (int spriteIndex = 0; spriteIndex < jmxData.getDepth(); spriteIndex++) {
-			final String texStr = jmxData.getTex(spriteIndex);
+		for (int i = 0; i < jmxData.getDepth(); i++) {
+			final String texStr = jmxData.getLayer(i).texture;
 			if (texStr != null && !texStr.isEmpty()) {
 				final SpriteIdentifier tex = me.resolveSprite(texStr);
 
@@ -256,7 +256,8 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 				final ModelElementFace elementFace = element.faces.get(face);
 				final FaceExtData extData = ((JmxExtension<FaceExtData>) elementFace).jmx_ext();
 
-				final String extTex = extData.getTex(0);
+				final FaceExtData.LayerData layer = extData.getLayer(0);
+				final String extTex = layer == null ? null : layer.texture;
 				final String tex = extTex == null ? elementFace.textureId : extTex;
 
 				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex));

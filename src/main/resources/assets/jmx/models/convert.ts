@@ -1,70 +1,59 @@
-function removeJmx(s: string): string {
-    return s.startsWith("jmx_") ? s.substr(4) : s;
+// @ts-ignore
+import { walk } from "https://deno.land/std@0.78.0/fs/mod.ts";
+
+function updateJmx(jmx: any): any {
+    if (jmx.materials && Array.isArray(jmx.materials)) {
+        function make(base: string): any[] {
+            return jmx.materials.map((material: any) => {
+                return Object.fromEntries(Object.entries(material).map(([key, value]: [string, any]) => {
+                    return [key.replace("mat", base), value.replace("mat", base)];
+                }));
+            });
+        }
+
+        jmx.tags = make("tag");
+        jmx.colors = make("color");
+    }
+    return jmx;
 }
 
-function replace(text: string, replacement: string): (s: string) => string {
-    return s => s === text ? replacement : text;
-}
+// const entry = {path: "block/2/jmx_crop.json"};
+for await (const entry of walk("block", {includeDirs: false, exts: ["json"]})) {
+    const model = JSON.parse(await Deno.readTextFile(entry.path));
 
-function updateFormat(val: any): any {
-    if (val.elements) {
-        val.elements = val.elements.map((element: any) => {
+    if (model.elements) {
+        model.elements = model.elements.map((element: any) => {
             return {
                 ...element,
                 faces: Object.fromEntries(Object.entries(element.faces).map(([dir, face]: [string, any]) => {
                     const newFace = {...face};
-                    if (newFace.layered_textures) {
-                        newFace.jmx_layers = newFace.layered_textures.map((layer: any) => {
+
+                    if (newFace.jmx_layers) {
+                        newFace.jmx_layers = newFace.jmx_layers.map((layer: any) => {
+                            function make(base: string): string {
+                                return layer.texture.replace("tex", base);
+                            }
                             return {
-                                ...layer.mapKeys(replace("jmx_tex", "texture")).mapKeys(removeJmx),
-                                material: face.jmx_material,
+                                ...layer,
+                                tag: make("tag"),
+                                color: make("color"),
                             };
                         });
                     }
-                    delete newFace.layered_textures;
-                    delete newFace.jmx_material;
+
                     return [dir, newFace];
                 })),
-            };
+            }
         });
     }
-    return val;
-}
 
-// @ts-ignore
-import { walk, move, exists } from "https://deno.land/std@0.78.0/fs/mod.ts";
+    if (model.jmx) {
+        model.jmx = updateJmx(model.jmx);
+    }
+    if (model.frex) {
+        model.frex = updateJmx(model.frex);
+    }
 
-// @ts-ignore
-Object.prototype.mapKeys = function(f: (key: string) => string): Object {
-    return Object.fromEntries(Object.entries(this).map(([key, val]: [string, any]) => {
-        return [f(key), val];
-    }));
-}
-
-if (Deno.args[0] === "update") {
-    for await (const entry of walk("block", {includeDirs: false, exts: ["json"]})) {
-        const model = JSON.parse(await Deno.readTextFile(entry.path));
-        const backup = entry.path + ".bak";
-        if (!await exists(backup)) {
-            await move(entry.path, entry.path + ".bak");
-        }
-        await Deno.writeTextFile(entry.path, JSON.stringify(updateFormat(model), null, 4));
-    }
-} else if (Deno.args[0] === "undo") {
-    for await (const entry of walk("block", {includeDirs: false, exts: ["bak"]})) {
-        await move(entry.path, entry.path.replaceAll(".bak", ""), {overwrite: true});
-    }
-} else if (Deno.args[0] === "find") {
-    for await(const entry of walk("block", {includeDirs: false, exts: ["json"]})) {
-        const model = JSON.parse(await Deno.readTextFile(entry.path));
-        if (model.jmx) {
-            if (model.jmx.materials) {
-                console.log(entry.path);
-            }
-        } else if (model.frex) {
-            if (model.frex.materials) {
-                console.log(entry.path);
-            }
-        }
-    }
+    // console.log(Deno.inspect(model, {depth: 100}));
+    await Deno.writeTextFile(entry.path, JSON.stringify(model, null, 4));
 }

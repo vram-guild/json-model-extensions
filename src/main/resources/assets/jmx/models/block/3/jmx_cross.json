@@ -43,15 +43,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         }
                     ]
                 },
@@ -66,15 +72,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         }
                     ]
                 }
@@ -114,15 +126,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         }
                     ]
                 },
@@ -137,15 +155,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         },
                         {
                             "texture": "#jmx_tex_cross",
-                            "material": "#jmx_mat_cross"
+                            "material": "#jmx_mat_cross",
+                            "tag": "#jmx_tag_cross",
+                            "color": "#jmx_color_cross"
                         }
                     ]
                 }

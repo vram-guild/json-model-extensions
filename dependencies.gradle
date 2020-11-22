@@ -30,6 +30,4 @@ dependencies {
 		transitive = false
 	}
 	include "grondag:frex-${project.mc_tag}:${project.frex_version}.+"
-
-    modRuntime ("grondag:canvas-${project.mc_tag}:1.0.1128")
 }

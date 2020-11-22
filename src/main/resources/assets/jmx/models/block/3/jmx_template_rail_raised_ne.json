@@ -42,15 +42,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         },
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         },
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         }
                     ]
                 },
@@ -65,15 +71,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         },
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         },
                         {
                             "texture": "#jmx_tex_rail",
-                            "material": "#jmx_mat_rail"
+                            "material": "#jmx_mat_rail",
+                            "tag": "#jmx_tag_rail",
+                            "color": "#jmx_color_rail"
                         }
                     ]
                 }

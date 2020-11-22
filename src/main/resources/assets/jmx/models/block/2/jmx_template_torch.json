@@ -33,11 +33,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 },
@@ -52,11 +56,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 }
@@ -86,11 +94,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 },
@@ -105,11 +117,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 }
@@ -139,11 +155,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 },
@@ -158,11 +178,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         },
                         {
                             "texture": "#jmx_tex_torch",
-                            "material": "#jmx_mat_torch"
+                            "material": "#jmx_mat_torch",
+                            "tag": "#jmx_tag_torch",
+                            "color": "#jmx_color_torch"
                         }
                     ]
                 }

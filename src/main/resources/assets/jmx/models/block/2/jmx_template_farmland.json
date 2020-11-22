@@ -25,11 +25,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         },
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         }
                     ]
                 },
@@ -44,11 +48,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_top",
-                            "material": "#jmx_mat_top"
+                            "material": "#jmx_mat_top",
+                            "tag": "#jmx_tag_top",
+                            "color": "#jmx_color_top"
                         },
                         {
                             "texture": "#jmx_tex_top",
-                            "material": "#jmx_mat_top"
+                            "material": "#jmx_mat_top",
+                            "tag": "#jmx_tag_top",
+                            "color": "#jmx_color_top"
                         }
                     ]
                 },
@@ -64,11 +72,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         },
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         }
                     ]
                 },
@@ -84,11 +96,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         },
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         }
                     ]
                 },
@@ -104,11 +120,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         },
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         }
                     ]
                 },
@@ -124,11 +144,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         },
                         {
                             "texture": "#jmx_tex_dirt",
-                            "material": "#jmx_mat_dirt"
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
                         }
                     ]
                 }

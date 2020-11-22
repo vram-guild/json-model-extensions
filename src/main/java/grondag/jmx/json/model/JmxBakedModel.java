@@ -309,33 +309,30 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			final int depth = extData.getDepth();
 
 			for (int i = 0; i < depth; i++) {
-				if (i != 0) {
-					sprite = getSprite(i, extData, spriteFunc);
+                final @Nullable FaceExtData.LayerData layer = extData.getLayer(i);
 
-					if (sprite == null) {
-						continue; // don't add quads with no sprite
-					}
-				}
+                if (layer != null) {
+                    if (i != 0) {
+                        sprite = getSprite(layer.texture, spriteFunc);
 
-				emitter.cullFace(cullFace);
-
-                final ModelElementTexture texData = extData.getTexData(i, elementFace.textureData);
-                QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
-
-                if (modelExt != null) {
-                    RenderMaterial mat = modelExt.resolveMaterial(extData.getMaterial(i));
-                    emitter.material(mat);
-
-                    if (modelExt.hasTag(i)) {
-                        emitter.tag(modelExt.getTag(i));
+                        if (sprite == null) {
+                            continue; // don't add quads with no sprite
+                        }
                     }
 
-                    if (modelExt.hasColor(i)) {
-                        final int color = modelExt.getColor(i);
+                    final ModelElementTexture texData = ObjectUtils.defaultIfNull(layer.texData, elementFace.textureData);
+                    QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+
+				    if (modelExt != null) {
+                        emitter.material(modelExt.resolveMaterial(layer.material));
+                        emitter.tag(modelExt.resolveTag(layer.tag));
+
+                        final int color = modelExt.resolveColor(layer.color);
                         emitter.spriteColor(0, color, color, color, color);
                     }
                 }
 
+                emitter.cullFace(cullFace);
 				emitter.colorIndex(elementFace.tintIndex);
 
 				emitter.emit();
@@ -343,14 +340,12 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		}
 
 		@Nullable
-		private Sprite getSprite(int i, FaceExtData extData, Function<String, Sprite> spriteFunc) {
-			final String tex = extData.getTex(i);
-
-			if (tex == null) {
+		private Sprite getSprite(String texName, Function<String, Sprite> spriteFunc) {
+			if (texName == null) {
 				return null;
 			}
 
-			final Sprite sprite = spriteFunc.apply(tex);
+			final Sprite sprite = spriteFunc.apply(texName);
 
 			if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
 				return null;

@@ -19,10 +19,10 @@ package grondag.jmx.json.ext;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.mojang.datafixers.util.Either;
 import grondag.frex.api.material.MaterialLoader;
 import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.target.FrexHolder;
@@ -45,17 +45,17 @@ public class JmxModelExt {
 
 	public JmxModelExt parent;
 
-	private final Map<String, Object> materialMap;
-	private final int[] tags;
-	private final int[] colors;
+	private final Map<String, Either<String, Identifier>> materialMap;
+	private final Map<String, Either<String, Integer>> colorMap;
+	private final Map<String, Either<String, Integer>> tagMap;
 	@Nullable
 	private final Identifier quadTransformId;
 
 
-	private JmxModelExt(Map<String, Object> materialMap, int[] tags, int[] colors, @Nullable Identifier quadTransformId) {
+	private JmxModelExt(Map<String, Either<String, Identifier>> materialMap, Map<String, Either<String, Integer>> colorMap, Map<String, Either<String, Integer>> tagMap, @Nullable Identifier quadTransformId) {
 		this.materialMap = materialMap;
-        this.tags = tags;
-        this.colors = colors;
+        this.colorMap = colorMap;
+        this.tagMap = tagMap;
         this.quadTransformId = quadTransformId;
 	}
 
@@ -63,76 +63,71 @@ public class JmxModelExt {
 		return materialMap.isEmpty() && getQuadTransformId() == null;
 	}
 
-	public boolean hasTag(int i) {
-	    return 0 <= i && i < tags.length;
-    }
-
-	public int getTag(int i) {
-	    return tags[i];
-    }
-
-    public boolean hasColor(int i) {
-	    return 0 <= i && i < colors.length;
-    }
-
-    public int getColor(int i) {
-	    return colors[i];
-    }
-
 	@Nullable
 	public Identifier getQuadTransformId() {
 		return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
 	}
 
-	public RenderMaterial resolveMaterial(String matName) {
-        if (matName == null || materialMap == null) throw new RuntimeException("matName = " + matName + ", materialMap? " + (materialMap == null));
-        return resolveMaterialInner(matName);
+    public int resolveColor(String name) {
+	    return this.resolve(
+	        name,
+            ext -> ext.colorMap,
+            i -> i,
+            0xFFFFFFFF,
+            "color"
+        );
     }
 
-	private RenderMaterial resolveMaterialInner(String matName) {
-        final Object result = resolveMaterial(matName, new MaterialResolutionContext(this));
-        if (result instanceof RenderMaterial) return (RenderMaterial) result;
-        throw new RuntimeException("didn't get RenderMaterial for " + matName + ": " + result);
-	}
-
-	private Object resolveMaterial(Object val, MaterialResolutionContext context) {
-		if (val instanceof String) {
-			if (this == context.current) {
-				JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
-				throw new RuntimeException("Upward reference " + val);
-			} else {
-				Object result = materialMap.get(((String)val).substring(1));
-				if(result instanceof RenderMaterial) {
-					return result;
-				}
-
-				if (result == null && parent != null) {
-					result = parent.resolveMaterial(val, context);
-				}
-
-				if (isMaterialId(result)) {
-				    return MaterialLoader.loadMaterial(new Identifier((String)result));
-                }
-
-				if (isMaterialReference(result)) {
-					context.current = this;
-					result = context.root.resolveMaterial(result, context);
-				}
-
-				return result;
-			}
-		} else {
-			return val;
-		}
-	}
-
-	public static boolean isMaterialId(Object val) {
-	    return val instanceof String && ((String) val).charAt(0) != '#';
+    public int resolveTag(String name) {
+	    return this.resolve(
+	        name,
+            ext -> ext.tagMap,
+            i -> i,
+            0,
+            "tag"
+        );
     }
 
-	public static boolean isMaterialReference(Object val) {
-		return val instanceof String && ((String) val).charAt(0) == '#';
-	}
+    public RenderMaterial resolveMaterial(String name) {
+        return this.resolve(
+            name,
+            ext -> ext.materialMap,
+            MaterialLoader::loadMaterial,
+            STANDARD_MATERIAL,
+            "material"
+        );
+    }
+
+    private <T, S> T resolve(String name, Function<JmxModelExt, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type) {
+	    return resolveInner(name, getMap, loader, _default, type, new ResolutionContext(this)).right().orElse(_default);
+    }
+
+    private <T, S> Either<String, T> resolveInner(String name, Function<JmxModelExt, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type, ResolutionContext context) {
+        if (context.current == this) {
+            JsonModelExtensions.LOG.warn("Unable to resolve {}: {}", type, name);
+            return Either.right(_default);
+        }
+
+        final Map<String, Either<String, S>> map = getMap.apply(this);
+        @Nullable Either<String, S> found = map.get(name.substring(1));
+
+        if (found == null) {
+            if (parent != null) {
+                return parent.resolveInner(name, getMap, loader, _default, type, context);
+            } else {
+                JsonModelExtensions.LOG.warn("Unable to resolve {} due to missing definition: {}", type, name.substring(1));
+                return Either.right(_default);
+            }
+        }
+
+        return found.map(
+            (String nextReference) -> {
+                context.current = this;
+                return context.root.resolveInner(nextReference, getMap, loader, _default, type, context);
+            },
+            (S storedValue) -> Either.right(loader.apply(storedValue))
+        );
+    }
 
 	public static void deserialize(JsonObject jsonObjIn) {
 		if(FREX_RENDERER && jsonObjIn.has("frex")) {
@@ -140,64 +135,60 @@ public class JmxModelExt {
 		} else if(jsonObjIn.has("jmx")) {
 			deserializeInner(jsonObjIn.getAsJsonObject("jmx"));
 		} else {
-			TRANSFER.set(new JmxModelExt(Collections.emptyMap(), new int[0], new int[0], null));
+			TRANSFER.set(new JmxModelExt(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap(), null));
 		}
 	}
 
-	public static final class MaterialResolutionContext {
+	public static final class ResolutionContext {
 		public final JmxModelExt root;
 		public JmxModelExt current;
 
-		private MaterialResolutionContext(JmxModelExt root) {
+		private ResolutionContext(JmxModelExt root) {
 			this.root = root;
 		}
 	}
 
-	private static void deserializeInner(JsonObject jsonObj) {
-		final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
-		if (jsonObj.has("materials")) {
-		    final JsonArray arr = jsonObj.getAsJsonArray("materials");
-		    for (int i = 0, size = arr.size(); i < size; i++) {
-		        final JsonObject material = arr.get(i).getAsJsonObject();
-                for (final Entry<String, JsonElement> e : material.entrySet()) {
+	private static boolean isReference(JsonElement element) {
+	    if (!element.isJsonPrimitive()) {
+	        return false;
+        }
+	    final JsonPrimitive primitive = element.getAsJsonPrimitive();
+	    if (!primitive.isString()) {
+	        return false;
+        }
+	    return primitive.getAsString().charAt(0) == '#';
+    }
+
+	private static <S> Map<String, Either<String, S>> deserializeLayers(JsonObject obj, String key, Function<JsonElement, S> deserializer, S _default) {
+        final Object2ObjectOpenHashMap<String, Either<String, S>> map = new Object2ObjectOpenHashMap<>();
+
+        if (obj.has(key)) {
+            final JsonArray arr = obj.getAsJsonArray(key);
+
+            for (int i = 0, size = arr.size(); i < size; i++) {
+                final JsonObject layer = arr.get(i).getAsJsonObject();
+
+                for (final Entry<String, JsonElement> e : layer.entrySet()) {
                     if (e.getValue().isJsonNull()) {
-                        map.put(e.getKey() + i, RenderMaterial.MATERIAL_STANDARD.toString());
+                        map.put(e.getKey() + i, Either.right(_default));
+                    } else if (isReference(e.getValue())) {
+                        map.put(e.getKey() + i, Either.left(e.getValue().getAsString() + i));
                     } else {
-                        String value = e.getValue().getAsString();
-                        if (value.charAt(0) == '#') {
-                            map.put(e.getKey() + i, value + i);
-                        } else {
-                            map.put(e.getKey() + i, value);
-                        }
+                        map.put(e.getKey() + i, Either.right(deserializer.apply(e.getValue())));
                     }
                 }
             }
-		}
-
-		final int[] tags;
-		if (jsonObj.has("tags")) {
-		    JsonArray arr = jsonObj.getAsJsonArray("tags");
-		    tags = new int[arr.size()];
-		    for (int i = 0, size = arr.size(); i < size; i++) {
-		        tags[i] = arr.get(i).getAsInt();
-            }
-        } else {
-		    tags = new int[0];
         }
 
-		final int[] colors;
-		if (jsonObj.has("colors")) {
-		    JsonArray arr = jsonObj.getAsJsonArray("colors");
-		    colors = new int[arr.size()];
-		    for (int i = 0, size = arr.size(); i < size; i++) {
-		        String color = arr.get(i).getAsString();
-                colors[i] = color.startsWith("0x") ? Integer.parseUnsignedInt(color.substring(2), 16) : Integer.parseInt(color);
-            }
-        } else {
-		    colors = new int[0];
-        }
+        return map;
+    }
 
-		final String idString = JsonHelper.getString(jsonObj, "quad_transform", null);
+	private static void deserializeInner(JsonObject obj) {
+	    final Map<String, Either<String, Identifier>> materials = deserializeLayers(obj, "materials", el -> new Identifier(el.getAsString()), RenderMaterial.MATERIAL_STANDARD);
+	    final Map<String, Either<String, Integer>> tags = deserializeLayers(obj, "tags", JsonElement::getAsInt, 0);
+	    final Map<String, Either<String, Integer>> colors = deserializeLayers(obj, "colors", JmxModelExt::parseColor, 0xFFFFFFFF);
+
+		final String idString = JsonHelper.getString(obj, "quad_transform", null);
 		final Identifier quadTransformId;
 		if (idString != null) {
 			quadTransformId = Identifier.tryParse(idString);
@@ -205,6 +196,22 @@ public class JmxModelExt {
 			quadTransformId = null;
 		}
 
-		TRANSFER.set(new JmxModelExt(map, tags, colors, quadTransformId));
+		TRANSFER.set(new JmxModelExt(materials, colors, tags, quadTransformId));
 	}
+
+    private static int parseColor(JsonElement element) {
+        if (element.isJsonPrimitive()) {
+            final JsonPrimitive primitive = element.getAsJsonPrimitive();
+            if (primitive.isNumber()) {
+                return primitive.getAsInt();
+            } else if (primitive.isString()) {
+                final String colorStr = primitive.getAsString();
+                return colorStr.startsWith("0x") ? Integer.parseUnsignedInt(colorStr.substring(2), 16) : Integer.parseInt(colorStr);
+            } else {
+                throw new JsonParseException("Invalid color: " + element);
+            }
+        } else {
+            throw new JsonParseException("Invalid color: " + element);
+        }
+    }
 }

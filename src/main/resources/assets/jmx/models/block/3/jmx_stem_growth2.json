@@ -43,15 +43,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         }
                     ]
                 },
@@ -67,15 +73,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         }
                     ]
                 }
@@ -115,15 +127,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         }
                     ]
                 },
@@ -139,15 +157,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         },
                         {
                             "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem"
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
                         }
                     ]
                 }

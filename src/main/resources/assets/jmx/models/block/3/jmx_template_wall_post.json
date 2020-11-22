@@ -26,15 +26,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
@@ -44,15 +50,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
@@ -61,15 +73,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
@@ -78,15 +96,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
@@ -95,15 +119,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
@@ -112,15 +142,21 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         },
                         {
                             "texture": "#jmx_tex_wall",
-                            "material": "#jmx_mat_wall"
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 }

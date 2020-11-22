@@ -33,11 +33,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 },
@@ -52,11 +56,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 },
@@ -72,11 +80,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 },
@@ -92,11 +104,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 },
@@ -112,11 +128,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 },
@@ -132,11 +152,15 @@
                     "jmx_layers": [
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         },
                         {
                             "texture": "#jmx_texture",
-                            "material": "#jmx_material"
+                            "material": "#jmx_material",
+                            "tag": "#jmx_tagture",
+                            "color": "#jmx_colorture"
                         }
                     ]
                 }
