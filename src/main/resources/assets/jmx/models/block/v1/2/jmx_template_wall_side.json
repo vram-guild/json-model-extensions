@@ -110,5 +110,6 @@
             },
             "__comment": "wall"
         }
-    ]
+    ],
+    "jmx_version": 1
 }

@@ -50,5 +50,6 @@
                 "jmx_color_down": "#jmx_color_top"
             }
         ]
-    }
+    },
+    "jmx_version": 1
 }

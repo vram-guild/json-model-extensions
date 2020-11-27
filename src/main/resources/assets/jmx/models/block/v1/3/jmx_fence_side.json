@@ -330,5 +330,6 @@
             },
             "__comment": "lower bar"
         }
-    ]
+    ],
+    "jmx_version": 1
 }

@@ -117,5 +117,6 @@
                 "jmx_color_west": "#jmx_color_all"
             }
         ]
-    }
+    },
+    "jmx_version": 1
 }
