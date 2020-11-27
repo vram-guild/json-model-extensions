@@ -69,7 +69,7 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 
 	@Override
 	public boolean isEmpty() {
-		return (parent == null || parent.isEmpty()) && materialMap.isEmpty() && getQuadTransformId() == null;
+		return (parent == null || parent.isEmpty()) && materialMap.isEmpty() && colorMap.isEmpty() && tagMap.isEmpty() && getQuadTransformId() == null;
 	}
 
     @Override
