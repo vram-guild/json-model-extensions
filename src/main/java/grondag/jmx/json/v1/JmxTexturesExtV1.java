@@ -14,11 +14,7 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.json.ext;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Function;
+package grondag.jmx.json.v1;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,16 +22,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import grondag.jmx.target.FrexHolder;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public final class JmxTexturesExt {
+public final class JmxTexturesExtV1 {
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 	/** prevents "unable to resolve" errors when 2nd texture layer isn't used */
 	public static final Identifier DUMMY_ID = new Identifier("jmx", "dummy");

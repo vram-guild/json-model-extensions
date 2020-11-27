@@ -16,18 +16,18 @@
 
 package grondag.jmx.json.ext;
 
-import java.util.Map;
-
 import com.mojang.datafixers.util.Either;
-
+import grondag.jmx.json.JmxModelExt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
+import java.util.Map;
+
 @Environment(EnvType.CLIENT)
 public interface JsonUnbakedModelExt {
-	JmxModelExt jmx_modelExt();
+	JmxModelExt<?> jmx_modelExt();
 
 	JsonUnbakedModelExt jmx_parent();
 

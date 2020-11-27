@@ -16,9 +16,6 @@
 
 package grondag.jmx;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import grondag.jmx.api.JmxInitializer;
 import grondag.jmx.impl.DerivedModelRegistryImpl;
 import net.fabricmc.api.ClientModInitializer;
@@ -26,6 +23,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class JsonModelExtensions implements ClientModInitializer {

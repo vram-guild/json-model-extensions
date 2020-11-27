@@ -1,0 +1,222 @@
+{
+    "parent": "jmx:block/3/jmx_cube",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [
+                0,
+                135,
+                0
+            ],
+            "translation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                0.4,
+                0.4,
+                0.4
+            ]
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                16,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "down",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "up",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                },
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "north",
+                    "rotation": 90,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "south",
+                    "rotation": 270,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "west",
+                    "rotation": 0,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#pattern",
+                    "cullface": "east",
+                    "rotation": 180,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        },
+                        {
+                            "texture": "#jmx_tex_pattern",
+                            "material": "#jmx_mat_pattern",
+                            "tag": "#jmx_tag_pattern",
+                            "color": "#jmx_color_pattern"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

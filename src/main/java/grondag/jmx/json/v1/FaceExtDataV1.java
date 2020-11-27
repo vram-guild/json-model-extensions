@@ -14,25 +14,31 @@
  * the License.
  ******************************************************************************/
 
-package grondag.jmx.json.ext;
-
-import java.util.Arrays;
-import java.util.Map;
+package grondag.jmx.json.v1;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.util.JsonHelper;
-
+import com.mojang.datafixers.util.Pair;
+import grondag.jmx.json.FaceExtData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.render.model.json.ModelElementTexture;
+import net.minecraft.client.texture.MissingSprite;
+import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.util.JsonHelper;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
-public class FaceExtData {
+public class FaceExtDataV1 extends FaceExtData {
 	public static class LayerData {
 		public static final LayerData EMPTY = new LayerData();
 
@@ -59,15 +65,13 @@ public class FaceExtData {
 		}
 	}
 
-	public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
+	public static final FaceExtDataV1 EMPTY = new FaceExtDataV1();
 
-	public static final FaceExtData EMPTY = new FaceExtData();
-
-	private FaceExtData() {
+	private FaceExtDataV1() {
 		layers = new LayerData[] {LayerData.EMPTY };
 	}
 
-	private FaceExtData(JsonObject jsonObj, JsonDeserializationContext context) {
+	private FaceExtDataV1(JsonObject jsonObj, JsonDeserializationContext context) {
 		final JsonArray layers = JsonHelper.getArray(jsonObj, "jmx_layers", null);
 
 		if (layers == null) {
@@ -147,8 +151,8 @@ public class FaceExtData {
 		}
 	}
 
-	public static void deserialize(JsonObject jsonObj, JsonDeserializationContext context) {
-		TRANSFER.set(new FaceExtData(jsonObj, context));
+	public static FaceExtDataV1 deserializeV1(JsonObject jsonObj, JsonDeserializationContext context) {
+		return new FaceExtDataV1(jsonObj, context);
 	}
 
 	private static @Nullable ModelElementTexture deserializeJmxTexData(JsonObject jsonObj, JsonDeserializationContext context, String tag) {
@@ -191,5 +195,21 @@ public class FaceExtData {
 	        return null;
         }
 	    return layers[i];
+    }
+
+    @Override
+    public void getTextureDependencies(JsonUnbakedModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<SpriteIdentifier>> deps) {
+        for (int i = 0; i < getDepth(); i++) {
+            final String texStr = getLayer(i).texture;
+            if (texStr != null && !texStr.isEmpty()) {
+                final SpriteIdentifier tex = model.resolveSprite(texStr);
+
+                if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
+                    errors.get().add(Pair.of(texStr, model.id));
+                } else {
+                    deps.get().add(tex);
+                }
+            }
+        }
     }
 }

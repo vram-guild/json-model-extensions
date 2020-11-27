@@ -1,6 +1,6 @@
 package grondag.jmx.mixin;
 
-import grondag.jmx.json.ext.JmxTexturesExt;
+import grondag.jmx.json.v1.JmxTexturesExtV1;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.resource.ResourceManager;
@@ -20,7 +20,7 @@ public class MixinSpriteAtlasTexture {
         cancellable = true
     )
     void blockDummySpriteLoad(Identifier id, ResourceManager resourceManager, ConcurrentLinkedQueue<Sprite.Info> queue, CallbackInfo ci) {
-        if (id == JmxTexturesExt.DUMMY_ID) {
+        if (id == JmxTexturesExtV1.DUMMY_ID) {
             ci.cancel();
         }
     }

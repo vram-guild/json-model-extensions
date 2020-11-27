@@ -16,23 +16,21 @@
 
 package grondag.jmx.mixin;
 
-import java.lang.reflect.Type;
-
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import grondag.jmx.json.v1.FaceExtDataV1;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.model.json.ModelElementFace;
+import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import grondag.jmx.json.ext.FaceExtData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.util.math.Direction;
+import java.lang.reflect.Type;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ModelElementFace.Deserializer.class)
@@ -43,6 +41,6 @@ public class MixinModelElementFaceDeserializer {
 					ordinal = 0,
 					target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
 	private void hookDeserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
-		FaceExtData.deserialize(jsonObj, context);
+		FaceExtDataV1.deserialize(jsonObj, context);
 	}
 }

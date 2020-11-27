@@ -1,0 +1,85 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#pane"
+    },
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                7,
+                0,
+                7
+            ],
+            "to": [
+                9,
+                16,
+                9
+            ],
+            "faces": {
+                "down": {
+                    "uv": [
+                        7,
+                        7,
+                        9,
+                        9
+                    ],
+                    "texture": "#edge",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        },
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        },
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        }
+                    ]
+                },
+                "up": {
+                    "uv": [
+                        7,
+                        7,
+                        9,
+                        9
+                    ],
+                    "texture": "#edge",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        },
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        },
+                        {
+                            "texture": "#jmx_tex_edge",
+                            "material": "#jmx_mat_edge",
+                            "tag": "#jmx_tag_edge",
+                            "color": "#jmx_color_edge"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

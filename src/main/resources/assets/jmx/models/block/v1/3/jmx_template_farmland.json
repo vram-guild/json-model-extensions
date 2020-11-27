@@ -1,0 +1,198 @@
+{
+    "parent": "minecraft:block/block",
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                15,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#dirt",
+                    "cullface": "down",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        }
+                    ]
+                },
+                "up": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#top",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top",
+                            "tag": "#jmx_tag_top",
+                            "color": "#jmx_color_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top",
+                            "tag": "#jmx_tag_top",
+                            "color": "#jmx_color_top"
+                        },
+                        {
+                            "texture": "#jmx_tex_top",
+                            "material": "#jmx_mat_top",
+                            "tag": "#jmx_tag_top",
+                            "color": "#jmx_color_top"
+                        }
+                    ]
+                },
+                "north": {
+                    "uv": [
+                        0,
+                        1,
+                        16,
+                        16
+                    ],
+                    "texture": "#dirt",
+                    "cullface": "north",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        1,
+                        16,
+                        16
+                    ],
+                    "texture": "#dirt",
+                    "cullface": "south",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        }
+                    ]
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        1,
+                        16,
+                        16
+                    ],
+                    "texture": "#dirt",
+                    "cullface": "west",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        0,
+                        1,
+                        16,
+                        16
+                    ],
+                    "texture": "#dirt",
+                    "cullface": "east",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        },
+                        {
+                            "texture": "#jmx_tex_dirt",
+                            "material": "#jmx_mat_dirt",
+                            "tag": "#jmx_tag_dirt",
+                            "color": "#jmx_color_dirt"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
