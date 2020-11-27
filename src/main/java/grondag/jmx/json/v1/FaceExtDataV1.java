@@ -160,7 +160,7 @@ public class FaceExtDataV1 extends FaceExtData {
 			final JsonObject texObj = JsonHelper.getObject(jsonObj, tag);
 
 			if(!texObj.isJsonNull()) {
-				return (ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
+				return context.deserialize(jsonObj, ModelElementTexture.class);
 			}
 		}
 

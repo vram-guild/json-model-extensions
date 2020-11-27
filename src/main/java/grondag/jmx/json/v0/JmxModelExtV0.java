@@ -73,7 +73,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
     }
 
     @Nullable
-    public Identifier getQuadTransformId() {
+    private Identifier getQuadTransformId() {
         return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
     }
 

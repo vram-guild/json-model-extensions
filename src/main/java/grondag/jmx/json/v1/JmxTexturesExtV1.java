@@ -69,10 +69,9 @@ public final class JmxTexturesExtV1 {
 		}
 	}
 
-	private static boolean handleTexture(String key, JsonElement value, Map<String, Either<SpriteIdentifier, String>> map, Function<String, String> getTexture) {
+	private static void handleTexture(String key, JsonElement value, Map<String, Either<SpriteIdentifier, String>> map, Function<String, String> getTexture) {
 		if (value.isJsonNull()) {
 			map.put(key, DUMMY_EITHER);
-			return true;
 		} else {
 			final String texture = value.getAsString();
 
@@ -82,7 +81,6 @@ public final class JmxTexturesExtV1 {
 				final SpriteIdentifier id = tryIdentifier(texture);
 				map.put(key, Either.left(id));
 			}
-			return false;
 		}
 	}
 

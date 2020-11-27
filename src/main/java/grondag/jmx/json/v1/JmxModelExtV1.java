@@ -96,9 +96,8 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
         return builder.build();
     }
 
-    @Override
-	@Nullable
-	public Identifier getQuadTransformId() {
+    @Nullable
+    private Identifier getQuadTransformId() {
 	    if (quadTransformId != null) {
 	        return quadTransformId;
         }
@@ -132,7 +131,7 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
         return this.resolve(
             name,
             ext -> ext.materialMap,
-            MaterialLoader::loadMaterial,
+            MaterialLoader::getOrLoadMaterial,
             STANDARD_MATERIAL,
             "material"
         );

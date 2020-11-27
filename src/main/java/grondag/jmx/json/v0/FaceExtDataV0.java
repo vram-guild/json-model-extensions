@@ -56,8 +56,6 @@ public class FaceExtDataV0 extends FaceExtData {
         }
     }
 
-    public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
-
     public static final FaceExtDataV0 EMPTY = new FaceExtDataV0();
 
     private FaceExtDataV0() {
@@ -140,7 +138,7 @@ public class FaceExtDataV0 extends FaceExtData {
             final JsonObject texObj = JsonHelper.getObject(jsonObj, tag);
 
             if(!texObj.isJsonNull()) {
-                return (ModelElementTexture)context.deserialize(jsonObj, ModelElementTexture.class);
+                return context.deserialize(jsonObj, ModelElementTexture.class);
             }
         }
 

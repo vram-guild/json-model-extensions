@@ -12,6 +12,7 @@ import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 import java.util.function.Function;
 
@@ -23,7 +24,7 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 
     public static void deserialize(JsonObject obj) {
         final JmxModelExt<?> modelExt;
-        final int version = obj.get("jmx_version").getAsInt();
+        final int version = JsonHelper.getInt(obj, "jmx_version", 0);
         VERSION.set(version);
         switch (version) {
         default:
@@ -55,6 +56,4 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
             this.root = root;
         }
     }
-
-    public abstract Identifier getQuadTransformId();
 }

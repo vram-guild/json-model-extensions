@@ -13,7 +13,13 @@ import java.util.function.Supplier;
 
 public abstract class FaceExtData {
     public static FaceExtData empty() {
-        return FaceExtDataV1.EMPTY;
+        switch (JmxModelExt.VERSION.get()) {
+            default:
+            case 0:
+                return FaceExtDataV0.EMPTY;
+            case 1:
+                return FaceExtDataV1.EMPTY;
+        }
     }
 
     public static final ThreadLocal<FaceExtData> TRANSFER  = new ThreadLocal<>();
