@@ -59,6 +59,9 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 			JsonUnbakedModel jsonUnbakedModel);
 
 	@Shadow
+    public String id;
+
+	@Shadow
 	protected Identifier parentId;
 
 	@Shadow
@@ -87,8 +90,12 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		jmxParent = parent;
 
 		if (jmxModelExt != null) {
-            //noinspection RedundantCast,rawtypes // rawtypes are the only thing keeping javac ok with this mess
-            ((JmxModelExt) jmxModelExt).parent = parent.jmx_modelExt();
+		    if (parent.jmx_modelExt().version() != jmxModelExt.version()) {
+		        JsonModelExtensions.LOG.warn(String.format("Model %s is v%d, but its parent (%s) is v%d", id, jmxModelExt.version(), parentId, parent.jmx_modelExt().version()));
+            } else {
+                //noinspection RedundantCast,rawtypes // rawtypes are the only thing keeping javac ok with this mess
+                ((JmxModelExt) jmxModelExt).parent = parent.jmx_modelExt();
+            }
 		}
 	}
 
@@ -193,7 +200,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 		// if no JMX extensions, cannot be a template model for transforms
 		// and not using JMX for vanilla, then use vanilla builder
-		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
+		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.hierarchyIsEmpty())) {
 			boolean isVanilla = true;
 			final Iterator<ModelElement> elements = me.getElements().iterator();
 

@@ -38,10 +38,20 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
         TRANSFER.set(modelExt);
     }
 
+    public abstract int version();
+
     /**
+     * Checks whether any model in the hierarchy has any JMX data.
      * If a ModelExt is empty, its associated model will be formed by vanilla.
      */
-    public abstract boolean isEmpty();
+    public boolean hierarchyIsEmpty() {
+        return selfIsEmpty() && (parent == null || parent.hierarchyIsEmpty());
+    }
+
+    /**
+     * Checks whether only the current model has any JMX data.
+     */
+    public abstract boolean selfIsEmpty();
 
     public abstract BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter);
 

@@ -1,5 +1,5 @@
 {
-    "parent": "jmx:block/3/jmx_orientable_with_bottom",
+    "parent": "jmx:block/v1/3/jmx_orientable_with_bottom",
     "textures": {
         "bottom": "#top"
     },

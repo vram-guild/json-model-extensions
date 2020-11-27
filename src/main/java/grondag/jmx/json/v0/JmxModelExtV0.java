@@ -68,8 +68,13 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
         }
     }
 
-    public boolean isEmpty() {
-        return materialMap.isEmpty() && getQuadTransformId() == null;
+    @Override
+    public int version() {
+        return 0;
+    }
+
+    public boolean selfIsEmpty() {
+        return getQuadTransformId() == null && materialMap.isEmpty();
     }
 
     @Nullable

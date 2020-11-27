@@ -67,10 +67,15 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
         this.quadTransformId = quadTransformId;
 	}
 
-	@Override
-	public boolean isEmpty() {
-		return (parent == null || parent.isEmpty()) && materialMap.isEmpty() && colorMap.isEmpty() && tagMap.isEmpty() && getQuadTransformId() == null;
-	}
+    @Override
+    public int version() {
+        return 1;
+    }
+
+    @Override
+    public boolean selfIsEmpty() {
+        return getQuadTransformId() == null && materialMap.isEmpty() && colorMap.isEmpty() && tagMap.isEmpty();
+    }
 
     @Override
     public BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter) {
@@ -151,7 +156,8 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
         @Nullable Either<String, S> found = map.get(name.substring(1));
 
         if (found == null) {
-            if (parent != null) {
+            //noinspection ConstantConditions // vanilla parent models will technically be V0, this should be removed when V0 is removed
+            if (parent instanceof JmxModelExtV1) {
                 return parent.resolveInner(name, getMap, loader, _default, type, context);
             } else {
                 JsonModelExtensions.LOG.warn("Unable to resolve {} due to missing definition: {}", type, name.substring(1));

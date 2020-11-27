@@ -1,5 +1,5 @@
 {
-    "parent": "jmx:block/3/jmx_cube",
+    "parent": "jmx:block/v1/3/jmx_cube",
     "textures": {
         "particle": "#side",
         "down": "#end",

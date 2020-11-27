@@ -1,5 +1,5 @@
 {
-    "parent": "jmx:block/2/jmx_cube_mirrored",
+    "parent": "jmx:block/v1/2/jmx_cube_mirrored",
     "textures": {
         "particle": "#all",
         "down": "#all",
