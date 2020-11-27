@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:block/block",
+    "parent": "jmx:block/v1/block",
     "elements": [
         {
             "from": [
