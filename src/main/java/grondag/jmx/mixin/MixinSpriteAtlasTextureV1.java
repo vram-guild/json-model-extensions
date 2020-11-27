@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Mixin(SpriteAtlasTexture.class)
-public class MixinSpriteAtlasTexture {
+public class MixinSpriteAtlasTextureV1 {
     @Inject(
         method = "method_18160",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getTexturePath(Lnet/minecraft/util/Identifier;)Lnet/minecraft/util/Identifier;"),

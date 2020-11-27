@@ -33,7 +33,7 @@ import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.util.TriState;
 
 @Environment(EnvType.CLIENT)
-public class JmxMaterial {
+public class JmxMaterialV0 {
     private static class LayerData {
         public static final LayerData DEFAULT = new LayerData();
 
@@ -63,7 +63,7 @@ public class JmxMaterial {
         }
     }
 
-    public static final JmxMaterial DEFAULT = new JmxMaterial();
+    public static final JmxMaterialV0 DEFAULT = new JmxMaterialV0();
 
     public final String id;
     public final String preset;
@@ -72,14 +72,14 @@ public class JmxMaterial {
 
     public final int tag;
 
-    private JmxMaterial() {
+    private JmxMaterialV0() {
         id = "DEFAULT";
         preset = null;
         layers = new LayerData[] {LayerData.DEFAULT };
         tag = 0;
     }
 
-    public JmxMaterial(String id, JsonObject jsonObject) {
+    public JmxMaterialV0(String id, JsonObject jsonObject) {
         this.id = id;
         preset = JsonHelper.getString(jsonObject, "preset", null);
         tag = JsonHelper.getInt(jsonObject, "tag", 0);

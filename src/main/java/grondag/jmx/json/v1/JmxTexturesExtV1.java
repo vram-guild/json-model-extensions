@@ -40,7 +40,7 @@ public final class JmxTexturesExtV1 {
 	public static final SpriteIdentifier DUMMY_SPRITE = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, DUMMY_ID);
 	private static final Either<SpriteIdentifier, String> DUMMY_EITHER = Either.left(DUMMY_SPRITE);
 
-	public static void handleJmxTextures(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
+	public static void handleTexturesV1(JsonObject jsonObj, Map<String, Either<SpriteIdentifier, String>> map) {
 		if(FREX_RENDERER && jsonObj.has("frex")) {
 			handleJmxTexturesInner(jsonObj.getAsJsonObject("frex"), map);
 		} else if(jsonObj.has("jmx")) {

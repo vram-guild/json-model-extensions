@@ -47,13 +47,4 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 
     protected static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
     protected static final BakedQuadFactoryExt QUADFACTORY_EXT = (BakedQuadFactoryExt)QUADFACTORY;
-
-    protected static final class ResolutionContext<M extends JmxModelExt<M>> {
-        public final M root;
-        public M current;
-
-        public ResolutionContext(M root) {
-            this.root = root;
-        }
-    }
 }

@@ -138,10 +138,10 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
     }
 
     private <T, S> T resolve(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type) {
-	    return resolveInner(name, getMap, loader, _default, type, new ResolutionContext<>(this)).right().orElse(_default);
+	    return resolveInner(name, getMap, loader, _default, type, new ResolutionContext(this)).right().orElse(_default);
     }
 
-    public <T, S> Either<String, T> resolveInner(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type, ResolutionContext<JmxModelExtV1> context) {
+    public <T, S> Either<String, T> resolveInner(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type, ResolutionContext context) {
         if (context.current == this) {
             JsonModelExtensions.LOG.warn("Unable to resolve {}: {}", type, name);
             return Either.right(_default);
@@ -166,6 +166,15 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
             },
             (S storedValue) -> Either.right(loader.apply(storedValue))
         );
+    }
+
+    protected static final class ResolutionContext {
+        public final JmxModelExtV1 root;
+        public JmxModelExtV1 current;
+
+        public ResolutionContext(JmxModelExtV1 root) {
+            this.root = root;
+        }
     }
 
     public void emitFace(

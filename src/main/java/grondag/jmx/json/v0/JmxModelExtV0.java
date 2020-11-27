@@ -77,27 +77,27 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
         return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
     }
 
-    public JmxMaterial resolveMaterial(String matName) {
-        return matName == null || materialMap == null ? JmxMaterial.DEFAULT : resolveMaterialInner(matName);
+    public JmxMaterialV0 resolveMaterial(String matName) {
+        return matName == null || materialMap == null ? JmxMaterialV0.DEFAULT : resolveMaterialInner(matName);
     }
 
-    private JmxMaterial resolveMaterialInner(String matName) {
+    private JmxMaterialV0 resolveMaterialInner(String matName) {
         if (!isMaterialReference(matName)) {
             matName = '#' + matName;
         }
 
         final Object result = resolveMaterial(matName, new MaterialResolutionContext(this));
-        return result instanceof JmxMaterial ? (JmxMaterial) result : JmxMaterial.DEFAULT;
+        return result instanceof JmxMaterialV0 ? (JmxMaterialV0) result : JmxMaterialV0.DEFAULT;
     }
 
     private Object resolveMaterial(Object val, MaterialResolutionContext context) {
         if (isMaterialReference(val)) {
             if (this == context.current) {
                 JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
-                return JmxMaterial.DEFAULT;
+                return JmxMaterialV0.DEFAULT;
             } else {
                 Object result = materialMap.get(((String)val).substring(1));
-                if(result instanceof JmxMaterial) {
+                if(result instanceof JmxMaterialV0) {
                     return result;
                 }
 
@@ -136,7 +136,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
             final JsonObject job = jsonObj.getAsJsonObject("materials");
             for (final Entry<String, JsonElement> e : job.entrySet()) {
                 if (e.getValue().isJsonObject()) {
-                    map.put(e.getKey(), new JmxMaterial(e.getKey(), e.getValue().getAsJsonObject()));
+                    map.put(e.getKey(), new JmxMaterialV0(e.getKey(), e.getValue().getAsJsonObject()));
                 } else {
                     map.put(e.getKey(), e.getValue().getAsString());
                 }
@@ -185,7 +185,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
     }
 
     private void addQuad(ModelBakeSettings bakeProps, Identifier modelId, Function<String, Sprite> innerSpriteFunc, JmxBakedModel.Builder builder, MaterialFinder finder, ModelElement element, Direction face, ModelElementFace elementFace, FaceExtDataV0 extData, Sprite sprite, Direction cullFace) {
-        final JmxMaterial jmxMat = resolveMaterial(extData.jmx_material);
+        final JmxMaterialV0 jmxMat = resolveMaterial(extData.jmx_material);
 
         final QuadEmitter emitter = builder.emitter;
 
@@ -237,7 +237,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
         return sprite;
     }
 
-    private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterial jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
+    private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterialV0 jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
         finder.clear();
 
         final TriState diffuse = jmxMat.getDiffuse(spriteIndex);

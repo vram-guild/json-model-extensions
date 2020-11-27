@@ -19,7 +19,7 @@ package grondag.jmx.mixin;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import grondag.jmx.json.v1.FaceExtDataV1;
+import grondag.jmx.json.FaceExtData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.json.ModelElementFace;
@@ -41,6 +41,6 @@ public class MixinModelElementFaceDeserializer {
 					ordinal = 0,
 					target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
 	private void hookDeserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
-		FaceExtDataV1.deserialize(jsonObj, context);
+		FaceExtData.deserialize(jsonObj, context);
 	}
 }
