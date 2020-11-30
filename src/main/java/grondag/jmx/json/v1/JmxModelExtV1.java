@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
@@ -116,40 +117,52 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	    return this.resolve(
 	        name,
             ext -> ext.colorMap,
-            i -> i,
-            0xFFFFFFFF,
-            "color"
-        );
+            i -> i
+        ).orElseGet(() -> {
+            if (shouldLogUnresolved()) {
+                JsonModelExtensions.LOG.warn("Unable to resolve color {}", name);
+            }
+            return 0xFFFFFFFF;
+        });
     }
 
     public int resolveTag(String name) {
 	    return this.resolve(
 	        name,
             ext -> ext.tagMap,
-            i -> i,
-            0,
-            "tag"
-        );
+            i -> i
+        ).orElseGet(() -> {
+            if (shouldLogUnresolved()) {
+                JsonModelExtensions.LOG.warn("Unable to resolve tag {}",  name);
+            }
+            return 0;
+        });
     }
 
     public RenderMaterial resolveMaterial(String name) {
         return this.resolve(
             name,
             ext -> ext.materialMap,
-            MaterialLoader::getOrLoadMaterial,
-            STANDARD_MATERIAL,
-            "material"
-        );
+            MaterialLoader::getOrLoadMaterial
+        ).orElseGet(() -> {
+            if (shouldLogUnresolved()) {
+                JsonModelExtensions.LOG.warn("Unable to resolve material {}", name);
+            }
+            return STANDARD_MATERIAL;
+        });
+    }
+    
+    private boolean shouldLogUnresolved() {
+	    return false;
     }
 
-    private <T, S> T resolve(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type) {
-	    return resolveInner(name, getMap, loader, _default, type, new ResolutionContext(this)).right().orElse(_default);
+    private <T, S> Optional<T> resolve(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader) {
+	    return resolveInner(name, getMap, loader, new ResolutionContext(this)).right().flatMap(x -> x);
     }
 
-    public <T, S> Either<String, T> resolveInner(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, T _default, String type, ResolutionContext context) {
+    public <T, S> Either<String, Optional<T>> resolveInner(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader, ResolutionContext context) {
         if (context.current == this) {
-            JsonModelExtensions.LOG.warn("Unable to resolve {}: {}", type, name);
-            return Either.right(_default);
+            return Either.right(Optional.empty());
         }
 
         final Map<String, Either<String, S>> map = getMap.apply(this);
@@ -158,19 +171,18 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
         if (found == null) {
             //noinspection ConstantConditions // vanilla parent models will technically be V0, this should be removed when V0 is removed
             if (parent instanceof JmxModelExtV1) {
-                return parent.resolveInner(name, getMap, loader, _default, type, context);
+                return parent.resolveInner(name, getMap, loader, context);
             } else {
-                JsonModelExtensions.LOG.warn("Unable to resolve {} due to missing definition: {}", type, name.substring(1));
-                return Either.right(_default);
+                return Either.right(Optional.empty());
             }
         }
 
         return found.map(
             (String nextReference) -> {
                 context.current = this;
-                return context.root.resolveInner(nextReference, getMap, loader, _default, type, context);
+                return context.root.resolveInner(nextReference, getMap, loader, context);
             },
-            (S storedValue) -> Either.right(loader.apply(storedValue))
+            (S storedValue) -> Either.right(Optional.ofNullable(loader.apply(storedValue)))
         );
     }
 
