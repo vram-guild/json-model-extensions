@@ -1,5 +1,5 @@
 {
-	"parent": "jmx:block/2/jmx_slab",
+	"parent": "jmx:block/v1/2/jmx_slab",
 	"textures": {
 		"top": "minecraft:block/redstone_ore",
 		"bottom": "minecraft:block/redstone_ore",
@@ -57,5 +57,6 @@
 				"jmx_mat_side": "jmx:redstone"
 			}
 		]
-	}
+	},
+	"jmx_version": 1
 }

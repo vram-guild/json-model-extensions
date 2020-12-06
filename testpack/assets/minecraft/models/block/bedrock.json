@@ -1,5 +1,5 @@
 {
-	"parent": "jmx:block/2/jmx_cube_all",
+	"parent": "jmx:block/v1/2/jmx_cube_all",
 	"textures": { "all": "block/white_concrete" },
 	"jmx": {
 		"textures": {
@@ -17,5 +17,6 @@
 			{ "jmx_color_all": "0xFFFF0000" },
 			{ "jmx_color_all": "0xFF00FFFF" }
 		]
-	}
+	},
+	"jmx_version": 1
 }

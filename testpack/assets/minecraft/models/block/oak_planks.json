@@ -1,5 +1,5 @@
 {
-	"parent": "jmx:block/2/jmx_cube_all",
+	"parent": "jmx:block/v1/2/jmx_cube_all",
 	"textures": { "all": "minecraft:block/redstone_ore" },
 	"jmx": {
 		"textures": {
@@ -26,5 +26,6 @@
 			{ "jmx_mat_all": "jmx:redstone" },
 			{ "jmx_mat_all": null }
 		]
-	}
+	},
+	"jmx_version": 1
 }
