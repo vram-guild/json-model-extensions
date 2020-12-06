@@ -19,6 +19,7 @@ package grondag.jmx.json.v1;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
 import grondag.frex.api.material.MaterialLoader;
+import grondag.jmx.Configurator;
 import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.json.JmxModelExt;
 import grondag.jmx.json.ext.JmxExtension;
@@ -49,8 +50,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
+    public static boolean HAS_ERROR = false;
+
     private static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
-    public static final RenderMaterial STANDARD_MATERIAL = RENDERER.materialById(RenderMaterial.MATERIAL_STANDARD);
 
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
@@ -113,47 +115,28 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	    return null;
 	}
 
-    public int resolveColor(String name) {
+    public Optional<Integer> resolveColor(String name) {
 	    return this.resolve(
 	        name,
             ext -> ext.colorMap,
             i -> i
-        ).orElseGet(() -> {
-            if (shouldLogUnresolved()) {
-                JsonModelExtensions.LOG.warn("Unable to resolve color {}", name);
-            }
-            return 0xFFFFFFFF;
-        });
+        );
     }
 
-    public int resolveTag(String name) {
+    public Optional<Integer> resolveTag(String name) {
 	    return this.resolve(
 	        name,
             ext -> ext.tagMap,
             i -> i
-        ).orElseGet(() -> {
-            if (shouldLogUnresolved()) {
-                JsonModelExtensions.LOG.warn("Unable to resolve tag {}",  name);
-            }
-            return 0;
-        });
+        );
     }
 
-    public RenderMaterial resolveMaterial(String name) {
+    public Optional<RenderMaterial> resolveMaterial(String name) {
         return this.resolve(
             name,
             ext -> ext.materialMap,
             MaterialLoader::getOrLoadMaterial
-        ).orElseGet(() -> {
-            if (shouldLogUnresolved()) {
-                JsonModelExtensions.LOG.warn("Unable to resolve material {}", name);
-            }
-            return STANDARD_MATERIAL;
-        });
-    }
-    
-    private boolean shouldLogUnresolved() {
-	    return false;
+        );
     }
 
     private <T, S> Optional<T> resolve(String name, Function<JmxModelExtV1, Map<String, Either<String, S>>> getMap, Function<S, T> loader) {
@@ -245,15 +228,39 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 
             if (layer != null) {
                 if (layer.material != null) {
-                    emitter.material(resolveMaterial(layer.material));
+                    final Optional<RenderMaterial> material = resolveMaterial(layer.material);
+                    if (material.isPresent()) {
+                        emitter.material(material.get());
+                    } else {
+                        HAS_ERROR = true;
+                        if (Configurator.logResolutionErrors) {
+                            JsonModelExtensions.LOG.warn("Unable to resolve material {} in {}", layer.material, modelId);
+                        }
+                    }
                 }
+
                 if (layer.tag != null) {
-                    emitter.tag(resolveTag(layer.tag));
+                    final Optional<Integer> tag = resolveTag(layer.tag);
+                    if (tag.isPresent()) {
+                        emitter.tag(tag.get());
+                    } else {
+                        HAS_ERROR = true;
+                        if (Configurator.logResolutionErrors) {
+                            JsonModelExtensions.LOG.warn("Unable to resolve tag {} in {}", layer.material, modelId);
+                        }
+                    }
                 }
 
                 if (layer.color != null) {
-                    final int color = resolveColor(layer.color);
-                    emitter.spriteColor(0, color, color, color, color);
+                    final Optional<Integer> color = resolveColor(layer.color);
+                    if (color.isPresent()) {
+                        emitter.spriteColor(0, color.get(), color.get(), color.get(), color.get());
+                    } else {
+                        HAS_ERROR = true;
+                        if (Configurator.logResolutionErrors) {
+                            JsonModelExtensions.LOG.warn("Unable to resolve color {} in {}", layer.material, modelId);
+                        }
+                    }
                 }
             }
 
@@ -262,6 +269,10 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 
             emitter.emit();
         }
+    }
+
+    private static boolean shouldLogResolutionErrors() {
+        return true;
     }
 
     public static JmxModelExtV1 deserializeV1(JsonObject jsonObjIn) {
