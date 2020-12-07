@@ -16,26 +16,18 @@
 
 package grondag.jmx.mixin;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import grondag.jmx.Configurator;
+import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.impl.DerivedModelRegistryImpl;
+import grondag.jmx.json.FaceExtData;
+import grondag.jmx.json.JmxModelExt;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JsonUnbakedModelExt;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -44,23 +36,20 @@ import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import grondag.jmx.Configurator;
-import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.impl.DerivedModelRegistryImpl;
-import grondag.jmx.json.ext.FaceExtData;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import grondag.jmx.json.model.JmxBakedModel;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.class)
@@ -70,16 +59,19 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 			JsonUnbakedModel jsonUnbakedModel);
 
 	@Shadow
+    public String id;
+
+	@Shadow
 	protected Identifier parentId;
 
 	@Shadow
 	protected Map<String, Either<SpriteIdentifier, String>> textureMap;
 
 	private JsonUnbakedModelExt jmxParent;
-	private JmxModelExt jmxModelExt;
+	private JmxModelExt<?> jmxModelExt;
 
 	@Override
-	public JmxModelExt jmx_modelExt() {
+	public JmxModelExt<?> jmx_modelExt() {
 		return jmxModelExt;
 	}
 
@@ -98,7 +90,12 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		jmxParent = parent;
 
 		if (jmxModelExt != null) {
-			jmxModelExt.parent = parent.jmx_modelExt();
+		    if (parent.jmx_modelExt().version() != jmxModelExt.version()) {
+		        JsonModelExtensions.LOG.warn(String.format("Model %s is v%d, but its parent (%s) is v%d", id, jmxModelExt.version(), parentId, parent.jmx_modelExt().version()));
+            } else {
+                //noinspection RedundantCast,rawtypes // rawtypes are the only thing keeping javac ok with this mess
+                ((JmxModelExt) jmxModelExt).parent = parent.jmx_modelExt();
+            }
 		}
 	}
 
@@ -183,29 +180,16 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	@ModifyVariable(method = "getTextureDependencies", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
 	private ModelElementFace hookTextureDeps(ModelElementFace face) {
 		@SuppressWarnings("unchecked")
-		final
-		FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
-		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
-
-		for (int spriteIndex = 0; spriteIndex < jmxData.getDepth(); spriteIndex++) {
-			final String texStr = jmxData.getTex(spriteIndex);
-			if (texStr != null && !texStr.isEmpty()) {
-				final SpriteIdentifier tex = me.resolveSprite(texStr);
-
-				if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
-					getOrCreateJmxTextureErrors().add(Pair.of(texStr, me.id));
-				} else {
-					getOrCreateJmxTextureDeps().add(tex);
-				}
-			}
-		}
+		final FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
+        final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
+		jmxData.getTextureDependencies(me, this::getOrCreateJmxTextureErrors, this::getOrCreateJmxTextureDeps);
 
 		return face;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
-	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> spriteFunc,
+	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> textureGetter,
 			ModelBakeSettings bakeProps, Identifier modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
 		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 
@@ -216,7 +200,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 		// if no JMX extensions, cannot be a template model for transforms
 		// and not using JMX for vanilla, then use vanilla builder
-		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.isEmpty())) {
+		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.hierarchyIsEmpty())) {
 			boolean isVanilla = true;
 			final Iterator<ModelElement> elements = me.getElements().iterator();
 
@@ -241,35 +225,16 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 
 		// build and return JMX model
-		final Sprite particleSprite = spriteFunc.apply(me.resolveSprite("particle"));
-		final Function<String, Sprite> innerSpriteFunc = s -> spriteFunc.apply(me.resolveSprite(s));
+		final Sprite particleSprite = textureGetter.apply(me.resolveSprite("particle"));
 
-		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, compileOverrides(modelLoader, unbakedModel), hasDepth, jmxModelExt.getQuadTransformId()))
-				.setParticle(particleSprite);
-		final Iterator<ModelElement> elements = me.getElements().iterator();
-		while (elements.hasNext()) {
-			final ModelElement element = elements.next();
-			final Iterator<Direction> faces = element.faces.keySet().iterator();
-
-			while (faces.hasNext()) {
-				final Direction face = faces.next();
-				final ModelElementFace elementFace = element.faces.get(face);
-				final FaceExtData extData = ((JmxExtension<FaceExtData>) elementFace).jmx_ext();
-
-				final String extTex = extData.getTex(0);
-				final String tex = extTex == null ? elementFace.textureId : extTex;
-
-				final Sprite sprite = spriteFunc.apply(me.resolveSprite(tex));
-
-				if (elementFace.cullFace == null) {
-					builder.addQuad(null, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
-				} else {
-					final Direction roatedCullFace = Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
-					builder.addQuad(roatedCullFace, jmxModelExt, innerSpriteFunc, element, elementFace, sprite, face, bakeProps, modelId);
-				}
-			}
-		}
-
-		ci.setReturnValue(builder.build());
+		ci.setReturnValue(jmxModelExt.buildModel(
+		    compileOverrides(modelLoader, unbakedModel),
+            hasDepth,
+            particleSprite,
+            bakeProps,
+            modelId,
+            me,
+            textureGetter
+        ));
 	}
 }

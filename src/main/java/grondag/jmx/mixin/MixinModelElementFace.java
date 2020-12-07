@@ -16,13 +16,13 @@
 
 package grondag.jmx.mixin;
 
+import grondag.jmx.json.FaceExtData;
 import org.apache.commons.lang3.ObjectUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import grondag.jmx.json.ext.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -45,6 +45,6 @@ public class MixinModelElementFace implements JmxExtension<FaceExtData> {
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onInit(CallbackInfo ci) {
-		jmx_ext = ObjectUtils.defaultIfNull(FaceExtData.TRANSFER.get(), FaceExtData.EMPTY);
+		jmx_ext = ObjectUtils.defaultIfNull(FaceExtData.TRANSFER.get(), FaceExtData.empty());
 	}
 }

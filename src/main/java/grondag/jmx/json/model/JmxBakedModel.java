@@ -16,37 +16,27 @@
 
 package grondag.jmx.json.model;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import com.google.common.collect.ImmutableList;
 import grondag.jmx.api.QuadTransformRegistry;
 import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
-import grondag.jmx.json.ext.FaceExtData;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JmxMaterial;
-import grondag.jmx.json.ext.JmxModelExt;
-import grondag.jmx.target.FrexHolder;
-import org.apache.commons.lang3.ObjectUtils;
-import org.jetbrains.annotations.Nullable;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.BakedQuadFactory;
-import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElement;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.item.ItemStack;
@@ -54,23 +44,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockRenderView;
+import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
 	protected static final Renderer RENDERER = RendererAccess.INSTANCE.getRenderer();
-	protected static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
 	protected final Mesh mesh;
 	protected WeakReference<List<BakedQuad>[]> quadLists = null;
@@ -249,10 +232,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	@Environment(EnvType.CLIENT)
 	public static class Builder {
 		private final MeshBuilder meshBuilder;
-		private final MaterialFinder finder;
-		private final QuadEmitter emitter;
+        public final QuadEmitter emitter;
 		private final ModelOverrideList itemPropertyOverrides;
-		private final boolean usesAo;
+		public final boolean usesAo;
 		private Sprite particleTexture;
 		private final boolean isSideLit;
 		private final ModelTransformation transformation;
@@ -266,8 +248,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
 			meshBuilder = RENDERER.meshBuilder();
-			finder = RENDERER.materialFinder();
-			emitter = meshBuilder.getEmitter();
+            emitter = meshBuilder.getEmitter();
 			this.itemPropertyOverrides = itemPropertyOverrides;
 			this.usesAo = usesAo;
 			this.isSideLit = isSideLit;
@@ -292,68 +273,6 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			return new JmxBakedModel(meshBuilder.build(), usesAo, isSideLit, particleTexture, transformation, itemPropertyOverrides, hasDepth, quadTransformSource);
-		}
-
-		private static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
-		private static final BakedQuadFactoryExt QUADFACTORY_EXT = (BakedQuadFactoryExt)QUADFACTORY;
-
-		/**
-		 * Intent here is to duplicate vanilla baking exactly.  Code is adapted from BakedQuadFactory.
-		 */
-		public void addQuad(Direction cullFace, JmxModelExt modelExt, Function<String, Sprite> spriteFunc, ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
-			@SuppressWarnings("unchecked")
-			final
-			FaceExtData extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtData>)elementFace).jmx_ext(), FaceExtData.EMPTY);
-			final JmxMaterial jmxMat = modelExt == null ? JmxMaterial.DEFAULT : modelExt.resolveMaterial(extData.jmx_material);
-
-			final QuadEmitter emitter = this.emitter;
-
-			final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
-
-			for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-				if (spriteIndex != 0) {
-					sprite = getSprite(spriteIndex, extData, spriteFunc);
-
-					if (sprite == null) {
-						continue; // don't add quads with no sprite
-					}
-				}
-
-				emitter.material(FrexHolder.target().loadMaterial(finder, jmxMat, element, usesAo, spriteIndex));
-				emitter.cullFace(cullFace);
-
-				if(jmxMat.tag != 0) {
-					emitter.tag(jmxMat.tag);
-				}
-
-				final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
-
-				QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
-
-				final int color = jmxMat.getColor(spriteIndex);
-				emitter.spriteColor(0, color, color, color, color);
-
-				emitter.colorIndex(elementFace.tintIndex);
-
-				emitter.emit();
-			}
-		}
-
-		@Nullable
-		private Sprite getSprite(int spriteIndex, FaceExtData extData, Function<String, Sprite> spriteFunc) {
-			final String tex = extData.getTex(spriteIndex);
-
-			if (tex == null) {
-				return null;
-			}
-
-			final Sprite sprite = spriteFunc.apply(tex);
-
-			if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
-				return null;
-			}
-
-			return sprite;
 		}
 	}
 }

@@ -1,20 +1,22 @@
 {
-  "required": true,
-  "package": "grondag.jmx.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ],
-  "client": [
-  	"MixinBakedQuadFactory",
-  	"MixinJsonUnbakedModel",
-  	"MixinJsonUnbakedModelDeserializer",
-  	"MixinModelElementFace",
-  	"MixinModelElementFaceDeserializer",
-  	"MixinMultipartBakedModel",
-  	"MixinWeightedBakedModel",
-  	"MixinWeightedBakedModelEntry"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+	"required": true,
+	"package": "grondag.jmx.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinModelLoader"
+	],
+	"client": [
+		"MixinBakedQuadFactory",
+		"MixinJsonUnbakedModel",
+		"MixinJsonUnbakedModelDeserializer",
+		"MixinModelElementFace",
+		"MixinModelElementFaceDeserializer",
+		"MixinMultipartBakedModel",
+		"MixinSpriteAtlasTextureV1",
+		"MixinWeightedBakedModel",
+		"MixinWeightedBakedModelEntry"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
 }

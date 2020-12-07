@@ -1,0 +1,147 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#bottom"
+    },
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                3,
+                16,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "uv": [
+                        13,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "down",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        }
+                    ]
+                },
+                "north": {
+                    "uv": [
+                        3,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "north",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        0,
+                        0,
+                        3,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "south",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        }
+                    ]
+                },
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "cullface": "west",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#bottom",
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        },
+                        {
+                            "texture": "#jmx_tex_bottom",
+                            "material": "#jmx_mat_bottom",
+                            "tag": "#jmx_tag_bottom",
+                            "color": "#jmx_color_bottom"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "jmx_version": 1
+}

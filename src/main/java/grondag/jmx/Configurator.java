@@ -16,6 +16,10 @@
 
 package grondag.jmx;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,14 +27,11 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
-
 @Environment(EnvType.CLIENT)
 public class Configurator {
 
 	public static boolean loadVanillaModels;
+	public static boolean logResolutionErrors;
 
 	static {
 		final File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.properties");
@@ -44,6 +45,7 @@ public class Configurator {
 		}
 
 		loadVanillaModels = ((String)properties.computeIfAbsent("load-vanilla-models", (a) -> "false")).toLowerCase(Locale.ROOT).equals("true");
+		logResolutionErrors = ((String)properties.computeIfAbsent("log-resolution-errors", (a) -> "false")).toLowerCase(Locale.ROOT).equals("true");
 
 		try (FileOutputStream stream = new FileOutputStream(configFile)) {
 			properties.store(stream, "JMX properties file");
