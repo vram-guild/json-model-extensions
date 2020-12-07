@@ -1,23 +1,21 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.mixin;
 
-import grondag.jmx.json.model.BakedQuadFactoryExt;
-import grondag.jmx.json.model.BakedQuadFactoryHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,6 +37,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 
+import grondag.jmx.json.model.BakedQuadFactoryExt;
+import grondag.jmx.json.model.BakedQuadFactoryHelper;
+
 @Environment(EnvType.CLIENT)
 @Mixin(BakedQuadFactory.class)
 public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
@@ -49,7 +50,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	protected abstract void encodeDirection(int[] data, Direction face);
 
 	@Override
-	public void jmx_bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace,  ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
+	public void jmx_bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings bakeProps, Identifier modelId) {
 		final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
 		final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
@@ -100,7 +101,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	}
 
 	private int[] jmx_buildVertexData(int[] target, ModelElementTexture tex, Sprite sprite, Direction face, float[] pos, AffineTransformation texRotation, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
-		for(int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 4; ++i) {
 			jmx_bakeVertex(target, i, face, tex, pos, sprite, texRotation, modelRotation);
 		}
 
@@ -111,7 +112,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		final CubeFace.Corner cubeFace$Corner_1 = CubeFace.getFace(face).getCorner(vertexIn);
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
-		((BakedQuadFactory)(Object)this).transformVertex(pos, modelRotation_1);
+		((BakedQuadFactory) (Object) this).transformVertex(pos, modelRotation_1);
 		jmx_packVertexData(data, vertexIn, pos, sprite, tex);
 	}
 
@@ -126,7 +127,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		vertices[i + 4 + 1] = Float.floatToRawIntBits(modelElementTexture.getV(cornerIndex));
 	}
 
-	private static float[] jmx_normalizePos(float [] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
+	private static float[] jmx_normalizePos(float[] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
 		targets[CubeFace.DirectionIds.WEST] = vector3f_1.getX() / 16.0F;
 		targets[CubeFace.DirectionIds.DOWN] = vector3f_1.getY() / 16.0F;
 		targets[CubeFace.DirectionIds.NORTH] = vector3f_1.getZ() / 16.0F;

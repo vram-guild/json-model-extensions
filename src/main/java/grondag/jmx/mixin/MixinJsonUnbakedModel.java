@@ -1,33 +1,40 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.mixin;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import grondag.jmx.Configurator;
-import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.impl.DerivedModelRegistryImpl;
-import grondag.jmx.json.FaceExtData;
-import grondag.jmx.json.JmxModelExt;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -39,17 +46,17 @@ import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import grondag.jmx.Configurator;
+import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.impl.DerivedModelRegistryImpl;
+import grondag.jmx.json.FaceExtData;
+import grondag.jmx.json.JmxModelExt;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.ext.JsonUnbakedModelExt;
 
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.class)
@@ -59,7 +66,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 			JsonUnbakedModel jsonUnbakedModel);
 
 	@Shadow
-    public String id;
+	public String id;
 
 	@Shadow
 	protected Identifier parentId;
@@ -85,17 +92,18 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		return parentId;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void jmx_parent(JsonUnbakedModelExt parent) {
 		jmxParent = parent;
 
 		if (jmxModelExt != null) {
-		    if (parent.jmx_modelExt().version() != jmxModelExt.version()) {
-		        JsonModelExtensions.LOG.warn(String.format("Model %s is v%d, but its parent (%s) is v%d", id, jmxModelExt.version(), parentId, parent.jmx_modelExt().version()));
-            } else {
-                //noinspection RedundantCast,rawtypes // rawtypes are the only thing keeping javac ok with this mess
-                ((JmxModelExt) jmxModelExt).parent = parent.jmx_modelExt();
-            }
+			if (parent.jmx_modelExt().version() != jmxModelExt.version()) {
+				JsonModelExtensions.LOG.warn(String.format("Model %s is v%d, but its parent (%s) is v%d", id, jmxModelExt.version(), parentId, parent.jmx_modelExt().version()));
+			} else {
+				//noinspection RedundantCast,rawtypes // rawtypes are the only thing keeping javac ok with this mess
+				((JmxModelExt) jmxModelExt).parent = parent.jmx_modelExt();
+			}
 		}
 	}
 
@@ -118,9 +126,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	 */
 	@SuppressWarnings("unlikely-arg-type")
 	@Inject(at = @At("RETURN"), method = "getTextureDependencies")
-	private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors,
-			CallbackInfoReturnable<Collection<SpriteIdentifier>> ci) {
-
+	private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors, CallbackInfoReturnable<Collection<SpriteIdentifier>> ci) {
 		if (jmxTextureDeps != null) {
 			ci.getReturnValue().addAll(jmxTextureDeps);
 		}
@@ -132,10 +138,13 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		// We don't need the collection of material dependencies - this is just to map
 		// parent relationships.
 		final Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
-		for (JsonUnbakedModelExt model = this; model.jmx_parentId() != null
-				&& model.jmx_parent() == null; model = model.jmx_parent()) {
+		for (JsonUnbakedModelExt model = this;
+				model.jmx_parentId() != null && model.jmx_parent() == null;
+				model = model.jmx_parent()
+		) {
 			set.add(model);
 			UnbakedModel parentModel = modelFunc.apply(model.jmx_parentId());
+
 			if (parentModel == null) {
 				JsonModelExtensions.LOG.warn("No parent '{}' while loading model '{}'", parentId, model);
 			}
@@ -154,15 +163,16 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 	}
 
-
 	private HashSet<SpriteIdentifier> jmxTextureDeps = null;
 
 	private HashSet<SpriteIdentifier> getOrCreateJmxTextureDeps() {
 		HashSet<SpriteIdentifier> result = jmxTextureDeps;
+
 		if (result == null) {
 			result = new HashSet<>();
 			jmxTextureDeps = result;
 		}
+
 		return result;
 	}
 
@@ -170,10 +180,12 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 	private HashSet<Pair<String, String>> getOrCreateJmxTextureErrors() {
 		HashSet<Pair<String, String>> result = jmxTextureErrors;
+
 		if (result == null) {
 			result = new HashSet<>();
 			jmxTextureErrors = result;
 		}
+
 		return result;
 	}
 
@@ -181,7 +193,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	private ModelElementFace hookTextureDeps(ModelElementFace face) {
 		@SuppressWarnings("unchecked")
 		final FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
-        final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
+		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
 		jmxData.getTextureDependencies(me, this::getOrCreateJmxTextureErrors, this::getOrCreateJmxTextureDeps);
 
 		return face;
@@ -212,7 +224,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 					final ModelElementFace face = faces.next();
 					final FaceExtData faceExt = ((JmxExtension<FaceExtData>) face).jmx_ext();
 
-					if(faceExt != null && !faceExt.isEmpty()) {
+					if (faceExt != null && !faceExt.isEmpty()) {
 						isVanilla = false;
 						break;
 					}
@@ -228,13 +240,13 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		final Sprite particleSprite = textureGetter.apply(me.resolveSprite("particle"));
 
 		ci.setReturnValue(jmxModelExt.buildModel(
-		    compileOverrides(modelLoader, unbakedModel),
-            hasDepth,
-            particleSprite,
-            bakeProps,
-            modelId,
-            me,
-            textureGetter
-        ));
+			compileOverrides(modelLoader, unbakedModel),
+			hasDepth,
+			particleSprite,
+			bakeProps,
+			modelId,
+			me,
+			textureGetter
+		));
 	}
 }

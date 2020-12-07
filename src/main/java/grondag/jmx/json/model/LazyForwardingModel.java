@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.json.model;
 
@@ -41,13 +41,13 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 public abstract class LazyForwardingModel implements BakedModel, FabricBakedModel {
 	protected BakedModel lazyWrapped;
 
-	/** MUST BE THREAD-SAFE AND INVARIANT */
+	/** MUST BE THREAD-SAFE AND INVARIANT. */
 	protected abstract BakedModel createWrapped();
 
 	protected BakedModel wrapped() {
 		BakedModel wrapped = lazyWrapped;
 
-		if(wrapped == null) {
+		if (wrapped == null) {
 			wrapped = createWrapped();
 			lazyWrapped = wrapped;
 		}
@@ -57,17 +57,17 @@ public abstract class LazyForwardingModel implements BakedModel, FabricBakedMode
 
 	@Override
 	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-		((FabricBakedModel)wrapped()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+		((FabricBakedModel) wrapped()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 	}
 
 	@Override
 	public boolean isVanillaAdapter() {
-		return ((FabricBakedModel)wrapped()).isVanillaAdapter();
+		return ((FabricBakedModel) wrapped()).isVanillaAdapter();
 	}
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-		((FabricBakedModel)wrapped()).emitItemQuads(stack, randomSupplier, context);
+		((FabricBakedModel) wrapped()).emitItemQuads(stack, randomSupplier, context);
 	}
 
 	@Override

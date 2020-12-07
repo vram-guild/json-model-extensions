@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.impl;
 
@@ -39,7 +39,6 @@ import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 
 public class RetexturedModelTransformer implements ModelTransformer, TransformableModelContext {
-
 	public final Identifier targetModel;
 	public final Identifier sourceModel;
 
@@ -61,8 +60,8 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	@Override
 	public BakedModel transform(BakedModel model) {
 		return model instanceof TransformableModel
-		? ((TransformableModel)model).derive(this)
-		: MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
+			? ((TransformableModel) model).derive(this)
+			: MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
 	}
 
 	public static Builder builder(Identifier sourceModel, Identifier targetModel) {
@@ -96,7 +95,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	}
 
 	private static void remapSprite(MutableQuadView q, Sprite oldSprite, Sprite newSprite, int spriteIndex) {
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			final float u = q.spriteU(i, spriteIndex);
 			final float v = q.spriteV(i, spriteIndex);
 
@@ -122,7 +121,8 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Object2ObjectOpenHashMap<BlockState, BlockState> inverseStateMapImpl() {
 		Object2ObjectOpenHashMap<BlockState, BlockState> result = inverseStateMap;
-		if(result == null) {
+
+		if (result == null) {
 			final Object2ObjectOpenHashMap<BlockState, BlockState> newMap = new Object2ObjectOpenHashMap<>();
 			final BlockState defaultState = Registry.BLOCK.get(targetModel).getDefaultState();
 
@@ -131,16 +131,17 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 				BlockState targetState = defaultState;
 				final ImmutableMap<Property<?>, Comparable<?>> props = s.getEntries();
 
-				if(!props.isEmpty()) {
+				if (!props.isEmpty()) {
 					final Iterator<Entry<Property<?>, Comparable<?>>> it = props.entrySet().iterator();
 
-					while(it.hasNext()) {
+					while (it.hasNext()) {
 						final Entry<Property<?>, Comparable<?>> prop = it.next();
 						final Property p = prop.getKey();
 						final Comparable v = prop.getValue();
 						targetState = targetState.with(p, v);
 					}
 				}
+
 				newMap.put(targetState, s);
 			});
 

@@ -1,35 +1,20 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.json.v1;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import grondag.jmx.json.FaceExtData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.JsonHelper;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,9 +22,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.render.model.json.ModelElementTexture;
+import net.minecraft.client.texture.MissingSprite;
+import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.util.JsonHelper;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import grondag.jmx.json.FaceExtData;
+
 @Environment(EnvType.CLIENT)
 public class FaceExtDataV1 extends FaceExtData {
 	public static class LayerData {
+		@SuppressWarnings("hiding")
 		public static final LayerData EMPTY = new LayerData();
 
 		public final String texture;
@@ -58,10 +62,10 @@ public class FaceExtDataV1 extends FaceExtData {
 
 		public LayerData(String texture, String material, String tag, String color, ModelElementTexture texData) {
 			this.texture = texture;
-            this.material = material;
-            this.tag = tag;
-            this.color = color;
-            this.texData = texData;
+			this.material = material;
+			this.tag = tag;
+			this.color = color;
+			this.texData = texData;
 		}
 	}
 
@@ -80,6 +84,7 @@ public class FaceExtDataV1 extends FaceExtData {
 			Arrays.fill(propertyIndices, -1);
 
 			int entryIndex = 0;
+
 			for (final Map.Entry<String, JsonElement> entry : jsonObj.entrySet()) {
 				if ("preset".equals(entry.getKey()) || "tag".equals(entry.getKey())) {
 					continue;
@@ -109,10 +114,10 @@ public class FaceExtDataV1 extends FaceExtData {
 
 				for (int i = 0; i < depth; i++) {
 					this.layers[i] = new LayerData(
-						JsonHelper.getString(jsonObj, "jmx_tex" + i, null),
-                            null,
-                        null, null, deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
-					);
+							JsonHelper.getString(jsonObj, "jmx_tex" + i, null),
+							null,
+							null, null, deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
+							);
 				}
 			} else {
 				this.layers = null;
@@ -125,27 +130,35 @@ public class FaceExtDataV1 extends FaceExtData {
 			for (int i = 0; i < depth; i++) {
 				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
 				@Nullable String texture = JsonHelper.getString(propertyObj, "texture", null);
+
 				if (texture != null) {
 					texture += i;
 				}
+
 				@Nullable String material = JsonHelper.getString(propertyObj, "material", null);
+
 				if (material != null) {
-				    material += i;
-                }
+					material += i;
+				}
+
 				@Nullable String tag = JsonHelper.getString(propertyObj, "tag", null);
+
 				if (tag != null) {
-				    tag += i;
-                }
+					tag += i;
+				}
+
 				@Nullable String color = JsonHelper.getString(propertyObj, "color", null);
+
 				if (color != null) {
-				    color += i;
-                }
+					color += i;
+				}
+
 				this.layers[i] = new LayerData(
 					texture,
-                    material,
-                    tag,
-                    color,
-                    deserializeJmxTexData(propertyObj, context, "uv_rot")
+					material,
+					tag,
+					color,
+					deserializeJmxTexData(propertyObj, context, "uv_rot")
 				);
 			}
 		}
@@ -156,10 +169,10 @@ public class FaceExtDataV1 extends FaceExtData {
 	}
 
 	private static @Nullable ModelElementTexture deserializeJmxTexData(JsonObject jsonObj, JsonDeserializationContext context, String tag) {
-		if(jsonObj.has(tag)) {
+		if (jsonObj.has(tag)) {
 			final JsonObject texObj = JsonHelper.getObject(jsonObj, tag);
 
-			if(!texObj.isJsonNull()) {
+			if (!texObj.isJsonNull()) {
 				return context.deserialize(jsonObj, ModelElementTexture.class);
 			}
 		}
@@ -169,6 +182,7 @@ public class FaceExtDataV1 extends FaceExtData {
 
 	private final LayerData[] layers;
 
+	@Override
 	public boolean isEmpty() {
 		if (layers == null) {
 			return true;
@@ -187,29 +201,32 @@ public class FaceExtDataV1 extends FaceExtData {
 		if (layers == null) {
 			return 0;
 		}
+
 		return layers.length;
 	}
 
 	public LayerData getLayer(int i) {
-	    if (layers == null || i >= layers.length) {
-	        return null;
-        }
-	    return layers[i];
-    }
+		if (layers == null || i >= layers.length) {
+			return null;
+		}
 
-    @Override
-    public void getTextureDependencies(JsonUnbakedModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<SpriteIdentifier>> deps) {
-        for (int i = 0; i < getDepth(); i++) {
-            final String texStr = getLayer(i).texture;
-            if (texStr != null && !texStr.isEmpty()) {
-                final SpriteIdentifier tex = model.resolveSprite(texStr);
+		return layers[i];
+	}
 
-                if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
-                    errors.get().add(Pair.of(texStr, model.id));
-                } else {
-                    deps.get().add(tex);
-                }
-            }
-        }
-    }
+	@Override
+	public void getTextureDependencies(JsonUnbakedModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<SpriteIdentifier>> deps) {
+		for (int i = 0; i < getDepth(); i++) {
+			final String texStr = getLayer(i).texture;
+
+			if (texStr != null && !texStr.isEmpty()) {
+				final SpriteIdentifier tex = model.resolveSprite(texStr);
+
+				if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
+					errors.get().add(Pair.of(texStr, model.id));
+				} else {
+					deps.get().add(tex);
+				}
+			}
+		}
+	}
 }

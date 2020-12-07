@@ -1,35 +1,29 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.json.model;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Supplier;
+
 import com.google.common.collect.ImmutableList;
-import grondag.jmx.api.QuadTransformRegistry;
-import grondag.jmx.impl.TransformableModel;
-import grondag.jmx.impl.TransformableModelContext;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
@@ -44,12 +38,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockRenderView;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Supplier;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
+
+import grondag.jmx.api.QuadTransformRegistry;
+import grondag.jmx.impl.TransformableModel;
+import grondag.jmx.impl.TransformableModelContext;
 
 @Environment(EnvType.CLIENT)
 public class JmxBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
@@ -87,7 +90,8 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		mesh.forEach(q -> {
 			emitter.material(q.material());
 			q.copyTo(emitter);
-			if(transform.transform(emitter)) {
+
+			if (transform.transform(emitter)) {
 				emitter.emit();
 			}
 		});
@@ -107,7 +111,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
 		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
 
-		if(lists == null) {
+		if (lists == null) {
 			lists = safeToQuadLists(mesh, particleSprite);
 			quadLists = new WeakReference<>(lists);
 		}
@@ -120,7 +124,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	 * Workaround for Fabric helper breaking when called before the sprite atlas is created.
 	 * Triggered by AE2 when running with JSON mesh loading active.
 	 *
-	 * Only difference is we use our particle sprite instead of looking one up.
+	 * <p>Only difference is we use our particle sprite instead of looking one up.
 	 */
 	private static List<BakedQuad>[] safeToQuadLists(Mesh mesh, Sprite particleSprite) {
 		@SuppressWarnings("unchecked")
@@ -189,8 +193,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 	@Override
 	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-		if(mesh != null) {
+		if (mesh != null) {
 			QuadTransform quadTransform;
+
 			if (quadTransformSource != null) {
 				quadTransform = quadTransformSource.getForBlock(blockView, state, pos, randomSupplier);
 			} else {
@@ -210,8 +215,9 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-		if(mesh != null) {
+		if (mesh != null) {
 			QuadTransform quadTransform;
+
 			if (quadTransformSource != null) {
 				quadTransform = quadTransformSource.getForItem(stack, randomSupplier);
 			} else {
@@ -232,7 +238,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	@Environment(EnvType.CLIENT)
 	public static class Builder {
 		private final MeshBuilder meshBuilder;
-        public final QuadEmitter emitter;
+		public final QuadEmitter emitter;
 		private final ModelOverrideList itemPropertyOverrides;
 		public final boolean usesAo;
 		private Sprite particleTexture;
@@ -248,7 +254,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
 			meshBuilder = RENDERER.meshBuilder();
-            emitter = meshBuilder.getEmitter();
+			emitter = meshBuilder.getEmitter();
 			this.itemPropertyOverrides = itemPropertyOverrides;
 			this.usesAo = usesAo;
 			this.isSideLit = isSideLit;
@@ -268,6 +274,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			}
 
 			final QuadTransformRegistry.QuadTransformSource quadTransformSource = QuadTransformRegistry.INSTANCE.getQuadTransform(quadTransformId);
+
 			if (quadTransformId != null && quadTransformSource == null) {
 				throw new IllegalStateException("No quad transform is registered with ID " + quadTransformId);
 			}

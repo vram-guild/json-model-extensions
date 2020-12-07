@@ -1,269 +1,282 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.json.v0;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import grondag.jmx.JsonModelExtensions;
-import grondag.jmx.json.JmxModelExt;
-import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.model.JmxBakedModel;
-import grondag.jmx.target.FrexHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
-import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.json.*;
-import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.math.Direction;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.ModelBakeSettings;
+import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.render.model.json.ModelElement;
+import net.minecraft.client.render.model.json.ModelElementFace;
+import net.minecraft.client.render.model.json.ModelElementTexture;
+import net.minecraft.client.render.model.json.ModelOverrideList;
+import net.minecraft.client.texture.MissingSprite;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.math.Direction;
+
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.MaterialFinder;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.util.TriState;
+
+import grondag.jmx.JsonModelExtensions;
+import grondag.jmx.json.JmxModelExt;
+import grondag.jmx.json.ext.JmxExtension;
+import grondag.jmx.json.model.JmxBakedModel;
+import grondag.jmx.target.FrexHolder;
+
 public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
-    private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
+	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
-    private final Map<String, Object> materialMap;
-    @Nullable
-    private final Identifier quadTransformId;
+	private final Map<String, Object> materialMap;
+	@Nullable
+	private final Identifier quadTransformId;
 
-    private JmxModelExtV0(Map<String, Object> materialMap, @Nullable Identifier quadTransformId) {
-        this.materialMap = materialMap;
-        this.quadTransformId = quadTransformId;
-    }
+	private JmxModelExtV0(Map<String, Object> materialMap, @Nullable Identifier quadTransformId) {
+		this.materialMap = materialMap;
+		this.quadTransformId = quadTransformId;
+	}
 
-    public static JmxModelExtV0 deserializeV0(JsonObject obj) {
-        if(FREX_RENDERER && obj.has("frex")) {
-            return deserializeInner(obj.getAsJsonObject("frex"));
-        } else if(obj.has("jmx")) {
-            return deserializeInner(obj.getAsJsonObject("jmx"));
-        } else {
-            return new JmxModelExtV0(Collections.emptyMap(), null);
-        }
-    }
+	public static JmxModelExtV0 deserializeV0(JsonObject obj) {
+		if (FREX_RENDERER && obj.has("frex")) {
+			return deserializeInner(obj.getAsJsonObject("frex"));
+		} else if (obj.has("jmx")) {
+			return deserializeInner(obj.getAsJsonObject("jmx"));
+		} else {
+			return new JmxModelExtV0(Collections.emptyMap(), null);
+		}
+	}
 
-    @Override
-    public int version() {
-        return 0;
-    }
+	@Override
+	public int version() {
+		return 0;
+	}
 
-    public boolean selfIsEmpty() {
-        return getQuadTransformId() == null && materialMap.isEmpty();
-    }
+	@Override
+	public boolean selfIsEmpty() {
+		return getQuadTransformId() == null && materialMap.isEmpty();
+	}
 
-    @Nullable
-    private Identifier getQuadTransformId() {
-        return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
-    }
+	@Nullable
+	private Identifier getQuadTransformId() {
+		return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
+	}
 
-    public JmxMaterialV0 resolveMaterial(String matName) {
-        return matName == null || materialMap == null ? JmxMaterialV0.DEFAULT : resolveMaterialInner(matName);
-    }
+	public JmxMaterialV0 resolveMaterial(String matName) {
+		return matName == null || materialMap == null ? JmxMaterialV0.DEFAULT : resolveMaterialInner(matName);
+	}
 
-    private JmxMaterialV0 resolveMaterialInner(String matName) {
-        if (!isMaterialReference(matName)) {
-            matName = '#' + matName;
-        }
+	private JmxMaterialV0 resolveMaterialInner(String matName) {
+		if (!isMaterialReference(matName)) {
+			matName = '#' + matName;
+		}
 
-        final Object result = resolveMaterial(matName, new MaterialResolutionContext(this));
-        return result instanceof JmxMaterialV0 ? (JmxMaterialV0) result : JmxMaterialV0.DEFAULT;
-    }
+		final Object result = resolveMaterial(matName, new MaterialResolutionContext(this));
+		return result instanceof JmxMaterialV0 ? (JmxMaterialV0) result : JmxMaterialV0.DEFAULT;
+	}
 
-    private Object resolveMaterial(Object val, MaterialResolutionContext context) {
-        if (isMaterialReference(val)) {
-            if (this == context.current) {
-                JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
-                return JmxMaterialV0.DEFAULT;
-            } else {
-                Object result = materialMap.get(((String)val).substring(1));
-                if(result instanceof JmxMaterialV0) {
-                    return result;
-                }
+	private Object resolveMaterial(Object val, MaterialResolutionContext context) {
+		if (isMaterialReference(val)) {
+			if (this == context.current) {
+				JsonModelExtensions.LOG.warn("Unable to resolve material due to upward reference: {}", val);
+				return JmxMaterialV0.DEFAULT;
+			} else {
+				Object result = materialMap.get(((String) val).substring(1));
 
-                if (result == null && parent != null) {
-                    result = parent.resolveMaterial(val, context);
-                }
+				if (result instanceof JmxMaterialV0) {
+					return result;
+				}
 
-                if (isMaterialReference(result)) {
-                    context.current = this;
-                    result = context.root.resolveMaterial(result, context);
-                }
+				if (result == null && parent != null) {
+					result = parent.resolveMaterial(val, context);
+				}
 
-                return result;
-            }
-        } else {
-            return val;
-        }
-    }
+				if (isMaterialReference(result)) {
+					context.current = this;
+					result = context.root.resolveMaterial(result, context);
+				}
 
-    public static boolean isMaterialReference(Object val) {
-        return val instanceof String && ((String)val).charAt(0) == '#';
-    }
+				return result;
+			}
+		} else {
+			return val;
+		}
+	}
 
-    public static final class MaterialResolutionContext {
-        public final JmxModelExtV0 root;
-        public JmxModelExtV0 current;
+	public static boolean isMaterialReference(Object val) {
+		return val instanceof String && ((String) val).charAt(0) == '#';
+	}
 
-        private MaterialResolutionContext(JmxModelExtV0 root) {
-            this.root = root;
-        }
-    }
+	public static final class MaterialResolutionContext {
+		public final JmxModelExtV0 root;
+		public JmxModelExtV0 current;
 
-    private static JmxModelExtV0 deserializeInner(JsonObject jsonObj) {
-        final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
-        if (jsonObj.has("materials")) {
-            final JsonObject job = jsonObj.getAsJsonObject("materials");
-            for (final Entry<String, JsonElement> e : job.entrySet()) {
-                if (e.getValue().isJsonObject()) {
-                    map.put(e.getKey(), new JmxMaterialV0(e.getKey(), e.getValue().getAsJsonObject()));
-                } else {
-                    map.put(e.getKey(), e.getValue().getAsString());
-                }
-            }
-        }
+		private MaterialResolutionContext(JmxModelExtV0 root) {
+			this.root = root;
+		}
+	}
 
-        final String idString = JsonHelper.getString(jsonObj, "quad_transform", null);
-        final Identifier quadTransformId;
-        if (idString != null) {
-            quadTransformId = Identifier.tryParse(idString);
-        } else {
-            quadTransformId = null;
-        }
+	private static JmxModelExtV0 deserializeInner(JsonObject jsonObj) {
+		final Object2ObjectOpenHashMap<String, Object> map = new Object2ObjectOpenHashMap<>();
 
-        return new JmxModelExtV0(map, quadTransformId);
-    }
+		if (jsonObj.has("materials")) {
+			final JsonObject job = jsonObj.getAsJsonObject("materials");
 
-    @Override
-    public BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter) {
-        final Function<String, Sprite> innerSpriteFunc = s -> textureGetter.apply(me.resolveSprite(s));
+			for (final Entry<String, JsonElement> e : job.entrySet()) {
+				if (e.getValue().isJsonObject()) {
+					map.put(e.getKey(), new JmxMaterialV0(e.getKey(), e.getValue().getAsJsonObject()));
+				} else {
+					map.put(e.getKey(), e.getValue().getAsString());
+				}
+			}
+		}
 
-        final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, modelOverrideList, hasDepth, getQuadTransformId()))
-            .setParticle(particleSprite);
+		final String idString = JsonHelper.getString(jsonObj, "quad_transform", null);
+		final Identifier quadTransformId;
 
-        final MaterialFinder finder = RendererAccess.INSTANCE.getRenderer().materialFinder();
+		if (idString != null) {
+			quadTransformId = Identifier.tryParse(idString);
+		} else {
+			quadTransformId = null;
+		}
 
-        for (ModelElement element : me.getElements()) {
+		return new JmxModelExtV0(map, quadTransformId);
+	}
 
-            for (Direction face : element.faces.keySet()) {
-                final ModelElementFace elementFace = element.faces.get(face);
-                //noinspection unchecked
-                final FaceExtDataV0 extData = ((JmxExtension<FaceExtDataV0>) elementFace).jmx_ext();
+	@Override
+	public BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter) {
+		final Function<String, Sprite> innerSpriteFunc = s -> textureGetter.apply(me.resolveSprite(s));
 
-                final String extTex = extData.getTex(0);
-                final String tex = extTex == null ? elementFace.textureId : extTex;
+		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, modelOverrideList, hasDepth, getQuadTransformId()))
+				.setParticle(particleSprite);
 
-                Sprite sprite = textureGetter.apply(me.resolveSprite(tex));
+		final MaterialFinder finder = RendererAccess.INSTANCE.getRenderer().materialFinder();
 
-                final Direction cullFace = elementFace.cullFace == null ? null : Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
+		for (final ModelElement element : me.getElements()) {
+			for (final Direction face : element.faces.keySet()) {
+				final ModelElementFace elementFace = element.faces.get(face);
+				@SuppressWarnings("unchecked")
+				//noinspection unchecked
+				final FaceExtDataV0 extData = ((JmxExtension<FaceExtDataV0>) elementFace).jmx_ext();
 
-                addQuad(bakeProps, modelId, innerSpriteFunc, builder, finder, element, face, elementFace, extData, sprite, cullFace);
-            }
-        }
+				final String extTex = extData.getTex(0);
+				final String tex = extTex == null ? elementFace.textureId : extTex;
 
-        return builder.build();
-    }
+				final Sprite sprite = textureGetter.apply(me.resolveSprite(tex));
 
-    private void addQuad(ModelBakeSettings bakeProps, Identifier modelId, Function<String, Sprite> innerSpriteFunc, JmxBakedModel.Builder builder, MaterialFinder finder, ModelElement element, Direction face, ModelElementFace elementFace, FaceExtDataV0 extData, Sprite sprite, Direction cullFace) {
-        final JmxMaterialV0 jmxMat = resolveMaterial(extData.jmx_material);
+				final Direction cullFace = elementFace.cullFace == null ? null : Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
 
-        final QuadEmitter emitter = builder.emitter;
+				addQuad(bakeProps, modelId, innerSpriteFunc, builder, finder, element, face, elementFace, extData, sprite, cullFace);
+			}
+		}
 
-        final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
+		return builder.build();
+	}
 
-        for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
-            if (spriteIndex != 0) {
-                sprite = getSprite(spriteIndex, extData, innerSpriteFunc);
+	private void addQuad(ModelBakeSettings bakeProps, Identifier modelId, Function<String, Sprite> innerSpriteFunc, JmxBakedModel.Builder builder, MaterialFinder finder, ModelElement element, Direction face, ModelElementFace elementFace, FaceExtDataV0 extData, Sprite sprite, Direction cullFace) {
+		final JmxMaterialV0 jmxMat = resolveMaterial(extData.jmx_material);
 
-                if (sprite == null) {
-                    continue; // don't add quads with no sprite
-                }
-            }
+		final QuadEmitter emitter = builder.emitter;
 
-            emitter.material(loadMaterial(finder, jmxMat, element, builder.usesAo, spriteIndex));
-            emitter.cullFace(cullFace);
+		final int depth = Math.max(extData.getDepth(), jmxMat.getDepth());
 
-            if(jmxMat.tag != 0) {
-                emitter.tag(jmxMat.tag);
-            }
+		for (int spriteIndex = 0; spriteIndex < depth; spriteIndex++) {
+			if (spriteIndex != 0) {
+				sprite = getSprite(spriteIndex, extData, innerSpriteFunc);
 
-            final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+				if (sprite == null) {
+					continue; // don't add quads with no sprite
+				}
+			}
 
-            QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
+			emitter.material(loadMaterial(finder, jmxMat, element, builder.usesAo, spriteIndex));
+			emitter.cullFace(cullFace);
 
-            final int color = jmxMat.getColor(spriteIndex);
-            emitter.spriteColor(0, color, color, color, color);
+			if (jmxMat.tag != 0) {
+				emitter.tag(jmxMat.tag);
+			}
 
-            emitter.colorIndex(elementFace.tintIndex);
+			final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
 
-            emitter.emit();
-        }
-    }
+			QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
-    @Nullable
-    private Sprite getSprite(int spriteIndex, FaceExtDataV0 extData, Function<String, Sprite> spriteFunc) {
-        final String tex = extData.getTex(spriteIndex);
+			final int color = jmxMat.getColor(spriteIndex);
+			emitter.spriteColor(0, color, color, color, color);
 
-        if (tex == null) {
-            return null;
-        }
+			emitter.colorIndex(elementFace.tintIndex);
 
-        final Sprite sprite = spriteFunc.apply(tex);
+			emitter.emit();
+		}
+	}
 
-        if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
-            return null;
-        }
+	@Nullable
+	private Sprite getSprite(int spriteIndex, FaceExtDataV0 extData, Function<String, Sprite> spriteFunc) {
+		final String tex = extData.getTex(spriteIndex);
 
-        return sprite;
-    }
+		if (tex == null) {
+			return null;
+		}
 
-    private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterialV0 jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
-        finder.clear();
+		final Sprite sprite = spriteFunc.apply(tex);
 
-        final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
-        final boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
-        finder.disableDiffuse(0, disableDiffuse);
+		if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
+			return null;
+		}
 
-        final TriState ao = jmxMat.getAo(spriteIndex);
-        final boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
-        finder.disableAo(0, disableAo);
+		return sprite;
+	}
 
-        finder.emissive(0, jmxMat.getEmissive(spriteIndex).get());
+	private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterialV0 jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
+		finder.clear();
 
-        if (jmxMat.getColorIndex(spriteIndex) == TriState.FALSE) {
-            finder.disableColorIndex(0, true);
-        }
+		final TriState diffuse = jmxMat.getDiffuse(spriteIndex);
+		final boolean disableDiffuse = diffuse == TriState.DEFAULT ? !element.shade : !diffuse.get();
+		finder.disableDiffuse(0, disableDiffuse);
 
-        final BlendMode layer = jmxMat.getLayer(spriteIndex);
-        if (layer != null) {
-            finder.blendMode(0, layer);
-        }
+		final TriState ao = jmxMat.getAo(spriteIndex);
+		final boolean disableAo = ao == TriState.DEFAULT ? !usesAo : !ao.get();
+		finder.disableAo(0, disableAo);
 
-        return finder.find();
-    }
+		finder.emissive(0, jmxMat.getEmissive(spriteIndex).get());
+
+		if (jmxMat.getColorIndex(spriteIndex) == TriState.FALSE) {
+			finder.disableColorIndex(0, true);
+		}
+
+		final BlendMode layer = jmxMat.getLayer(spriteIndex);
+
+		if (layer != null) {
+			finder.blendMode(0, layer);
+		}
+
+		return finder.find();
+	}
 }

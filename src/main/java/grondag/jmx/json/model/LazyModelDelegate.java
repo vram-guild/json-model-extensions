@@ -1,18 +1,18 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ *  Copyright 2019, 2020 grondag
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ */
 
 package grondag.jmx.json.model;
 
@@ -23,8 +23,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Pair;
-import grondag.jmx.impl.ModelTransformer;
-import grondag.jmx.impl.RetexturedModelTransformer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
@@ -38,8 +36,10 @@ import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
-public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
+import grondag.jmx.impl.ModelTransformer;
+import grondag.jmx.impl.RetexturedModelTransformer;
 
+public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
 	private final ModelTransformer transformer;
 	private final ModelIdentifier templateId;
 
@@ -60,18 +60,19 @@ public class LazyModelDelegate extends LazyForwardingModel implements UnbakedMod
 
 	@Override
 	public BakedModel bake(ModelLoader modelLoader, Function<SpriteIdentifier, Sprite> spriteFunc, ModelBakeSettings bakeProps, Identifier modelId) {
-		if(transformer instanceof RetexturedModelTransformer) {
+		if (transformer instanceof RetexturedModelTransformer) {
 			final UnbakedModel template = modelLoader.getOrLoadModel(templateId);
 
-			if(template instanceof JsonUnbakedModel) {
-				final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel)template;
+			if (template instanceof JsonUnbakedModel) {
+				final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel) template;
 
-				if(((JsonUnbakedModel) template).getRootModel() == ModelLoader.GENERATION_MARKER) {
-					final JsonUnbakedModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer)transformer).textureMap);
+				if (((JsonUnbakedModel) template).getRootModel() == ModelLoader.GENERATION_MARKER) {
+					final JsonUnbakedModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer) transformer).textureMap);
 					return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.create(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps, modelId);
 				}
 			}
 		}
+
 		return this;
 	}
 
