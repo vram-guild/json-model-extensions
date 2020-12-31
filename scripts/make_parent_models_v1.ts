@@ -5,66 +5,68 @@ import {JmxModel, Layers} from "./jmx.ts";
 
 import {existsSync, walkSync, ensureFileSync} from "https://deno.land/std@0.82.0/fs/mod.ts";
 import {assertEquals} from "https://deno.land/std@0.82.0/testing/asserts.ts";
+import {parse} from "https://deno.land/std@0.82.0/flags/mod.ts";
 
 Deno.chdir("../src/main/resources/assets");
 
-//region Validate type definitions using known models
-// {
-//     function check(path: string) {
-//         const json = JSON.parse(Deno.readTextFileSync(path));
-//
-//         try {
-//             Model.check(json);
-//         } catch (e) {
-//             console.log('not valid: ' + path);
-//             console.log(e);
-//             console.log();
-//             return;
-//         }
-//
-//         let layered_textures = undefined;
-//         if (json.jmx && json.jmx.textures && json.jmx.textures.layered_textures) {
-//             layered_textures = json.jmx.textures.layered_textures;
-//             delete json.jmx.textures.layered_textures;
-//         }
-//
-//         try {
-//             JmxModel.check(json);
-//             if (layered_textures) {
-//                 Layers.check(layered_textures);
-//             }
-//         } catch (e) {
-//             console.log('not jmx valid: ' + path);
-//             console.log(e);
-//             console.log();
-//             return;
-//         }
-//
-//         const model = json as JmxModel;
-//
-//         if (layered_textures) {
-//             // @ts-ignore // guaranteed to be present from above
-//             model.jmx.textures.layered_textures = layered_textures;
-//         }
-//     }
-//
-//     function checkAll(entries: IterableIterator<{ isFile: boolean, path: string }>) {
-//         for (const entry of entries) {
-//             if (!entry.isFile) {
-//                 continue;
-//             }
-//
-//             check(entry.path);
-//         }
-//     }
-//
-//     checkAll(walkSync("vanilla_mc/models/block"));
-//     checkAll(walkSync("jmx/models/block/v1"));
-// }
+const args = parse(Deno.args);
+// //region Validate type definitions using known models
+if (args.check) {
+    function check(path: string) {
+        const json = JSON.parse(Deno.readTextFileSync(path));
+
+        try {
+            Model.check(json);
+        } catch (e) {
+            console.log('not valid: ' + path);
+            console.log(e);
+            console.log();
+            return;
+        }
+
+        let layered_textures = undefined;
+        if (json.jmx && json.jmx.textures && json.jmx.textures.layered_textures) {
+            layered_textures = json.jmx.textures.layered_textures;
+            delete json.jmx.textures.layered_textures;
+        }
+
+        try {
+            JmxModel.check(json);
+            if (layered_textures) {
+                Layers.check(layered_textures);
+            }
+        } catch (e) {
+            console.log('not jmx valid: ' + path);
+            console.log(e);
+            console.log();
+            return;
+        }
+
+        const model = json as JmxModel;
+
+        if (layered_textures) {
+            // @ts-ignore // guaranteed to be present from above
+            model.jmx.textures.layered_textures = layered_textures;
+        }
+    }
+
+    function checkAll(entries: IterableIterator<{ isFile: boolean, path: string }>) {
+        for (const entry of entries) {
+            if (!entry.isFile) {
+                continue;
+            }
+
+            check(entry.path);
+        }
+    }
+
+    checkAll(walkSync("vanilla_mc/models/block"));
+    checkAll(walkSync("jmx/models/block/v1"));
+}
 //endregion
 
 //region Create JMX versions of models from args
-{
+if (args.create) {
     type Identifier = {
         namespace: string,
         path: string[],
@@ -335,7 +337,7 @@ Deno.chdir("../src/main/resources/assets");
 //endregion
 
 //region Diff old and new models
-{
+if (args.diff) {
     const dir = Deno.cwd();
 
     Deno.chdir("jmx");
@@ -393,3 +395,15 @@ Deno.chdir("../src/main/resources/assets");
     Deno.chdir(dir);
 }
 //endregion
+
+if (!args.check && !args.create && !args.diff) {
+    console.log(`
+USAGE:
+Requires Deno (https://deno.land)
+
+ARGS:
+--check      checks type definitions against vanilla and JMX models
+--create     creates new parent models based on a variable defined below
+--diff       diffs created models with old models
+`.trim());
+}
