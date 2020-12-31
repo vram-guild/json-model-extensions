@@ -3,11 +3,6 @@
     "textures": {
         "particle": "#stem"
     },
-    "jmx": {
-        "textures": {
-            "particle": "#jmx_tex_particle"
-        }
-    },
     "elements": [
         {
             "from": [
@@ -200,22 +195,22 @@
                     "tintindex": 0,
                     "jmx_layers": [
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         },
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         },
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         }
                     ]
                 },
@@ -230,27 +225,32 @@
                     "tintindex": 0,
                     "jmx_layers": [
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         },
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         },
                         {
-                            "texture": "#jmx_tex_stem",
-                            "material": "#jmx_mat_stem",
-                            "tag": "#jmx_tag_stem",
-                            "color": "#jmx_color_stem"
+                            "texture": "#jmx_tex_upperstem",
+                            "material": "#jmx_mat_upperstem",
+                            "tag": "#jmx_tag_upperstem",
+                            "color": "#jmx_color_upperstem"
                         }
                     ]
                 }
             }
         }
     ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "jmx_version": 1
 }

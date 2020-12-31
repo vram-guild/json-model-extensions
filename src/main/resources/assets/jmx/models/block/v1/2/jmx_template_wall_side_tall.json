@@ -11,7 +11,7 @@
             ],
             "to": [
                 11,
-                14,
+                16,
                 8
             ],
             "faces": {
@@ -35,6 +35,7 @@
                 },
                 "up": {
                     "texture": "#wall",
+                    "cullface": "up",
                     "jmx_layers": [
                         {
                             "texture": "#jmx_tex_wall",
@@ -102,8 +103,7 @@
                         }
                     ]
                 }
-            },
-            "__comment": "wall"
+            }
         }
     ],
     "jmx": {

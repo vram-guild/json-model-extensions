@@ -19,35 +19,35 @@
         },
         "materials": [
             {
-                "jmx_mat_down": "#jmx_mat_top"
+                "jmx_mat_bottom": "#jmx_mat_top"
             },
             {
-                "jmx_mat_down": "#jmx_mat_top"
+                "jmx_mat_bottom": "#jmx_mat_top"
             },
             {
-                "jmx_mat_down": "#jmx_mat_top"
+                "jmx_mat_bottom": "#jmx_mat_top"
             }
         ],
         "tags": [
             {
-                "jmx_tag_down": "#jmx_tag_top"
+                "jmx_tag_bottom": "#jmx_tag_top"
             },
             {
-                "jmx_tag_down": "#jmx_tag_top"
+                "jmx_tag_bottom": "#jmx_tag_top"
             },
             {
-                "jmx_tag_down": "#jmx_tag_top"
+                "jmx_tag_bottom": "#jmx_tag_top"
             }
         ],
         "colors": [
             {
-                "jmx_color_down": "#jmx_color_top"
+                "jmx_color_bottom": "#jmx_color_top"
             },
             {
-                "jmx_color_down": "#jmx_color_top"
+                "jmx_color_bottom": "#jmx_color_top"
             },
             {
-                "jmx_color_down": "#jmx_color_top"
+                "jmx_color_bottom": "#jmx_color_top"
             }
         ]
     },

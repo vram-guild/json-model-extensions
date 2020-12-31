@@ -3,11 +3,6 @@
     "textures": {
         "particle": "#top"
     },
-    "jmx": {
-        "textures": {
-            "particle": "#jmx_tex_particle"
-        }
-    },
     "elements": [
         {
             "from": [
@@ -143,5 +138,10 @@
             }
         }
     ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "jmx_version": 1
 }

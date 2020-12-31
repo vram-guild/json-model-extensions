@@ -40,11 +40,6 @@
     "textures": {
         "particle": "#texture"
     },
-    "jmx": {
-        "textures": {
-            "particle": "#jmx_tex_particle"
-        }
-    },
     "elements": [
         {
             "from": [
@@ -805,5 +800,10 @@
             "__comment": "Lower bar"
         }
     ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "jmx_version": 1
 }

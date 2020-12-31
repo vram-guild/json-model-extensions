@@ -3,11 +3,6 @@
     "textures": {
         "particle": "#texture"
     },
-    "jmx": {
-        "textures": {
-            "particle": "#jmx_tex_particle"
-        }
-    },
     "elements": [
         {
             "__comment": "Left-hand post",
@@ -1292,5 +1287,10 @@
             }
         }
     ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "jmx_version": 1
 }

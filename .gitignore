@@ -44,3 +44,6 @@ discarded textures
 notes.txt
 *.csv
 .mixin.out/audit/mixin_implementation_report.txt
+
+# symlinked vanilla assets
+src/main/resources/assets/vanilla_mc

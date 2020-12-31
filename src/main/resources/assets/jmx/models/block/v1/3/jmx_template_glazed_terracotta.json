@@ -1,5 +1,8 @@
 {
     "parent": "jmx:block/v1/3/jmx_cube",
+    "textures": {
+        "particle": "#pattern"
+    },
     "display": {
         "firstperson_righthand": {
             "rotation": [
@@ -219,5 +222,10 @@
             }
         }
     ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
     "jmx_version": 1
 }

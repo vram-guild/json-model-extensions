@@ -11,7 +11,7 @@
             ],
             "to": [
                 11,
-                14,
+                16,
                 8
             ],
             "faces": {
@@ -30,12 +30,25 @@
                             "material": "#jmx_mat_wall",
                             "tag": "#jmx_tag_wall",
                             "color": "#jmx_color_wall"
+                        },
+                        {
+                            "texture": "#jmx_tex_wall",
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
                 "up": {
                     "texture": "#wall",
+                    "cullface": "up",
                     "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_wall",
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
+                        },
                         {
                             "texture": "#jmx_tex_wall",
                             "material": "#jmx_mat_wall",
@@ -65,12 +78,24 @@
                             "material": "#jmx_mat_wall",
                             "tag": "#jmx_tag_wall",
                             "color": "#jmx_color_wall"
+                        },
+                        {
+                            "texture": "#jmx_tex_wall",
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 },
                 "west": {
                     "texture": "#wall",
                     "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_wall",
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
+                        },
                         {
                             "texture": "#jmx_tex_wall",
                             "material": "#jmx_mat_wall",
@@ -99,11 +124,16 @@
                             "material": "#jmx_mat_wall",
                             "tag": "#jmx_tag_wall",
                             "color": "#jmx_color_wall"
+                        },
+                        {
+                            "texture": "#jmx_tex_wall",
+                            "material": "#jmx_mat_wall",
+                            "tag": "#jmx_tag_wall",
+                            "color": "#jmx_color_wall"
                         }
                     ]
                 }
-            },
-            "__comment": "wall"
+            }
         }
     ],
     "jmx": {
