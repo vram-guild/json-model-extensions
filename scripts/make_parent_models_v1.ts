@@ -169,7 +169,17 @@ if (args.create) {
                                 .map(([key, value]) => {
                                     const toJmx = (s: string, start: string = "") => {
                                         const base = extractBase(s);
-                                        return `${start}jmx_${kind}_${base}`;
+
+                                        if (base === "texture") {
+                                            switch (kind) {
+                                                case "tex": return `${start}jmx_texture`;
+                                                case "mat": return `${start}jmx_material`;
+                                                case "tag": return `${start}jmx_tag`;
+                                                case "color": return `${start}jmx_color`;
+                                            }
+                                        } else {
+                                            return `${start}jmx_${kind}_${base}`;
+                                        }
                                     }
                                     return [toJmx(key), toJmx(value, "#")];
                                 })
