@@ -11,7 +11,6 @@
     },
     "jmx": {
         "textures": {
-            "particle": "#jmx_tex_particle",
             "layered_textures": [
                 {
                     "jmx_tex_down": "#jmx_tex_all",
@@ -37,7 +36,8 @@
                     "jmx_tex_south": "#jmx_tex_all",
                     "jmx_tex_west": "#jmx_tex_all"
                 }
-            ]
+            ],
+            "particle": "#jmx_tex_particle"
         },
         "materials": [
             {
