@@ -401,6 +401,10 @@ if (!args.check && !args.create && !args.diff) {
 USAGE:
 Requires Deno (https://deno.land)
 
+CAUTION:
+This script will remove all files in \`src/main/resources/assets/jmx/models\`.
+Use git to restore any non-v1 models.
+
 ARGS:
 --check      checks type definitions against vanilla and JMX models
 --create     creates new parent models based on a variable defined below
