@@ -57,8 +57,11 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onInit(List<Pair<Predicate<BlockState>, BakedModel>> list, CallbackInfo ci) {
-		final BakedModel defaultModel = list.iterator().next().getRight();
-		isVanilla = ((FabricBakedModel) defaultModel).isVanillaAdapter();
+		for (Pair<Predicate<BlockState>, BakedModel> pair : list) {
+			isVanilla &= ((FabricBakedModel) pair.getRight()).isVanillaAdapter();
+
+			if (!isVanilla) break;
+		}
 	}
 
 	@Override

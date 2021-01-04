@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -46,25 +47,33 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 	@SuppressWarnings("rawtypes")
 	@Shadow private List models;
 	@Shadow private int totalWeight;
-	@Shadow private BakedModel defaultModel;
+
+	private boolean isVanilla = true;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
 		final WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
+		final MutableBoolean isVanilla = new MutableBoolean(true);
+
 		models.forEach(m -> {
 			final ModelEntryAccess me = (ModelEntryAccess) m;
 			final BakedModel template = me.jmx_getModel();
 			final BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel) template).derive(context) : template;
+
+			isVanilla.setValue(isVanilla.booleanValue() && ((FabricBakedModel) ((ModelEntryAccess) m).jmx_getModel()).isVanillaAdapter());
+
 			builder.add(mNew, me.jmx_getWeight());
 		});
+
+		this.isVanilla = isVanilla.booleanValue();
 
 		return builder.getFirst();
 	}
 
 	@Override
 	public boolean isVanillaAdapter() {
-		return ((FabricBakedModel) defaultModel).isVanillaAdapter();
+		return this.isVanilla;
 	}
 
 	@Override
