@@ -47,6 +47,7 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 
@@ -112,12 +113,20 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
 
 		if (lists == null) {
-			lists = safeToQuadLists(mesh, particleSprite);
+			lists = toQuadLists(mesh, particleSprite);
 			quadLists = new WeakReference<>(lists);
 		}
 
 		final List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
 		return result == null ? ImmutableList.of() : result;
+	}
+
+	private static List<BakedQuad>[] toQuadLists(Mesh mesh, Sprite particleSprite) {
+		try {
+			return ModelHelper.toQuadLists(mesh);
+		} catch (final Exception e) {
+			return safeToQuadLists(mesh, particleSprite);
+		}
 	}
 
 	/**
