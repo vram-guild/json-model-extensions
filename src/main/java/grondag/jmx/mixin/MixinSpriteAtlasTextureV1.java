@@ -16,7 +16,7 @@
 
 package grondag.jmx.mixin;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Queue;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,7 +37,7 @@ public class MixinSpriteAtlasTextureV1 {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getTexturePath(Lnet/minecraft/util/Identifier;)Lnet/minecraft/util/Identifier;"),
 		cancellable = true
 	)
-	void blockDummySpriteLoad(Identifier id, ResourceManager resourceManager, ConcurrentLinkedQueue<Sprite.Info> queue, CallbackInfo ci) {
+	void blockDummySpriteLoad(Identifier id, ResourceManager resourceManager, Queue<Sprite.Info> queue, CallbackInfo ci) {
 		if (id == JmxTexturesExtV1.DUMMY_ID) {
 			ci.cancel();
 		}

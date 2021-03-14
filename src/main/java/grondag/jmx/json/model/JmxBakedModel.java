@@ -82,7 +82,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
-		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().method_24153(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().getAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 		final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
 		final QuadEmitter emitter = meshBuilder.getEmitter();
 		final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);

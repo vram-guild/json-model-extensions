@@ -68,12 +68,12 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 
 		this.isVanilla = isVanilla.booleanValue();
 
-		return builder.getFirst();
+		return builder.build();
 	}
 
 	@Override
 	public boolean isVanillaAdapter() {
-		return this.isVanilla;
+		return isVanilla;
 	}
 
 	@Override
@@ -90,6 +90,6 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 
 	@SuppressWarnings("unchecked")
 	private BakedModel getModel(Random random) {
-		return ((ModelEntryAccess) WeightedPicker.getAt(models, Math.abs((int) random.nextLong()) % totalWeight)).jmx_getModel();
+		return ((ModelEntryAccess) WeightedPicker.getAt(models, Math.abs((int) random.nextLong()) % totalWeight).get()).jmx_getModel();
 	}
 }

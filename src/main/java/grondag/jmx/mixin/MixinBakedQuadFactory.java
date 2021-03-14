@@ -27,11 +27,11 @@ import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.AffineTransformation;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.AffineTransformation;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -44,7 +44,7 @@ import grondag.jmx.json.model.BakedQuadFactoryHelper;
 @Mixin(BakedQuadFactory.class)
 public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	@Shadow
-	protected abstract void rotateVertex(Vector3f vector3f_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation_1);
+	protected abstract void rotateVertex(Vec3f vector3f_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation_1);
 
 	@Shadow
 	protected abstract void encodeDirection(int[] data, Direction face);
@@ -54,7 +54,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		final BakedQuadFactoryHelper help = BakedQuadFactoryHelper.get();
 		final net.minecraft.client.render.model.json.ModelRotation modelRotation = element.rotation;
 
-		if (bakeProps.isShaded()) { // NB: yarn name is wrong
+		if (bakeProps.isUvLocked()) {
 			tex = BakedQuadFactory.uvLock(elementFace.textureData, face, bakeProps.getRotation(), modelId);
 		}
 
@@ -110,14 +110,14 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 
 	private void jmx_bakeVertex(int[] data, int vertexIn, Direction face, ModelElementTexture tex, float[] uvs, Sprite sprite, AffineTransformation modelRotation_1, @Nullable net.minecraft.client.render.model.json.ModelRotation modelRotation) {
 		final CubeFace.Corner cubeFace$Corner_1 = CubeFace.getFace(face).getCorner(vertexIn);
-		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
+		final Vec3f pos = new Vec3f(uvs[cubeFace$Corner_1.xSide], uvs[cubeFace$Corner_1.ySide], uvs[cubeFace$Corner_1.zSide]);
 		rotateVertex(pos, modelRotation);
 		((BakedQuadFactory) (Object) this).transformVertex(pos, modelRotation_1);
 		jmx_packVertexData(data, vertexIn, pos, sprite, tex);
 	}
 
 	// NB: name must not conflict with vanilla names - somehow acts as an override if does, even though private
-	private void jmx_packVertexData(int[] vertices, int cornerIndex, Vector3f position, Sprite sprite, ModelElementTexture modelElementTexture) {
+	private void jmx_packVertexData(int[] vertices, int cornerIndex, Vec3f position, Sprite sprite, ModelElementTexture modelElementTexture) {
 		final int i = cornerIndex * 8;
 		vertices[i] = Float.floatToRawIntBits(position.getX());
 		vertices[i + 1] = Float.floatToRawIntBits(position.getY());
@@ -127,7 +127,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		vertices[i + 4 + 1] = Float.floatToRawIntBits(modelElementTexture.getV(cornerIndex));
 	}
 
-	private static float[] jmx_normalizePos(float[] targets, Vector3f vector3f_1, Vector3f vector3f_2) {
+	private static float[] jmx_normalizePos(float[] targets, Vec3f vector3f_1, Vec3f vector3f_2) {
 		targets[CubeFace.DirectionIds.WEST] = vector3f_1.getX() / 16.0F;
 		targets[CubeFace.DirectionIds.DOWN] = vector3f_1.getY() / 16.0F;
 		targets[CubeFace.DirectionIds.NORTH] = vector3f_1.getZ() / 16.0F;
