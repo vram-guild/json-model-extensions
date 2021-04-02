@@ -24,11 +24,12 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.class_6008;
+import net.minecraft.class_6011;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.WeightedBakedModel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.WeightedPicker;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
@@ -39,31 +40,27 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 
 import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
-import grondag.jmx.json.ext.ModelEntryAccess;
 
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
 public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
-	@SuppressWarnings("rawtypes")
-	@Shadow private List models;
+	@Shadow private List<class_6008.class_6010<BakedModel>> models;
 	@Shadow private int totalWeight;
 
 	private boolean isVanilla = true;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
 		final WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
 		final MutableBoolean isVanilla = new MutableBoolean(true);
 
 		models.forEach(m -> {
-			final ModelEntryAccess me = (ModelEntryAccess) m;
-			final BakedModel template = me.jmx_getModel();
+			final BakedModel template = m.method_34983();
 			final BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel) template).derive(context) : template;
 
-			isVanilla.setValue(isVanilla.booleanValue() && ((FabricBakedModel) ((ModelEntryAccess) m).jmx_getModel()).isVanillaAdapter());
+			isVanilla.setValue(isVanilla.booleanValue() && ((FabricBakedModel) template).isVanillaAdapter());
 
-			builder.add(mNew, me.jmx_getWeight());
+			builder.add(mNew, m.method_34979().method_34976());
 		});
 
 		this.isVanilla = isVanilla.booleanValue();
@@ -88,8 +85,7 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 		((FabricBakedModel) model).emitItemQuads(stack, randomSupplier, context);
 	}
 
-	@SuppressWarnings("unchecked")
 	private BakedModel getModel(Random random) {
-		return ((ModelEntryAccess) WeightedPicker.getAt(models, Math.abs((int) random.nextLong()) % totalWeight).get()).jmx_getModel();
+		return class_6011.method_34985(models, Math.abs((int) random.nextLong()) % totalWeight).get().method_34983();
 	}
 }

@@ -11,7 +11,6 @@
 		"MixinMultipartBakedModel",
 		"MixinSpriteAtlasTextureV1",
 		"MixinWeightedBakedModel",
-		"MixinWeightedBakedModelEntry",
 		"MixinModelLoader"
 	],
 	"injectors": {
