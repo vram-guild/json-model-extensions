@@ -24,12 +24,12 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.class_6008;
-import net.minecraft.class_6011;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.WeightedBakedModel;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.Weighted;
+import net.minecraft.util.collection.Weighting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
@@ -44,7 +44,7 @@ import grondag.jmx.impl.TransformableModelContext;
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
 public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
-	@Shadow private List<class_6008.class_6010<BakedModel>> models;
+	@Shadow private List<Weighted.Present<BakedModel>> models;
 	@Shadow private int totalWeight;
 
 	private boolean isVanilla = true;
@@ -55,12 +55,12 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 		final MutableBoolean isVanilla = new MutableBoolean(true);
 
 		models.forEach(m -> {
-			final BakedModel template = m.method_34983();
+			final BakedModel template = m.getData();
 			final BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel) template).derive(context) : template;
 
 			isVanilla.setValue(isVanilla.booleanValue() && ((FabricBakedModel) template).isVanillaAdapter());
 
-			builder.add(mNew, m.method_34979().method_34976());
+			builder.add(mNew, m.getWeight().getValue());
 		});
 
 		this.isVanilla = isVanilla.booleanValue();
@@ -86,6 +86,6 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 	}
 
 	private BakedModel getModel(Random random) {
-		return class_6011.method_34985(models, Math.abs((int) random.nextLong()) % totalWeight).get().method_34983();
+		return Weighting.getAt(models, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
 	}
 }
