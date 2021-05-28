@@ -38,7 +38,7 @@ import grondag.jmx.json.JmxTexturesExt;
 @Environment(EnvType.CLIENT)
 @Mixin(JsonUnbakedModel.Deserializer.class)
 public class MixinJsonUnbakedModelDeserializer {
-	@Inject(at = @At("RETURN"), method = "deserializeTextures")
+	@Inject(at = @At("RETURN"), method = "texturesFromJson")
 	private void onDeserializeTextures(JsonObject jsonObj, CallbackInfoReturnable<Map<String, Either<SpriteIdentifier, String>>> ci) {
 		JmxTexturesExt.handleJmxTextures(jsonObj, ci.getReturnValue());
 	}

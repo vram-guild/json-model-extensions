@@ -27,7 +27,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.util.math.Direction;
 
 import net.fabricmc.api.EnvType;
@@ -36,7 +35,7 @@ import net.fabricmc.api.Environment;
 import grondag.jmx.json.FaceExtData;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ModelElementFace.Deserializer.class)
+@Mixin(targets = "net.minecraft.client.render.model.json.ModelElementFace$Deserializer")
 public class MixinModelElementFaceDeserializer {
 	@Inject(method = "deserialize", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			at = @At(
