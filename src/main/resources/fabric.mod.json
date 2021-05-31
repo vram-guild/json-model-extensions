@@ -25,7 +25,9 @@
 	    "jmx.mixins.json"
   ],
   "custom": {
-    "modmenu:api": true
+    "modmenu": {
+        "badges": [ "library" ]
+    }
   },
   "depends": {
     "fabricloader": ">=0.11.3",
