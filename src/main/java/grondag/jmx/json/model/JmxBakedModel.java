@@ -181,7 +181,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	}
 
 	@Override
-	public Sprite getSprite() {
+	public Sprite getParticleSprite() {
 		return particleSprite;
 	}
 
