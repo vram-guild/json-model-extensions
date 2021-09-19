@@ -16,7 +16,7 @@
 
 package grondag.jmx.impl;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Used in transformed multi-part models to map the new model's block

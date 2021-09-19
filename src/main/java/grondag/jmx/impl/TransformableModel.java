@@ -16,7 +16,7 @@
 
 package grondag.jmx.impl;
 
-import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.resources.model.BakedModel;
 
 public interface TransformableModel {
 	/**

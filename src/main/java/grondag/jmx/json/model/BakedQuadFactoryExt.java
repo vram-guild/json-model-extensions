@@ -16,13 +16,13 @@
 
 package grondag.jmx.json.model;
 
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.json.ModelElement;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -30,5 +30,5 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 
 @Environment(EnvType.CLIENT)
 public interface BakedQuadFactoryExt {
-	void jmx_bake(QuadEmitter q, int spriteIndex, ModelElement element, ModelElementFace elementFace, ModelElementTexture tex, Sprite sprite, Direction face, ModelBakeSettings modelBakeSettings, Identifier modelId);
+	void jmx_bake(QuadEmitter q, int spriteIndex, BlockElement element, BlockElementFace elementFace, BlockFaceUV tex, TextureAtlasSprite sprite, Direction face, ModelState modelBakeSettings, ResourceLocation modelId);
 }

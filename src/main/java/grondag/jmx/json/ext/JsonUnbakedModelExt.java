@@ -20,8 +20,8 @@ import java.util.Map;
 
 import com.mojang.datafixers.util.Either;
 
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -34,9 +34,9 @@ public interface JsonUnbakedModelExt {
 
 	JsonUnbakedModelExt jmx_parent();
 
-	Identifier jmx_parentId();
+	ResourceLocation jmx_parentId();
 
 	void jmx_parent(JsonUnbakedModelExt parent);
 
-	Map<String, Either<SpriteIdentifier, String>> jmx_textureMap();
+	Map<String, Either<Material, String>> jmx_textureMap();
 }

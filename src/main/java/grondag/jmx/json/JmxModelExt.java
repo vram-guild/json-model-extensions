@@ -20,15 +20,15 @@ import java.util.function.Function;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuadFactory;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 
 import grondag.jmx.json.model.BakedQuadFactoryExt;
 import grondag.jmx.json.v0.JmxModelExtV0;
@@ -42,7 +42,7 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 
 	public static void deserialize(JsonObject obj) {
 		final JmxModelExt<?> modelExt;
-		final int version = JsonHelper.getInt(obj, "jmx_version", 0);
+		final int version = GsonHelper.getAsInt(obj, "jmx_version", 0);
 		VERSION.set(version);
 
 		switch (version) {
@@ -73,8 +73,8 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 	 */
 	public abstract boolean selfIsEmpty();
 
-	public abstract BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter);
+	public abstract BakedModel buildModel(ItemOverrides modelOverrideList, boolean hasDepth, TextureAtlasSprite particleSprite, ModelState bakeProps, ResourceLocation modelId, BlockModel me, Function<Material, TextureAtlasSprite> textureGetter);
 
-	protected static final BakedQuadFactory QUADFACTORY = new BakedQuadFactory();
+	protected static final FaceBakery QUADFACTORY = new FaceBakery();
 	protected static final BakedQuadFactoryExt QUADFACTORY_EXT = (BakedQuadFactoryExt) QUADFACTORY;
 }

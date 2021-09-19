@@ -24,51 +24,49 @@ import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.ModelLoader;
-import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
 
 import grondag.jmx.impl.ModelTransformer;
 import grondag.jmx.impl.RetexturedModelTransformer;
 
 public class LazyModelDelegate extends LazyForwardingModel implements UnbakedModel {
 	private final ModelTransformer transformer;
-	private final ModelIdentifier templateId;
+	private final ModelResourceLocation templateId;
 
-	public LazyModelDelegate(ModelIdentifier templateId, ModelTransformer transformer) {
+	public LazyModelDelegate(ModelResourceLocation templateId, ModelTransformer transformer) {
 		this.templateId = templateId;
 		this.transformer = transformer;
 	}
 
 	@Override
-	public Collection<Identifier> getModelDependencies() {
+	public Collection<ResourceLocation> getDependencies() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors) {
-		return transformer.textures().stream().map(id -> new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, id)).collect(Collectors.toList());
+	public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelFunc, Set<Pair<String, String>> errors) {
+		return transformer.textures().stream().map(id -> new Material(TextureAtlas.LOCATION_BLOCKS, id)).collect(Collectors.toList());
 	}
 
 	@Override
-	public BakedModel bake(ModelLoader modelLoader, Function<SpriteIdentifier, Sprite> spriteFunc, ModelBakeSettings bakeProps, Identifier modelId) {
+	public BakedModel bake(ModelBakery modelLoader, Function<Material, TextureAtlasSprite> spriteFunc, ModelState bakeProps, ResourceLocation modelId) {
 		if (transformer instanceof RetexturedModelTransformer) {
-			final UnbakedModel template = modelLoader.getOrLoadModel(templateId);
+			final UnbakedModel template = modelLoader.getModel(templateId);
 
-			if (template instanceof JsonUnbakedModel) {
-				final JsonUnbakedModel jsonTemplate = (JsonUnbakedModel) template;
-
-				if (((JsonUnbakedModel) template).getRootModel() == ModelLoader.GENERATION_MARKER) {
-					final JsonUnbakedModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer) transformer).textureMap);
-					return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.create(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps, modelId);
+			if (template instanceof BlockModel jsonTemplate) {
+				if (((BlockModel) template).getRootModel() == ModelBakery.GENERATION_MARKER) {
+					final BlockModel remapped = JsonUnbakedModelHelper.remap(jsonTemplate, ((RetexturedModelTransformer) transformer).textureMap);
+					return JsonUnbakedModelHelper.ITEM_MODEL_GENERATOR.generateBlockModel(spriteFunc, remapped).bake(modelLoader, spriteFunc, bakeProps, modelId);
 				}
 			}
 		}
@@ -78,6 +76,6 @@ public class LazyModelDelegate extends LazyForwardingModel implements UnbakedMod
 
 	@Override
 	protected BakedModel createWrapped() {
-		return transformer.transform(MinecraftClient.getInstance().getBakedModelManager().getModel(templateId));
+		return transformer.transform(Minecraft.getInstance().getModelManager().getModel(templateId));
 	}
 }

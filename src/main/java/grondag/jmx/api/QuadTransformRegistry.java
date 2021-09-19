@@ -21,11 +21,11 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 
@@ -34,14 +34,14 @@ import grondag.jmx.impl.QuadTransformRegistryImpl;
 public interface QuadTransformRegistry {
 	interface QuadTransformSource {
 		@Nullable
-		RenderContext.QuadTransform getForBlock(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier);
+		RenderContext.QuadTransform getForBlock(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier);
 		@Nullable
 		RenderContext.QuadTransform getForItem(ItemStack stack, Supplier<Random> randomSupplier);
 	}
 
 	QuadTransformRegistry INSTANCE = new QuadTransformRegistryImpl();
 
-	void register(Identifier id, QuadTransformSource quadTransformSource);
+	void register(ResourceLocation id, QuadTransformSource quadTransformSource);
 
-	@Nullable QuadTransformSource getQuadTransform(Identifier id);
+	@Nullable QuadTransformSource getQuadTransform(ResourceLocation id);
 }

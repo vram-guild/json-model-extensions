@@ -25,7 +25,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.JsonHelper;
+import net.minecraft.util.GsonHelper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -82,10 +82,10 @@ public class JmxMaterialV0 {
 
 	public JmxMaterialV0(String id, JsonObject jsonObject) {
 		this.id = id;
-		preset = JsonHelper.getString(jsonObject, "preset", null);
-		tag = JsonHelper.getInt(jsonObject, "tag", 0);
+		preset = GsonHelper.getAsString(jsonObject, "preset", null);
+		tag = GsonHelper.getAsInt(jsonObject, "tag", 0);
 
-		final JsonArray layers = JsonHelper.getArray(jsonObject, "layers", null);
+		final JsonArray layers = GsonHelper.getAsJsonArray(jsonObject, "layers", null);
 
 		if (layers == null) {
 			int depth = -1;
@@ -114,8 +114,8 @@ public class JmxMaterialV0 {
 				entryIndex++;
 			}
 
-			if (JsonHelper.hasPrimitive(jsonObject, "depth") && depth > JsonHelper.getInt(jsonObject, "depth")) {
-				throw new IllegalStateException("Model defines a depth of " + JsonHelper.getInt(jsonObject, "depth") + ", but uses a depth of " + depth + ".");
+			if (GsonHelper.isValidPrimitive(jsonObject, "depth") && depth > GsonHelper.getAsInt(jsonObject, "depth")) {
+				throw new IllegalStateException("Model defines a depth of " + GsonHelper.getAsInt(jsonObject, "depth") + ", but uses a depth of " + depth + ".");
 			}
 
 			if (depth != -1) {
@@ -123,12 +123,12 @@ public class JmxMaterialV0 {
 
 				for (int i = 0; i < depth; i++) {
 					this.layers[i] = new LayerData(
-							asTriState(JsonHelper.getString(jsonObject, "diffuse" + i, null)),
-							asTriState(JsonHelper.getString(jsonObject, "ambient_occlusion" + i, null)),
-							asTriState(JsonHelper.getString(jsonObject, "emissive" + i, null)),
-							asTriState(JsonHelper.getString(jsonObject, "colorIndex" + i, null)),
-							color(JsonHelper.getString(jsonObject, "color" + i, "0xFFFFFFFF")),
-							asLayer(JsonHelper.getString(jsonObject, "layer" + i, null))
+							asTriState(GsonHelper.getAsString(jsonObject, "diffuse" + i, null)),
+							asTriState(GsonHelper.getAsString(jsonObject, "ambient_occlusion" + i, null)),
+							asTriState(GsonHelper.getAsString(jsonObject, "emissive" + i, null)),
+							asTriState(GsonHelper.getAsString(jsonObject, "colorIndex" + i, null)),
+							color(GsonHelper.getAsString(jsonObject, "color" + i, "0xFFFFFFFF")),
+							asLayer(GsonHelper.getAsString(jsonObject, "layer" + i, null))
 							);
 				}
 			} else {
@@ -142,12 +142,12 @@ public class JmxMaterialV0 {
 			for (int i = 0; i < depth; i++) {
 				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
 				this.layers[i] = new LayerData(
-						asTriState(JsonHelper.getString(propertyObj, "diffuse", null)),
-						asTriState(JsonHelper.getString(propertyObj, "ambient_occlusion", null)),
-						asTriState(JsonHelper.getString(propertyObj, "emissive", null)),
-						asTriState(JsonHelper.getString(propertyObj, "colorIndex", null)),
-						color(JsonHelper.getString(propertyObj, "color", "0xFFFFFFFF")),
-						asLayer(JsonHelper.getString(propertyObj, "layer", null))
+						asTriState(GsonHelper.getAsString(propertyObj, "diffuse", null)),
+						asTriState(GsonHelper.getAsString(propertyObj, "ambient_occlusion", null)),
+						asTriState(GsonHelper.getAsString(propertyObj, "emissive", null)),
+						asTriState(GsonHelper.getAsString(propertyObj, "colorIndex", null)),
+						color(GsonHelper.getAsString(propertyObj, "color", "0xFFFFFFFF")),
+						asLayer(GsonHelper.getAsString(propertyObj, "layer", null))
 						);
 			}
 		}

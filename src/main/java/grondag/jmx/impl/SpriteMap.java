@@ -16,15 +16,15 @@
 
 package grondag.jmx.impl;
 
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 
 @FunctionalInterface
 public interface SpriteMap {
-	Identifier mapId(Identifier from);
+	ResourceLocation mapId(ResourceLocation from);
 
-	default Sprite mapSprite(Sprite from, SpriteAtlasTexture atlas) {
-		return atlas.getSprite(mapId(from.getId()));
+	default TextureAtlasSprite mapSprite(TextureAtlasSprite from, TextureAtlas atlas) {
+		return atlas.getSprite(mapId(from.getName()));
 	}
 }

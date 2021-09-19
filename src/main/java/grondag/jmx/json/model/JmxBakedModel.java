@@ -24,20 +24,20 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -63,13 +63,13 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	protected WeakReference<List<BakedQuad>[]> quadLists = null;
 	protected final boolean usesAo;
 	protected final boolean isSideLit;
-	protected final Sprite particleSprite;
-	protected final ModelTransformation transformation;
-	protected final ModelOverrideList itemPropertyOverrides;
+	protected final TextureAtlasSprite particleSprite;
+	protected final ItemTransforms transformation;
+	protected final ItemOverrides itemPropertyOverrides;
 	protected final boolean hasDepth;
 	protected final QuadTransformRegistry.QuadTransformSource quadTransformSource;
 
-	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, Sprite particleSprite, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, QuadTransformRegistry.QuadTransformSource quadTransformSource) {
+	public JmxBakedModel(Mesh mesh, boolean usesAo, boolean isSideLit, TextureAtlasSprite particleSprite, ItemTransforms transformation, ItemOverrides itemPropertyOverrides, boolean hasDepth, QuadTransformRegistry.QuadTransformSource quadTransformSource) {
 		this.mesh = mesh;
 		this.usesAo = usesAo;
 		this.isSideLit = isSideLit;
@@ -82,10 +82,10 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
-		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().getAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+		final TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS);
 		final MeshBuilder meshBuilder = RendererAccess.INSTANCE.getRenderer().meshBuilder();
 		final QuadEmitter emitter = meshBuilder.getEmitter();
-		final Sprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
+		final TextureAtlasSprite newParticleSprite = context.spriteTransform().mapSprite(particleSprite, atlas);
 		final QuadTransform transform = context.quadTransform();
 
 		mesh.forEach(q -> {
@@ -103,7 +103,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		);
 	}
 
-	private ModelOverrideList transformItemProperties(TransformableModelContext context, SpriteAtlasTexture atlas, MeshBuilder meshBuilder) {
+	private ItemOverrides transformItemProperties(TransformableModelContext context, TextureAtlas atlas, MeshBuilder meshBuilder) {
 		//TODO: Implement
 		return itemPropertyOverrides;
 	}
@@ -117,11 +117,11 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			quadLists = new WeakReference<>(lists);
 		}
 
-		final List<BakedQuad> result = lists[face == null ? 6 : face.getId()];
+		final List<BakedQuad> result = lists[face == null ? 6 : face.get3DDataValue()];
 		return result == null ? ImmutableList.of() : result;
 	}
 
-	private static List<BakedQuad>[] toQuadLists(Mesh mesh, Sprite particleSprite) {
+	private static List<BakedQuad>[] toQuadLists(Mesh mesh, TextureAtlasSprite particleSprite) {
 		try {
 			return ModelHelper.toQuadLists(mesh);
 		} catch (final Exception e) {
@@ -135,7 +135,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	 *
 	 * <p>Only difference is we use our particle sprite instead of looking one up.
 	 */
-	private static List<BakedQuad>[] safeToQuadLists(Mesh mesh, Sprite particleSprite) {
+	private static List<BakedQuad>[] safeToQuadLists(Mesh mesh, TextureAtlasSprite particleSprite) {
 		@SuppressWarnings("unchecked")
 		final ImmutableList.Builder<BakedQuad>[] builders = new ImmutableList.Builder[7];
 
@@ -146,7 +146,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 		if (mesh != null) {
 			mesh.forEach(q -> {
 				final Direction face = q.cullFace();
-				builders[face == null ? 6 : face.getId()].add(q.toBakedQuad(0, particleSprite, false));
+				builders[face == null ? 6 : face.get3DDataValue()].add(q.toBakedQuad(0, particleSprite, false));
 			});
 		}
 
@@ -166,32 +166,32 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	}
 
 	@Override
-	public boolean hasDepth() {
+	public boolean isGui3d() {
 		return hasDepth;
 	}
 
 	@Override
-	public boolean isSideLit() {
+	public boolean usesBlockLight() {
 		return isSideLit;
 	}
 
 	@Override
-	public boolean isBuiltin() {
+	public boolean isCustomRenderer() {
 		return false;
 	}
 
 	@Override
-	public Sprite getParticleSprite() {
+	public TextureAtlasSprite getParticleIcon() {
 		return particleSprite;
 	}
 
 	@Override
-	public ModelTransformation getTransformation() {
+	public ItemTransforms getTransforms() {
 		return transformation;
 	}
 
 	@Override
-	public ModelOverrideList getOverrides() {
+	public ItemOverrides getOverrides() {
 		return itemPropertyOverrides;
 	}
 
@@ -201,7 +201,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	}
 
 	@Override
-	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		if (mesh != null) {
 			QuadTransform quadTransform;
 
@@ -248,20 +248,20 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 	public static class Builder {
 		private final MeshBuilder meshBuilder;
 		public final QuadEmitter emitter;
-		private final ModelOverrideList itemPropertyOverrides;
+		private final ItemOverrides itemPropertyOverrides;
 		public final boolean usesAo;
-		private Sprite particleTexture;
+		private TextureAtlasSprite particleTexture;
 		private final boolean isSideLit;
-		private final ModelTransformation transformation;
+		private final ItemTransforms transformation;
 		private final boolean hasDepth;
 		@Nullable
-		private final Identifier quadTransformId;
+		private final ResourceLocation quadTransformId;
 
-		public Builder(JsonUnbakedModel unbakedModel, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
-			this(unbakedModel.useAmbientOcclusion(), unbakedModel.getGuiLight().isSide(), unbakedModel.getTransformations(), itemPropertyOverrides, hasDepth, quadTransformId);
+		public Builder(BlockModel unbakedModel, ItemOverrides itemPropertyOverrides, boolean hasDepth, @Nullable ResourceLocation quadTransformId) {
+			this(unbakedModel.hasAmbientOcclusion(), unbakedModel.getGuiLight().lightLikeBlock(), unbakedModel.getTransforms(), itemPropertyOverrides, hasDepth, quadTransformId);
 		}
 
-		private Builder(boolean usesAo, boolean isSideLit, ModelTransformation transformation, ModelOverrideList itemPropertyOverrides, boolean hasDepth, @Nullable Identifier quadTransformId) {
+		private Builder(boolean usesAo, boolean isSideLit, ItemTransforms transformation, ItemOverrides itemPropertyOverrides, boolean hasDepth, @Nullable ResourceLocation quadTransformId) {
 			meshBuilder = RENDERER.meshBuilder();
 			emitter = meshBuilder.getEmitter();
 			this.itemPropertyOverrides = itemPropertyOverrides;
@@ -272,7 +272,7 @@ public class JmxBakedModel implements BakedModel, FabricBakedModel, Transformabl
 			this.quadTransformId = quadTransformId;
 		}
 
-		public JmxBakedModel.Builder setParticle(Sprite sprite) {
+		public JmxBakedModel.Builder setParticle(TextureAtlasSprite sprite) {
 			particleTexture = sprite;
 			return this;
 		}

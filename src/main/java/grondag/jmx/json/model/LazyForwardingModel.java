@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
@@ -56,7 +56,7 @@ public abstract class LazyForwardingModel implements BakedModel, FabricBakedMode
 	}
 
 	@Override
-	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		((FabricBakedModel) wrapped()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 	}
 
@@ -81,32 +81,32 @@ public abstract class LazyForwardingModel implements BakedModel, FabricBakedMode
 	}
 
 	@Override
-	public boolean hasDepth() {
-		return wrapped().hasDepth();
+	public boolean isGui3d() {
+		return wrapped().isGui3d();
 	}
 
 	@Override
-	public boolean isSideLit() {
-		return wrapped().isSideLit();
+	public boolean usesBlockLight() {
+		return wrapped().usesBlockLight();
 	}
 
 	@Override
-	public boolean isBuiltin() {
-		return wrapped().isBuiltin();
+	public boolean isCustomRenderer() {
+		return wrapped().isCustomRenderer();
 	}
 
 	@Override
-	public Sprite getParticleSprite() {
-		return wrapped().getParticleSprite();
+	public TextureAtlasSprite getParticleIcon() {
+		return wrapped().getParticleIcon();
 	}
 
 	@Override
-	public ModelTransformation getTransformation() {
-		return wrapped().getTransformation();
+	public ItemTransforms getTransforms() {
+		return wrapped().getTransforms();
 	}
 
 	@Override
-	public ModelOverrideList getOverrides() {
+	public ItemOverrides getOverrides() {
 		return wrapped().getOverrides();
 	}
 }

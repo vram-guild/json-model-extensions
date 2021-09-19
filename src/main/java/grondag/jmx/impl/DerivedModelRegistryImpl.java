@@ -21,9 +21,9 @@ import java.util.function.Function;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
 import net.fabricmc.fabric.api.client.model.ModelProviderException;
@@ -64,13 +64,13 @@ public class DerivedModelRegistryImpl implements DerivedModelRegistry, ModelVari
 	}
 
 	@Override
-	public UnbakedModel loadModelVariant(ModelIdentifier modelId, ModelProviderContext context) throws ModelProviderException {
+	public UnbakedModel loadModelVariant(ModelResourceLocation modelId, ModelProviderContext context) throws ModelProviderException {
 		final String fromString = modelId.getNamespace() + ":" + modelId.getPath();
 		final Pair<String, ModelTransformer> match = modelId.getVariant().equals("inventory")
 				? itemModels.get(fromString) : blockModels.get(fromString);
 
 		if (match != null) {
-			final ModelIdentifier templateId = new ModelIdentifier(match.getLeft(), modelId.getVariant());
+			final ModelResourceLocation templateId = new ModelResourceLocation(match.getLeft(), modelId.getVariant());
 			return new LazyModelDelegate(templateId, match.getRight());
 		}
 

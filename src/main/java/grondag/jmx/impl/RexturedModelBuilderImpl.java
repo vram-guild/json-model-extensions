@@ -16,12 +16,12 @@
 
 package grondag.jmx.impl;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import grondag.jmx.api.RetexturedModelBuilder;
 
 public class RexturedModelBuilderImpl implements RetexturedModelBuilder {
-	public static RetexturedModelBuilder builder(Identifier sourceModel, Identifier targetModel) {
+	public static RetexturedModelBuilder builder(ResourceLocation sourceModel, ResourceLocation targetModel) {
 		return new RexturedModelBuilderImpl(sourceModel, targetModel);
 	}
 
@@ -33,12 +33,12 @@ public class RexturedModelBuilderImpl implements RetexturedModelBuilder {
 		}
 	}
 
-	RexturedModelBuilderImpl(Identifier sourceModel, Identifier targetModel) {
+	RexturedModelBuilderImpl(ResourceLocation sourceModel, ResourceLocation targetModel) {
 		builder = RetexturedModelTransformer.builder(sourceModel, targetModel);
 	}
 
 	@Override
-	public RetexturedModelBuilder mapSprite(Identifier from, Identifier to) {
+	public RetexturedModelBuilder mapSprite(ResourceLocation from, ResourceLocation to) {
 		checkNotComplete();
 		builder.mapSprite(from, to);
 		return this;

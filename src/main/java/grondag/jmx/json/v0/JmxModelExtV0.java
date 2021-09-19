@@ -26,19 +26,19 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElement;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
@@ -58,9 +58,9 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 
 	private final Map<String, Object> materialMap;
 	@Nullable
-	private final Identifier quadTransformId;
+	private final ResourceLocation quadTransformId;
 
-	private JmxModelExtV0(Map<String, Object> materialMap, @Nullable Identifier quadTransformId) {
+	private JmxModelExtV0(Map<String, Object> materialMap, @Nullable ResourceLocation quadTransformId) {
 		this.materialMap = materialMap;
 		this.quadTransformId = quadTransformId;
 	}
@@ -86,7 +86,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 	}
 
 	@Nullable
-	private Identifier getQuadTransformId() {
+	private ResourceLocation getQuadTransformId() {
 		return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
 	}
 
@@ -159,11 +159,11 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 			}
 		}
 
-		final String idString = JsonHelper.getString(jsonObj, "quad_transform", null);
-		final Identifier quadTransformId;
+		final String idString = GsonHelper.getAsString(jsonObj, "quad_transform", null);
+		final ResourceLocation quadTransformId;
 
 		if (idString != null) {
-			quadTransformId = Identifier.tryParse(idString);
+			quadTransformId = ResourceLocation.tryParse(idString);
 		} else {
 			quadTransformId = null;
 		}
@@ -172,27 +172,27 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 	}
 
 	@Override
-	public BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter) {
-		final Function<String, Sprite> innerSpriteFunc = s -> textureGetter.apply(me.resolveSprite(s));
+	public BakedModel buildModel(ItemOverrides modelOverrideList, boolean hasDepth, TextureAtlasSprite particleSprite, ModelState bakeProps, ResourceLocation modelId, BlockModel me, Function<Material, TextureAtlasSprite> textureGetter) {
+		final Function<String, TextureAtlasSprite> innerSpriteFunc = s -> textureGetter.apply(me.getMaterial(s));
 
 		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, modelOverrideList, hasDepth, getQuadTransformId()))
 				.setParticle(particleSprite);
 
 		final MaterialFinder finder = RendererAccess.INSTANCE.getRenderer().materialFinder();
 
-		for (final ModelElement element : me.getElements()) {
+		for (final BlockElement element : me.getElements()) {
 			for (final Direction face : element.faces.keySet()) {
-				final ModelElementFace elementFace = element.faces.get(face);
+				final BlockElementFace elementFace = element.faces.get(face);
 				@SuppressWarnings("unchecked")
 				//noinspection unchecked
 				final FaceExtDataV0 extData = ((JmxExtension<FaceExtDataV0>) elementFace).jmx_ext();
 
 				final String extTex = extData.getTex(0);
-				final String tex = extTex == null ? elementFace.textureId : extTex;
+				final String tex = extTex == null ? elementFace.texture : extTex;
 
-				final Sprite sprite = textureGetter.apply(me.resolveSprite(tex));
+				final TextureAtlasSprite sprite = textureGetter.apply(me.getMaterial(tex));
 
-				final Direction cullFace = elementFace.cullFace == null ? null : Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
+				final Direction cullFace = elementFace.cullForDirection == null ? null : Direction.rotate(bakeProps.getRotation().getMatrix(), elementFace.cullForDirection);
 
 				addQuad(bakeProps, modelId, innerSpriteFunc, builder, finder, element, face, elementFace, extData, sprite, cullFace);
 			}
@@ -201,7 +201,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 		return builder.build();
 	}
 
-	private void addQuad(ModelBakeSettings bakeProps, Identifier modelId, Function<String, Sprite> innerSpriteFunc, JmxBakedModel.Builder builder, MaterialFinder finder, ModelElement element, Direction face, ModelElementFace elementFace, FaceExtDataV0 extData, Sprite sprite, Direction cullFace) {
+	private void addQuad(ModelState bakeProps, ResourceLocation modelId, Function<String, TextureAtlasSprite> innerSpriteFunc, JmxBakedModel.Builder builder, MaterialFinder finder, BlockElement element, Direction face, BlockElementFace elementFace, FaceExtDataV0 extData, TextureAtlasSprite sprite, Direction cullFace) {
 		final JmxMaterialV0 jmxMat = resolveMaterial(extData.jmx_material);
 
 		final QuadEmitter emitter = builder.emitter;
@@ -224,7 +224,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 				emitter.tag(jmxMat.tag);
 			}
 
-			final ModelElementTexture texData = extData.getTexData(spriteIndex, elementFace.textureData);
+			final BlockFaceUV texData = extData.getTexData(spriteIndex, elementFace.uv);
 
 			QUADFACTORY_EXT.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
 
@@ -238,23 +238,23 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 	}
 
 	@Nullable
-	private Sprite getSprite(int spriteIndex, FaceExtDataV0 extData, Function<String, Sprite> spriteFunc) {
+	private TextureAtlasSprite getSprite(int spriteIndex, FaceExtDataV0 extData, Function<String, TextureAtlasSprite> spriteFunc) {
 		final String tex = extData.getTex(spriteIndex);
 
 		if (tex == null) {
 			return null;
 		}
 
-		final Sprite sprite = spriteFunc.apply(tex);
+		final TextureAtlasSprite sprite = spriteFunc.apply(tex);
 
-		if (sprite.getId().equals(MissingSprite.getMissingSpriteId())) {
+		if (sprite.getName().equals(MissingTextureAtlasSprite.getLocation())) {
 			return null;
 		}
 
 		return sprite;
 	}
 
-	private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterialV0 jmxMat, ModelElement element, boolean usesAo, int spriteIndex) {
+	private static RenderMaterial loadMaterial(MaterialFinder finder, JmxMaterialV0 jmxMat, BlockElement element, boolean usesAo, int spriteIndex) {
 		finder.clear();
 
 		final TriState diffuse = jmxMat.getDiffuse(spriteIndex);

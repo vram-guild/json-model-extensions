@@ -20,15 +20,15 @@ import java.util.HashMap;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import grondag.jmx.api.QuadTransformRegistry;
 
 public class QuadTransformRegistryImpl implements QuadTransformRegistry {
-	private final HashMap<Identifier, QuadTransformSource> registeredQuadTransforms = new HashMap<>();
+	private final HashMap<ResourceLocation, QuadTransformSource> registeredQuadTransforms = new HashMap<>();
 
 	@Override
-	public void register(Identifier id, QuadTransformSource quadTransformSource) {
+	public void register(ResourceLocation id, QuadTransformSource quadTransformSource) {
 		if (id == null) {
 			throw new IllegalStateException("Cannot register a quad transform with null ID.");
 		}
@@ -42,7 +42,7 @@ public class QuadTransformRegistryImpl implements QuadTransformRegistry {
 
 	@Nullable
 	@Override
-	public QuadTransformSource getQuadTransform(Identifier id) {
+	public QuadTransformSource getQuadTransform(ResourceLocation id) {
 		return registeredQuadTransforms.get(id);
 	}
 }

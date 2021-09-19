@@ -29,11 +29,11 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.util.GsonHelper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -46,14 +46,14 @@ public class FaceExtDataV0 extends FaceExtData {
 		public static final LayerData EMPTY = new LayerData();
 
 		public final String tex;
-		public final ModelElementTexture texData;
+		public final BlockFaceUV texData;
 
 		private LayerData() {
 			tex = null;
 			texData = null;
 		}
 
-		private LayerData(String tex, ModelElementTexture texData) {
+		private LayerData(String tex, BlockFaceUV texData) {
 			this.tex = tex;
 			this.texData = texData;
 		}
@@ -67,9 +67,9 @@ public class FaceExtDataV0 extends FaceExtData {
 	}
 
 	private FaceExtDataV0(JsonObject jsonObj, JsonDeserializationContext context) {
-		jmx_material = JsonHelper.getString(jsonObj, "jmx_material", null);
+		jmx_material = GsonHelper.getAsString(jsonObj, "jmx_material", null);
 
-		final JsonArray layers = JsonHelper.getArray(jsonObj, "layered_textures", null);
+		final JsonArray layers = GsonHelper.getAsJsonArray(jsonObj, "layered_textures", null);
 
 		if (layers == null) {
 			int depth = -1;
@@ -98,8 +98,8 @@ public class FaceExtDataV0 extends FaceExtData {
 				entryIndex++;
 			}
 
-			if (JsonHelper.hasPrimitive(jsonObj, "depth") && depth > JsonHelper.getInt(jsonObj, "depth")) {
-				throw new IllegalStateException("Model defines a depth of " + JsonHelper.getInt(jsonObj, "depth") + ", but uses a depth of " + depth + ".");
+			if (GsonHelper.isValidPrimitive(jsonObj, "depth") && depth > GsonHelper.getAsInt(jsonObj, "depth")) {
+				throw new IllegalStateException("Model defines a depth of " + GsonHelper.getAsInt(jsonObj, "depth") + ", but uses a depth of " + depth + ".");
 			}
 
 			if (depth != -1) {
@@ -107,7 +107,7 @@ public class FaceExtDataV0 extends FaceExtData {
 
 				for (int i = 0; i < depth; i++) {
 					this.layers[i] = new LayerData(
-							JsonHelper.getString(jsonObj, "jmx_tex" + i, null),
+							GsonHelper.getAsString(jsonObj, "jmx_tex" + i, null),
 							deserializeJmxTexData(jsonObj, context, "jmx_uv_rot" + i)
 							);
 				}
@@ -121,7 +121,7 @@ public class FaceExtDataV0 extends FaceExtData {
 
 			for (int i = 0; i < depth; i++) {
 				final JsonObject propertyObj = layers.get(i).getAsJsonObject();
-				@Nullable String tex = JsonHelper.getString(propertyObj, "jmx_tex", null);
+				@Nullable String tex = GsonHelper.getAsString(propertyObj, "jmx_tex", null);
 
 				if (tex != null) {
 					tex += i;
@@ -139,12 +139,12 @@ public class FaceExtDataV0 extends FaceExtData {
 		return new FaceExtDataV0(jsonObj, context);
 	}
 
-	private static @Nullable ModelElementTexture deserializeJmxTexData(JsonObject jsonObj, JsonDeserializationContext context, String tag) {
+	private static @Nullable BlockFaceUV deserializeJmxTexData(JsonObject jsonObj, JsonDeserializationContext context, String tag) {
 		if (jsonObj.has(tag)) {
-			final JsonObject texObj = JsonHelper.getObject(jsonObj, tag);
+			final JsonObject texObj = GsonHelper.getAsJsonObject(jsonObj, tag);
 
 			if (!texObj.isJsonNull()) {
-				return context.deserialize(jsonObj, ModelElementTexture.class);
+				return context.deserialize(jsonObj, BlockFaceUV.class);
 			}
 		}
 
@@ -175,15 +175,15 @@ public class FaceExtDataV0 extends FaceExtData {
 	}
 
 	@Override
-	public void getTextureDependencies(JsonUnbakedModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<SpriteIdentifier>> deps) {
+	public void getTextureDependencies(BlockModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<Material>> deps) {
 		for (int spriteIndex = 0; spriteIndex < getDepth(); spriteIndex++) {
 			final String texStr = getTex(spriteIndex);
 
 			if (texStr != null && !texStr.isEmpty()) {
-				final SpriteIdentifier tex = model.resolveSprite(texStr);
+				final Material tex = model.getMaterial(texStr);
 
-				if (Objects.equals(tex.getTextureId(), MissingSprite.getMissingSpriteId())) {
-					errors.get().add(Pair.of(texStr, model.id));
+				if (Objects.equals(tex.texture(), MissingTextureAtlasSprite.getLocation())) {
+					errors.get().add(Pair.of(texStr, model.name));
 				} else {
 					deps.get().add(tex);
 				}
@@ -209,7 +209,7 @@ public class FaceExtDataV0 extends FaceExtData {
 	}
 
 	@Nullable
-	public ModelElementTexture getTexData(int spriteIndex) {
+	public BlockFaceUV getTexData(int spriteIndex) {
 		if (layers == null || spriteIndex >= layers.length) {
 			return null;
 		}
@@ -217,8 +217,8 @@ public class FaceExtDataV0 extends FaceExtData {
 		return layers[spriteIndex].texData;
 	}
 
-	public ModelElementTexture getTexData(int spriteIndex, ModelElementTexture backup) {
-		final ModelElementTexture texData = getTexData(spriteIndex);
+	public BlockFaceUV getTexData(int spriteIndex, BlockFaceUV backup) {
+		final BlockFaceUV texData = getTexData(spriteIndex);
 		return texData == null ? backup : texData;
 	}
 }

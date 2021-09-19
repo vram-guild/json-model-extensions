@@ -22,10 +22,10 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 
-import net.minecraft.client.render.model.json.ItemModelGenerator;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.ResourceLocation;
 
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
 
@@ -34,31 +34,31 @@ public class JsonUnbakedModelHelper {
 
 	public static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
 
-	public static JsonUnbakedModel remap(JsonUnbakedModel template, ImmutableMap<Identifier, Identifier> textureMap) {
+	public static BlockModel remap(BlockModel template, ImmutableMap<ResourceLocation, ResourceLocation> textureMap) {
 		final JsonUnbakedModelExt ext = (JsonUnbakedModelExt) template;
 
-		return new JsonUnbakedModel(
+		return new BlockModel(
 				ext.jmx_parentId(),
 				template.getElements(),
 				remapTextureMap(ext.jmx_textureMap(), textureMap),
-				template.useAmbientOcclusion(),
+				template.hasAmbientOcclusion(),
 				template.getGuiLight(),
-				template.getTransformations(),
+				template.getTransforms(),
 				template.getOverrides());
 	}
 
-	public static Map<String, Either<SpriteIdentifier, String>> remapTextureMap(Map<String, Either<SpriteIdentifier, String>> mapIn, Map<Identifier, Identifier> textureMap) {
-		final Map<String, Either<SpriteIdentifier, String>> result = new HashMap<>();
+	public static Map<String, Either<Material, String>> remapTextureMap(Map<String, Either<Material, String>> mapIn, Map<ResourceLocation, ResourceLocation> textureMap) {
+		final Map<String, Either<Material, String>> result = new HashMap<>();
 
-		for (final Map.Entry<String, Either<SpriteIdentifier, String>> entry : mapIn.entrySet()) {
+		for (final Map.Entry<String, Either<Material, String>> entry : mapIn.entrySet()) {
 			if (entry.getValue().left().isPresent()) {
-				final SpriteIdentifier oldId = entry.getValue().left().get();
+				final Material oldId = entry.getValue().left().get();
 
 				if (oldId != null) {
-					final Identifier remapId = textureMap.get(oldId.getTextureId());
+					final ResourceLocation remapId = textureMap.get(oldId.texture());
 
 					if (remapId != null) {
-						result.put(entry.getKey(), Either.left(new SpriteIdentifier(oldId.getAtlasId(), remapId)));
+						result.put(entry.getKey(), Either.left(new Material(oldId.atlasLocation(), remapId)));
 						continue;
 					}
 				}

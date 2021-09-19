@@ -18,11 +18,11 @@ package grondag.jmx.impl;
 
 import java.util.Collection;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
 
 public interface ModelTransformer {
-	Collection<Identifier> textures();
+	Collection<ResourceLocation> textures();
 
 	BakedModel transform(BakedModel model);
 }

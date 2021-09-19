@@ -24,14 +24,14 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.WeightedBakedModel;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.Weighted;
-import net.minecraft.util.collection.Weighting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.WeightedBakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandom;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -44,7 +44,7 @@ import grondag.jmx.impl.TransformableModelContext;
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
 public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
-	@Shadow private List<Weighted.Present<BakedModel>> models;
+	@Shadow private List<WeightedEntry.Wrapper<BakedModel>> models;
 	@Shadow private int totalWeight;
 
 	private boolean isVanilla = true;
@@ -60,7 +60,7 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 
 			isVanilla.setValue(isVanilla.booleanValue() && ((FabricBakedModel) template).isVanillaAdapter());
 
-			builder.add(mNew, m.getWeight().getValue());
+			builder.add(mNew, m.getWeight().asInt());
 		});
 
 		this.isVanilla = isVanilla.booleanValue();
@@ -74,7 +74,7 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 	}
 
 	@Override
-	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		final BakedModel model = getModel(randomSupplier.get());
 		((FabricBakedModel) model).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 	}
@@ -86,6 +86,6 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 	}
 
 	private BakedModel getModel(Random random) {
-		return Weighting.getAt(models, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
+		return WeightedRandom.getWeightedItem(models, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
 	}
 }

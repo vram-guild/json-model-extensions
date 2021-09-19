@@ -31,12 +31,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.MultipartBakedModel;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.MultiPartBakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -48,7 +48,7 @@ import grondag.jmx.impl.TransformableModel;
 import grondag.jmx.impl.TransformableModelContext;
 
 @Environment(EnvType.CLIENT)
-@Mixin(MultipartBakedModel.class)
+@Mixin(MultiPartBakedModel.class)
 public abstract class MixinMultipartBakedModel implements FabricBakedModel, TransformableModel {
 	@Shadow protected List<Pair<Predicate<BlockState>, BakedModel>> components;
 	@Shadow protected Map<BlockState, BitSet> stateCache;
@@ -57,7 +57,7 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onInit(List<Pair<Predicate<BlockState>, BakedModel>> list, CallbackInfo ci) {
-		for (Pair<Predicate<BlockState>, BakedModel> pair : list) {
+		for (final Pair<Predicate<BlockState>, BakedModel> pair : list) {
 			isVanilla &= ((FabricBakedModel) pair.getRight()).isVanillaAdapter();
 
 			if (!isVanilla) break;
@@ -76,7 +76,7 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 			newComponents.add(Pair.of(newPredicate, newModel));
 		});
 
-		return new MultipartBakedModel(newComponents);
+		return new MultiPartBakedModel(newComponents);
 	}
 
 	@Override
@@ -85,9 +85,8 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 	}
 
 	@Override
-	public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		if (state == null) {
-			return;
 		} else {
 			BitSet bits = stateCache.get(state);
 

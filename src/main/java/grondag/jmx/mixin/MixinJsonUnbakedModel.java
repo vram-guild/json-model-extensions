@@ -35,17 +35,17 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.ModelLoader;
-import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElement;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -59,20 +59,20 @@ import grondag.jmx.json.ext.JmxExtension;
 import grondag.jmx.json.ext.JsonUnbakedModelExt;
 
 @Environment(EnvType.CLIENT)
-@Mixin(JsonUnbakedModel.class)
+@Mixin(BlockModel.class)
 public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	@Shadow
-	protected abstract ModelOverrideList compileOverrides(ModelLoader modelLoader,
-			JsonUnbakedModel jsonUnbakedModel);
+	protected abstract ItemOverrides compileOverrides(ModelBakery modelLoader,
+			BlockModel jsonUnbakedModel);
 
 	@Shadow
 	public String id;
 
 	@Shadow
-	protected Identifier parentId;
+	protected ResourceLocation parentId;
 
 	@Shadow
-	protected Map<String, Either<SpriteIdentifier, String>> textureMap;
+	protected Map<String, Either<Material, String>> textureMap;
 
 	private JsonUnbakedModelExt jmxParent;
 	private JmxModelExt<?> jmxModelExt;
@@ -88,7 +88,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	}
 
 	@Override
-	public Identifier jmx_parentId() {
+	public ResourceLocation jmx_parentId() {
 		return parentId;
 	}
 
@@ -108,7 +108,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	}
 
 	@Override
-	public Map<String, Either<SpriteIdentifier, String>> jmx_textureMap() {
+	public Map<String, Either<Material, String>> jmx_textureMap() {
 		return textureMap;
 	}
 
@@ -126,7 +126,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	 */
 	@SuppressWarnings("unlikely-arg-type")
 	@Inject(at = @At("RETURN"), method = "getTextureDependencies")
-	private void onGetTextureDependencies(Function<Identifier, UnbakedModel> modelFunc, Set<Pair<String, String>> errors, CallbackInfoReturnable<Collection<SpriteIdentifier>> ci) {
+	private void onGetTextureDependencies(Function<ResourceLocation, UnbakedModel> modelFunc, Set<Pair<String, String>> errors, CallbackInfoReturnable<Collection<Material>> ci) {
 		if (jmxTextureDeps != null) {
 			ci.getReturnValue().addAll(jmxTextureDeps);
 		}
@@ -155,7 +155,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 				parentModel = null;
 			}
 
-			if (parentModel != null && !(parentModel instanceof JsonUnbakedModel)) {
+			if (parentModel != null && !(parentModel instanceof BlockModel)) {
 				throw new IllegalStateException("BlockModel parent has to be a block model.");
 			}
 
@@ -163,10 +163,10 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 	}
 
-	private HashSet<SpriteIdentifier> jmxTextureDeps = null;
+	private HashSet<Material> jmxTextureDeps = null;
 
-	private HashSet<SpriteIdentifier> getOrCreateJmxTextureDeps() {
-		HashSet<SpriteIdentifier> result = jmxTextureDeps;
+	private HashSet<Material> getOrCreateJmxTextureDeps() {
+		HashSet<Material> result = jmxTextureDeps;
 
 		if (result == null) {
 			result = new HashSet<>();
@@ -190,10 +190,10 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 	}
 
 	@ModifyVariable(method = "getTextureDependencies", at = @At(value = "STORE", ordinal = 0), allow = 1, require = 1)
-	private ModelElementFace hookTextureDeps(ModelElementFace face) {
+	private BlockElementFace hookTextureDeps(BlockElementFace face) {
 		@SuppressWarnings("unchecked")
 		final FaceExtData jmxData = ((JmxExtension<FaceExtData>) face).jmx_ext();
-		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
+		final BlockModel me = (BlockModel) (Object) this;
 		jmxData.getTextureDependencies(me, this::getOrCreateJmxTextureErrors, this::getOrCreateJmxTextureDeps);
 
 		return face;
@@ -201,12 +201,12 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 
 	@SuppressWarnings("unchecked")
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", cancellable = true)
-	public void onBake(ModelLoader modelLoader, JsonUnbakedModel unbakedModel, Function<SpriteIdentifier, Sprite> textureGetter,
-			ModelBakeSettings bakeProps, Identifier modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
-		final JsonUnbakedModel me = (JsonUnbakedModel) (Object) this;
+	public void onBake(ModelBakery modelLoader, BlockModel unbakedModel, Function<Material, TextureAtlasSprite> textureGetter,
+			ModelState bakeProps, ResourceLocation modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
+		final BlockModel me = (BlockModel) (Object) this;
 
 		// leave vanilla logic for built-ins
-		if (me.getRootModel() == ModelLoader.BLOCK_ENTITY_MARKER) {
+		if (me.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
 			return;
 		}
 
@@ -214,14 +214,14 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		// and not using JMX for vanilla, then use vanilla builder
 		if (jmxModelExt == null || (!Configurator.loadVanillaModels && DerivedModelRegistryImpl.INSTANCE.isEmpty() && jmxModelExt.hierarchyIsEmpty())) {
 			boolean isVanilla = true;
-			final Iterator<ModelElement> elements = me.getElements().iterator();
+			final Iterator<BlockElement> elements = me.getElements().iterator();
 
 			while (isVanilla && elements.hasNext()) {
-				final ModelElement element = elements.next();
-				final Iterator<ModelElementFace> faces = element.faces.values().iterator();
+				final BlockElement element = elements.next();
+				final Iterator<BlockElementFace> faces = element.faces.values().iterator();
 
 				while (faces.hasNext()) {
-					final ModelElementFace face = faces.next();
+					final BlockElementFace face = faces.next();
 					final FaceExtData faceExt = ((JmxExtension<FaceExtData>) face).jmx_ext();
 
 					if (faceExt != null && !faceExt.isEmpty()) {
@@ -237,7 +237,7 @@ public abstract class MixinJsonUnbakedModel implements JsonUnbakedModelExt {
 		}
 
 		// build and return JMX model
-		final Sprite particleSprite = textureGetter.apply(me.resolveSprite("particle"));
+		final TextureAtlasSprite particleSprite = textureGetter.apply(me.getMaterial("particle"));
 
 		ci.setReturnValue(jmxModelExt.buildModel(
 			compileOverrides(modelLoader, unbakedModel),

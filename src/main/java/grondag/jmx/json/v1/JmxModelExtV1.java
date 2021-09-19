@@ -32,19 +32,19 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.render.model.json.ModelElement;
-import net.minecraft.client.render.model.json.ModelElementFace;
-import net.minecraft.client.render.model.json.ModelElementTexture;
-import net.minecraft.client.render.model.json.ModelOverrideList;
-import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
@@ -62,13 +62,13 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	public static boolean HAS_ERROR = false;
 	private static final boolean FREX_RENDERER = FrexHolder.target().isFrexRendererAvailable();
 
-	public final Map<String, Either<String, Identifier>> materialMap;
+	public final Map<String, Either<String, ResourceLocation>> materialMap;
 	private final Map<String, Either<String, Integer>> colorMap;
 	private final Map<String, Either<String, Integer>> tagMap;
 	@Nullable
-	private final Identifier quadTransformId;
+	private final ResourceLocation quadTransformId;
 
-	private JmxModelExtV1(Map<String, Either<String, Identifier>> materialMap, Map<String, Either<String, Integer>> colorMap, Map<String, Either<String, Integer>> tagMap, @Nullable Identifier quadTransformId) {
+	private JmxModelExtV1(Map<String, Either<String, ResourceLocation>> materialMap, Map<String, Either<String, Integer>> colorMap, Map<String, Either<String, Integer>> tagMap, @Nullable ResourceLocation quadTransformId) {
 		this.materialMap = materialMap;
 		this.colorMap = colorMap;
 		this.tagMap = tagMap;
@@ -86,22 +86,22 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	}
 
 	@Override
-	public BakedModel buildModel(ModelOverrideList modelOverrideList, boolean hasDepth, Sprite particleSprite, ModelBakeSettings bakeProps, Identifier modelId, JsonUnbakedModel me, Function<SpriteIdentifier, Sprite> textureGetter) {
+	public BakedModel buildModel(ItemOverrides modelOverrideList, boolean hasDepth, TextureAtlasSprite particleSprite, ModelState bakeProps, ResourceLocation modelId, BlockModel me, Function<Material, TextureAtlasSprite> textureGetter) {
 		final JmxBakedModel.Builder builder = (new JmxBakedModel.Builder(me, modelOverrideList, hasDepth, getQuadTransformId()))
 				.setParticle(particleSprite);
 
-		for (final ModelElement element : me.getElements()) {
+		for (final BlockElement element : me.getElements()) {
 			for (final Direction face : element.faces.keySet()) {
-				final ModelElementFace elementFace = element.faces.get(face);
+				final BlockElementFace elementFace = element.faces.get(face);
 				final Direction cullFace;
 
-				if (elementFace.cullFace != null) {
-					cullFace = Direction.transform(bakeProps.getRotation().getMatrix(), elementFace.cullFace);
+				if (elementFace.cullForDirection != null) {
+					cullFace = Direction.rotate(bakeProps.getRotation().getMatrix(), elementFace.cullForDirection);
 				} else {
 					cullFace = null;
 				}
 
-				emitFace(builder.emitter, QUADFACTORY_EXT, cullFace, me::resolveSprite, textureGetter, element, elementFace, face, bakeProps, modelId);
+				emitFace(builder.emitter, QUADFACTORY_EXT, cullFace, me::getMaterial, textureGetter, element, elementFace, face, bakeProps, modelId);
 			}
 		}
 
@@ -109,7 +109,7 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	}
 
 	@Nullable
-	private Identifier getQuadTransformId() {
+	private ResourceLocation getQuadTransformId() {
 		if (quadTransformId != null) {
 			return quadTransformId;
 		}
@@ -189,13 +189,13 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 			QuadEmitter emitter,
 			BakedQuadFactoryExt quadFactoryExt,
 			Direction cullFace,
-			Function<String, SpriteIdentifier> resolver,
-			Function<SpriteIdentifier, Sprite> textureGetter,
-			ModelElement element,
-			ModelElementFace elementFace,
+			Function<String, Material> resolver,
+			Function<Material, TextureAtlasSprite> textureGetter,
+			BlockElement element,
+			BlockElementFace elementFace,
 			Direction face,
-			ModelBakeSettings bakeProps,
-			Identifier modelId
+			ModelState bakeProps,
+			ResourceLocation modelId
 	) {
 		@SuppressWarnings("unchecked")
 		final FaceExtDataV1 extData = ObjectUtils.defaultIfNull(((JmxExtension<FaceExtDataV1>) elementFace).jmx_ext(), FaceExtDataV1.EMPTY);
@@ -204,16 +204,16 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 
 		for (int i = 0; i < depth; i++) {
 			final @Nullable FaceExtDataV1.LayerData layer = extData.getLayer(i);
-			final Sprite sprite;
+			final TextureAtlasSprite sprite;
 
 			if (layer != null) {
-				final SpriteIdentifier spriteId = resolver.apply(layer.texture);
+				final Material spriteId = resolver.apply(layer.texture);
 
 				// workaround for having different # of quads in "jmx" and "frex"
 				// reference equals is OK because JmxTexturesExt inserts this same field
 				if (spriteId == JmxTexturesExtV1.DUMMY_SPRITE) {
 					continue;
-				} else if (spriteId.getTextureId() == MissingSprite.getMissingSpriteId()) {
+				} else if (spriteId.texture() == MissingTextureAtlasSprite.getLocation()) {
 					continue;
 				}
 
@@ -223,15 +223,15 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 					continue; // don't add quads with no sprite
 				}
 			} else {
-				sprite = textureGetter.apply(resolver.apply(elementFace.textureId));
+				sprite = textureGetter.apply(resolver.apply(elementFace.texture));
 			}
 
-			final ModelElementTexture texData;
+			final BlockFaceUV texData;
 
 			if (layer == null) {
-				texData = elementFace.textureData;
+				texData = elementFace.uv;
 			} else {
-				texData = ObjectUtils.defaultIfNull(layer.texData, elementFace.textureData);
+				texData = ObjectUtils.defaultIfNull(layer.texData, elementFace.uv);
 			}
 
 			quadFactoryExt.jmx_bake(emitter, 0, element, elementFace, texData, sprite, face, bakeProps, modelId);
@@ -336,15 +336,15 @@ public class JmxModelExtV1 extends JmxModelExt<JmxModelExtV1> {
 	}
 
 	private static JmxModelExtV1 deserializeInner(JsonObject obj) {
-		final Map<String, Either<String, Identifier>> materials = deserializeLayers(obj, "materials", el -> new Identifier(el.getAsString()), RenderMaterial.MATERIAL_STANDARD);
+		final Map<String, Either<String, ResourceLocation>> materials = deserializeLayers(obj, "materials", el -> new ResourceLocation(el.getAsString()), RenderMaterial.MATERIAL_STANDARD);
 		final Map<String, Either<String, Integer>> tags = deserializeLayers(obj, "tags", JsonElement::getAsInt, 0);
 		final Map<String, Either<String, Integer>> colors = deserializeLayers(obj, "colors", JmxModelExtV1::parseColor, 0xFFFFFFFF);
 
-		final String idString = JsonHelper.getString(obj, "quad_transform", null);
-		final Identifier quadTransformId;
+		final String idString = GsonHelper.getAsString(obj, "quad_transform", null);
+		final ResourceLocation quadTransformId;
 
 		if (idString != null) {
-			quadTransformId = Identifier.tryParse(idString);
+			quadTransformId = ResourceLocation.tryParse(idString);
 		} else {
 			quadTransformId = null;
 		}

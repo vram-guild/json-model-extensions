@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.render.model.json.ModelElementFace;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -31,7 +31,7 @@ import grondag.jmx.json.FaceExtData;
 import grondag.jmx.json.ext.JmxExtension;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ModelElementFace.class)
+@Mixin(BlockElementFace.class)
 public class MixinModelElementFace implements JmxExtension<FaceExtData> {
 	private FaceExtData jmx_ext;
 

@@ -131,9 +131,6 @@
 		<module name="CommentsIndentation"/>
 
 		<module name="ArrayTypeStyle"/>
-		<module name="DefaultComesLast">
-			<property name="skipIfLastAndSharedWithCase" value="true"/>
-		</module>
 		<module name="SimplifyBooleanExpression"/>
 		<module name="SimplifyBooleanReturn"/>
 		<module name="StringLiteralEquality"/>

@@ -23,37 +23,37 @@ import java.util.Map.Entry;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext.QuadTransform;
 
 public class RetexturedModelTransformer implements ModelTransformer, TransformableModelContext {
-	public final Identifier targetModel;
-	public final Identifier sourceModel;
+	public final ResourceLocation targetModel;
+	public final ResourceLocation sourceModel;
 
-	public final ImmutableMap<Identifier, Identifier> textureMap;
+	public final ImmutableMap<ResourceLocation, ResourceLocation> textureMap;
 
 	private Object2ObjectOpenHashMap<BlockState, BlockState> inverseStateMap = null;
 
-	private RetexturedModelTransformer(Identifier sourceModel, Identifier targetModel, ImmutableMap<Identifier, Identifier> textureMap) {
+	private RetexturedModelTransformer(ResourceLocation sourceModel, ResourceLocation targetModel, ImmutableMap<ResourceLocation, ResourceLocation> textureMap) {
 		this.sourceModel = sourceModel;
 		this.targetModel = targetModel;
 		this.textureMap = textureMap;
 	}
 
 	@Override
-	public Collection<Identifier> textures() {
+	public Collection<ResourceLocation> textures() {
 		return textureMap.values();
 	}
 
@@ -61,31 +61,31 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 	public BakedModel transform(BakedModel model) {
 		return model instanceof TransformableModel
 			? ((TransformableModel) model).derive(this)
-			: MinecraftClient.getInstance().getBakedModelManager().getMissingModel();
+			: Minecraft.getInstance().getModelManager().getMissingModel();
 	}
 
-	public static Builder builder(Identifier sourceModel, Identifier targetModel) {
+	public static Builder builder(ResourceLocation sourceModel, ResourceLocation targetModel) {
 		return new Builder(sourceModel, targetModel);
 	}
 
 	public static class Builder {
-		private final ImmutableMap.Builder<Identifier, Identifier> builder = ImmutableMap.builder();
+		private final ImmutableMap.Builder<ResourceLocation, ResourceLocation> builder = ImmutableMap.builder();
 
-		final Identifier sourceModel;
-		final Identifier targetModel;
+		final ResourceLocation sourceModel;
+		final ResourceLocation targetModel;
 
-		private Builder(Identifier sourceModel, Identifier targetModel) {
+		private Builder(ResourceLocation sourceModel, ResourceLocation targetModel) {
 			this.sourceModel = sourceModel;
 			this.targetModel = targetModel;
 		}
 
-		public Builder mapSprite(Identifier from, Identifier to) {
+		public Builder mapSprite(ResourceLocation from, ResourceLocation to) {
 			builder.put(from, to);
 			return this;
 		}
 
 		public Builder mapSprite(String from, String to) {
-			builder.put(new Identifier(from), new Identifier(to));
+			builder.put(new ResourceLocation(from), new ResourceLocation(to));
 			return this;
 		}
 
@@ -94,26 +94,26 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 		}
 	}
 
-	private static void remapSprite(MutableQuadView q, Sprite oldSprite, Sprite newSprite, int spriteIndex) {
+	private static void remapSprite(MutableQuadView q, TextureAtlasSprite oldSprite, TextureAtlasSprite newSprite, int spriteIndex) {
 		for (int i = 0; i < 4; i++) {
 			final float u = q.spriteU(i, spriteIndex);
 			final float v = q.spriteV(i, spriteIndex);
 
-			final float uSpan = oldSprite.getMaxU() - oldSprite.getMinU();
-			final float x = (u - oldSprite.getMinU()) / uSpan * 16.0F;
+			final float uSpan = oldSprite.getU1() - oldSprite.getU0();
+			final float x = (u - oldSprite.getU0()) / uSpan * 16.0F;
 
-			final float vSpan = oldSprite.getMaxV() - oldSprite.getMinV();
-			final float y = (v - oldSprite.getMinV()) / vSpan * 16.0F;
+			final float vSpan = oldSprite.getV1() - oldSprite.getV0();
+			final float y = (v - oldSprite.getV0()) / vSpan * 16.0F;
 
-			q.sprite(i, spriteIndex, newSprite.getFrameU(x), newSprite.getFrameV(y));
+			q.sprite(i, spriteIndex, newSprite.getU(x), newSprite.getV(y));
 		}
 	}
 
 	public boolean transform(MutableQuadView quad) {
-		final SpriteAtlasTexture atlas = MinecraftClient.getInstance().getBakedModelManager().getAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+		final TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS);
 		final SpriteFinder sf = SpriteFinder.get(atlas);
-		final Sprite oldSprite = sf.find(quad, 0);
-		final Sprite newSprite = spriteTransform().mapSprite(oldSprite, atlas);
+		final TextureAtlasSprite oldSprite = sf.find(quad, 0);
+		final TextureAtlasSprite newSprite = spriteTransform().mapSprite(oldSprite, atlas);
 		remapSprite(quad, oldSprite, newSprite, 0);
 		return true;
 	}
@@ -124,12 +124,12 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 
 		if (result == null) {
 			final Object2ObjectOpenHashMap<BlockState, BlockState> newMap = new Object2ObjectOpenHashMap<>();
-			final BlockState defaultState = Registry.BLOCK.get(targetModel).getDefaultState();
+			final BlockState defaultState = Registry.BLOCK.get(targetModel).defaultBlockState();
 
-			final StateManager<Block, BlockState> factory = Registry.BLOCK.get(sourceModel).getStateManager();
-			factory.getStates().forEach(s -> {
+			final StateDefinition<Block, BlockState> factory = Registry.BLOCK.get(sourceModel).getStateDefinition();
+			factory.getPossibleStates().forEach(s -> {
 				BlockState targetState = defaultState;
-				final ImmutableMap<Property<?>, Comparable<?>> props = s.getEntries();
+				final ImmutableMap<Property<?>, Comparable<?>> props = s.getValues();
 
 				if (!props.isEmpty()) {
 					final Iterator<Entry<Property<?>, Comparable<?>>> it = props.entrySet().iterator();
@@ -138,7 +138,7 @@ public class RetexturedModelTransformer implements ModelTransformer, Transformab
 						final Entry<Property<?>, Comparable<?>> prop = it.next();
 						final Property p = prop.getKey();
 						final Comparable v = prop.getValue();
-						targetState = targetState.with(p, v);
+						targetState = targetState.setValue(p, v);
 					}
 				}
 

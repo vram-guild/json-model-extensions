@@ -21,13 +21,13 @@ import java.util.Map;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
 
-import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.client.resources.model.Material;
 
 import grondag.jmx.json.v0.JmxTexturesExtV0;
 import grondag.jmx.json.v1.JmxTexturesExtV1;
 
 public abstract class JmxTexturesExt {
-	public static void handleJmxTextures(JsonObject obj, Map<String, Either<SpriteIdentifier, String>> map) {
+	public static void handleJmxTextures(JsonObject obj, Map<String, Either<Material, String>> map) {
 		switch (JmxModelExt.VERSION.get()) {
 			case 0:
 			default:

@@ -23,8 +23,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.client.render.model.json.JsonUnbakedModel;
-import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.Material;
 
 import grondag.jmx.json.v0.FaceExtDataV0;
 import grondag.jmx.json.v1.FaceExtDataV1;
@@ -63,5 +63,5 @@ public abstract class FaceExtData {
 	 */
 	public abstract boolean isEmpty();
 
-	public abstract void getTextureDependencies(JsonUnbakedModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<SpriteIdentifier>> deps);
+	public abstract void getTextureDependencies(BlockModel model, Supplier<HashSet<Pair<String, String>>> errors, Supplier<HashSet<Material>> deps);
 }
