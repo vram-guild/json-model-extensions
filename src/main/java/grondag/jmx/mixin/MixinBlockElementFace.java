@@ -32,7 +32,7 @@ import grondag.jmx.json.ext.JmxExtension;
 
 @Environment(EnvType.CLIENT)
 @Mixin(BlockElementFace.class)
-public class MixinModelElementFace implements JmxExtension<FaceExtData> {
+public class MixinBlockElementFace implements JmxExtension<FaceExtData> {
 	private FaceExtData jmx_ext;
 
 	@Override

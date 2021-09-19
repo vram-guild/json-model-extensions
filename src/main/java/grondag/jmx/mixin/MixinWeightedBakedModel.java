@@ -44,7 +44,7 @@ import grondag.jmx.impl.TransformableModelContext;
 @Environment(EnvType.CLIENT)
 @Mixin(WeightedBakedModel.class)
 public abstract class MixinWeightedBakedModel implements BakedModel, FabricBakedModel, TransformableModel {
-	@Shadow private List<WeightedEntry.Wrapper<BakedModel>> models;
+	@Shadow private List<WeightedEntry.Wrapper<BakedModel>> list;
 	@Shadow private int totalWeight;
 
 	private boolean isVanilla = true;
@@ -54,7 +54,7 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 		final WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
 		final MutableBoolean isVanilla = new MutableBoolean(true);
 
-		models.forEach(m -> {
+		list.forEach(m -> {
 			final BakedModel template = m.getData();
 			final BakedModel mNew = (template instanceof TransformableModel) ? ((TransformableModel) template).derive(context) : template;
 
@@ -86,6 +86,6 @@ public abstract class MixinWeightedBakedModel implements BakedModel, FabricBaked
 	}
 
 	private BakedModel getModel(Random random) {
-		return WeightedRandom.getWeightedItem(models, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
+		return WeightedRandom.getWeightedItem(list, Math.abs((int) random.nextLong()) % totalWeight).get().getData();
 	}
 }

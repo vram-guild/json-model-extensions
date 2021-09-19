@@ -35,13 +35,13 @@ import net.fabricmc.api.Environment;
 import grondag.jmx.json.FaceExtData;
 
 @Environment(EnvType.CLIENT)
-@Mixin(targets = "net.minecraft.client.render.model.json.ModelElementFace$Deserializer")
-public class MixinModelElementFaceDeserializer {
+@Mixin(targets = "net.minecraft.client.renderer.block.model.BlockElementFace$Deserializer")
+public class MixinBlockElementFaceDeserializer {
 	@Inject(method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/render/model/json/ModelElementFace;", allow = 1, require = 1, locals = LocalCapture.CAPTURE_FAILEXCEPTION,
 			at = @At(
 					value = "INVOKE",
 					ordinal = 0,
-					target = "Lnet/minecraft/client/render/model/json/ModelElementFace$Deserializer;deserializeCullFace(Lcom/google/gson/JsonObject;)Lnet/minecraft/util/math/Direction;"))
+					target = "Lnet/minecraft/client/renderer/block/model/BlockElementFace$Deserializer;getCullFacing(Lcom/google/gson/JsonObject;)Lnet/minecraft/core/Direction;"))
 	private void hookDeserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context, CallbackInfoReturnable<Direction> ci, JsonObject jsonObj) {
 		FaceExtData.deserialize(jsonObj, context);
 	}

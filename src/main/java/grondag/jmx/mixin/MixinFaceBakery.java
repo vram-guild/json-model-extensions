@@ -42,12 +42,12 @@ import grondag.jmx.json.model.BakedQuadFactoryHelper;
 
 @Environment(EnvType.CLIENT)
 @Mixin(FaceBakery.class)
-public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
+public abstract class MixinFaceBakery implements BakedQuadFactoryExt {
 	@Shadow
-	protected abstract void rotateVertex(Vector3f vector3f_1, @Nullable net.minecraft.client.renderer.block.model.BlockElementRotation modelRotation_1);
+	protected abstract void applyElementRotation(Vector3f vector3f_1, @Nullable net.minecraft.client.renderer.block.model.BlockElementRotation modelRotation_1);
 
 	@Shadow
-	protected abstract void encodeDirection(int[] data, Direction face);
+	protected abstract void recalculateWinding(int[] data, Direction face);
 
 	@Override
 	public void jmx_bake(QuadEmitter q, int spriteIndex, BlockElement element, BlockElementFace elementFace, BlockFaceUV tex, TextureAtlasSprite sprite, Direction face, ModelState bakeProps, ResourceLocation modelId) {
@@ -78,7 +78,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 		System.arraycopy(uvs, 0, tex.uvs, 0, BakedQuadFactoryHelper.UV_LEN);
 
 		if (modelRotation == null) {
-			encodeDirection(vertexData, nominalFace);
+			recalculateWinding(vertexData, nominalFace);
 		}
 
 		q.nominalFace(nominalFace);
@@ -111,7 +111,7 @@ public abstract class MixinBakedQuadFactory implements BakedQuadFactoryExt {
 	private void jmx_bakeVertex(int[] data, int vertexIn, Direction face, BlockFaceUV tex, float[] uvs, TextureAtlasSprite sprite, Transformation modelRotation_1, @Nullable net.minecraft.client.renderer.block.model.BlockElementRotation modelRotation) {
 		final FaceInfo.VertexInfo cubeFace$Corner_1 = FaceInfo.fromFacing(face).getVertexInfo(vertexIn);
 		final Vector3f pos = new Vector3f(uvs[cubeFace$Corner_1.xFace], uvs[cubeFace$Corner_1.yFace], uvs[cubeFace$Corner_1.zFace]);
-		rotateVertex(pos, modelRotation);
+		applyElementRotation(pos, modelRotation);
 		((FaceBakery) (Object) this).applyModelRotation(pos, modelRotation_1);
 		jmx_packVertexData(data, vertexIn, pos, sprite, tex);
 	}

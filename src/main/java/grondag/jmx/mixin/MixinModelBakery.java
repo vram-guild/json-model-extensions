@@ -31,8 +31,8 @@ import grondag.jmx.JsonModelExtensions;
 import grondag.jmx.json.v1.JmxModelExtV1;
 
 @Mixin(ModelBakery.class)
-public class MixinModelLoader {
-	@Inject(method = "upload", at = @At("TAIL"))
+public class MixinModelBakery {
+	@Inject(method = "uploadTextures", at = @At("TAIL"))
 	void logErrorPresence(TextureManager textureManager, ProfilerFiller profiler, CallbackInfoReturnable<AtlasSet> cir) {
 		if (!Configurator.logResolutionErrors && JmxModelExtV1.HAS_ERROR) {
 			JsonModelExtensions.LOG.warn("One or more errors occurred in JMX model(s). Enable `log-resolution-errors` in config/jmx.properties to display all errors.");

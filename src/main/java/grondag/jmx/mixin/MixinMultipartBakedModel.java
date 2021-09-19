@@ -50,8 +50,8 @@ import grondag.jmx.impl.TransformableModelContext;
 @Environment(EnvType.CLIENT)
 @Mixin(MultiPartBakedModel.class)
 public abstract class MixinMultipartBakedModel implements FabricBakedModel, TransformableModel {
-	@Shadow protected List<Pair<Predicate<BlockState>, BakedModel>> components;
-	@Shadow protected Map<BlockState, BitSet> stateCache;
+	@Shadow protected List<Pair<Predicate<BlockState>, BakedModel>> selectors;
+	@Shadow protected Map<BlockState, BitSet> selectorCache;
 
 	private boolean isVanilla = true;
 
@@ -67,7 +67,7 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 	@Override
 	public BakedModel derive(TransformableModelContext context) {
 		final List<Pair<Predicate<BlockState>, BakedModel>> newComponents = new ArrayList<>();
-		components.forEach(c -> {
+		selectors.forEach(c -> {
 			final BakedModel template = c.getRight();
 			final BakedModel newModel = (template instanceof TransformableModel) ? ((TransformableModel) template).derive(context) : template;
 			final Predicate<BlockState> oldPredicate = c.getLeft();
@@ -88,27 +88,27 @@ public abstract class MixinMultipartBakedModel implements FabricBakedModel, Tran
 	public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
 		if (state == null) {
 		} else {
-			BitSet bits = stateCache.get(state);
+			BitSet bits = selectorCache.get(state);
 
 			if (bits == null) {
 				bits = new BitSet();
 
-				for (int i = 0; i < components.size(); ++i) {
-					final Pair<Predicate<BlockState>, BakedModel> pair = components.get(i);
+				for (int i = 0; i < selectors.size(); ++i) {
+					final Pair<Predicate<BlockState>, BakedModel> pair = selectors.get(i);
 
 					if (pair.getLeft().test(state)) {
 						bits.set(i);
 					}
 				}
 
-				stateCache.put(state, bits);
+				selectorCache.put(state, bits);
 			}
 
 			final int limit = bits.length();
 
 			for (int i = 0; i < limit; ++i) {
 				if (bits.get(i)) {
-					((FabricBakedModel) components.get(i).getRight()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
+					((FabricBakedModel) selectors.get(i).getRight()).emitBlockQuads(blockView, state, pos, randomSupplier, context);
 				}
 			}
 		}

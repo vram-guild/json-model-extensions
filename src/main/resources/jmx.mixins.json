@@ -4,15 +4,15 @@
 	"package": "grondag.jmx.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"client": [
-		"MixinBakedQuadFactory",
-		"MixinJsonUnbakedModel",
-		"MixinJsonUnbakedModelDeserializer",
-		"MixinModelElementFace",
-		"MixinModelElementFaceDeserializer",
+		"MixinBlockElementFace",
+		"MixinBlockElementFaceDeserializer",
+		"MixinBlockModel",
+		"MixinBlockModelDeserializer",
+		"MixinFaceBakery",
+		"MixinModelBakery",
 		"MixinMultipartBakedModel",
-		"MixinSpriteAtlasTextureV1",
-		"MixinWeightedBakedModel",
-		"MixinModelLoader"
+		"MixinTextureAtlas",
+		"MixinWeightedBakedModel"
 	],
 	"injectors": {
 		"defaultRequire": 1

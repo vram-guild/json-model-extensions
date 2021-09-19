@@ -51,7 +51,7 @@ license {
 
 checkstyle {
 	configFile = rootProject.file("checkstyle.xml")
-	toolVersion = "8.31"
+	toolVersion = "9.0"
 }
 
 def eclipseName =  project.mod_name;

@@ -31,10 +31,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import grondag.jmx.json.v1.JmxTexturesExtV1;
 
 @Mixin(TextureAtlas.class)
-public class MixinSpriteAtlasTextureV1 {
+public class MixinTextureAtlas {
 	@Inject(
-		method = "method_18160",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;getTexturePath(Lnet/minecraft/util/Identifier;)Lnet/minecraft/util/Identifier;"),
+		method = "getBasicSpriteInfos",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlas;getResourceLocation(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/resources/ResourceLocation;"),
 		cancellable = true
 	)
 	void blockDummySpriteLoad(ResourceLocation id, ResourceManager resourceManager, Queue<TextureAtlasSprite.Info> queue, CallbackInfo ci) {
