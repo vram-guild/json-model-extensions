@@ -18,14 +18,19 @@ configurations.all {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
-	modApi "net.fabricmc:fabric-loader:${project.loader_version}"
-	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-	modApi ("grondag:frex-${project.mc_tag}:${project.frex_version}.+") {
-		transitive = false
-		changing = true
+	// The first would be sufficient but we want to bring in changes of underlying
+	modImplementation("grondag:frex-${project.mc_tag}:${project.frex_version}.+") { transitive = false; changing = true; }
+	modImplementation("grondag:frex-core-${project.mc_tag}:${project.frex_core_version}.+") { transitive = false; changing = true; }
+	modImplementation("grondag:frex-fabric-${project.mc_tag}:${project.frex_fabric_version}.+") { transitive = false; changing = true; }
+	
+	if (!(gradle.startParameter.taskNames.contains("publish") || gradle.startParameter.taskNames.contains("publishToMavenLocal"))) {
+		// frex jar contains no code but prevents loader from loading older versions
+		include "grondag:frex-${project.mc_tag}:${project.frex_version}.+"
+		include "grondag:frex-core-${project.mc_tag}:${project.frex_core_version}.+"
+		include "grondag:frex-fabric-${project.mc_tag}:${project.frex_fabric_version}.+"
 	}
-	
-	include "grondag:frex-${project.mc_tag}:${project.frex_version}.+"
 }
