@@ -23,10 +23,10 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
 	// The first would be sufficient but we want to bring in changes of underlying
-	modImplementation("grondag:frex-fabric-${project.mc_tag}:${project.frex_version}.+") { transitive = false; changing = true; }
+	modImplementation("io.vram:frex-fabric-${project.mc_tag}:${project.frex_version}.+") { transitive = false; changing = true; }
 	
 	if (!(gradle.startParameter.taskNames.contains("publish") || gradle.startParameter.taskNames.contains("publishToMavenLocal"))) {
 		// frex jar contains no code but prevents loader from loading older versions
-		include "grondag:frex-fabric-${project.mc_tag}:${project.frex_version}.+"
+		include "io.vram:frex-fabric-${project.mc_tag}:${project.frex_version}.+"
 	}
 }
