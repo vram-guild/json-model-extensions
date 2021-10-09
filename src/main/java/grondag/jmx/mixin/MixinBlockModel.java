@@ -60,11 +60,11 @@ import grondag.jmx.impl.DerivedModelRegistryImpl;
 import grondag.jmx.json.FaceExtData;
 import grondag.jmx.json.JmxModelExt;
 import grondag.jmx.json.ext.JmxExtension;
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
+import grondag.jmx.json.ext.JsonBlockModelExt;
 
 @Environment(EnvType.CLIENT)
 @Mixin(BlockModel.class)
-public abstract class MixinBlockModel implements JsonUnbakedModelExt {
+public abstract class MixinBlockModel implements JsonBlockModelExt {
 	@Shadow
 	protected abstract ItemOverrides getItemOverrides(ModelBakery modelBakery, BlockModel blockModel);
 
@@ -77,7 +77,7 @@ public abstract class MixinBlockModel implements JsonUnbakedModelExt {
 	@Shadow
 	protected Map<String, Either<Material, String>> textureMap;
 
-	private JsonUnbakedModelExt jmxParent;
+	private JsonBlockModelExt jmxParent;
 	private JmxModelExt<?> jmxModelExt;
 
 	@Override
@@ -86,7 +86,7 @@ public abstract class MixinBlockModel implements JsonUnbakedModelExt {
 	}
 
 	@Override
-	public JsonUnbakedModelExt jmx_parent() {
+	public JsonBlockModelExt jmx_parent() {
 		return jmxParent;
 	}
 
@@ -97,7 +97,7 @@ public abstract class MixinBlockModel implements JsonUnbakedModelExt {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void jmx_parent(JsonUnbakedModelExt parent) {
+	public void jmx_parent(JsonBlockModelExt parent) {
 		jmxParent = parent;
 
 		if (jmxModelExt != null) {
@@ -140,8 +140,8 @@ public abstract class MixinBlockModel implements JsonUnbakedModelExt {
 
 		// We don't need the collection of material dependencies - this is just to map
 		// parent relationships.
-		final Set<JsonUnbakedModelExt> set = Sets.newLinkedHashSet();
-		for (JsonUnbakedModelExt model = this;
+		final Set<JsonBlockModelExt> set = Sets.newLinkedHashSet();
+		for (JsonBlockModelExt model = this;
 				model.jmx_parentId() != null && model.jmx_parent() == null;
 				model = model.jmx_parent()
 		) {
@@ -162,7 +162,7 @@ public abstract class MixinBlockModel implements JsonUnbakedModelExt {
 				throw new IllegalStateException("BlockModel parent has to be a block model.");
 			}
 
-			model.jmx_parent((JsonUnbakedModelExt) parentModel);
+			model.jmx_parent((JsonBlockModelExt) parentModel);
 		}
 	}
 

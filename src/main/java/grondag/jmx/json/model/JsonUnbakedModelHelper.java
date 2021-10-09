@@ -31,7 +31,7 @@ import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 
-import grondag.jmx.json.ext.JsonUnbakedModelExt;
+import grondag.jmx.json.ext.JsonBlockModelExt;
 
 public class JsonUnbakedModelHelper {
 	private JsonUnbakedModelHelper() { }
@@ -39,7 +39,7 @@ public class JsonUnbakedModelHelper {
 	public static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
 
 	public static BlockModel remap(BlockModel template, ImmutableMap<ResourceLocation, ResourceLocation> textureMap) {
-		final JsonUnbakedModelExt ext = (JsonUnbakedModelExt) template;
+		final JsonBlockModelExt ext = (JsonBlockModelExt) template;
 
 		return new BlockModel(
 				ext.jmx_parentId(),

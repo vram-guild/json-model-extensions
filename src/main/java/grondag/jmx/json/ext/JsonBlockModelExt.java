@@ -33,14 +33,14 @@ import net.fabricmc.api.Environment;
 import grondag.jmx.json.JmxModelExt;
 
 @Environment(EnvType.CLIENT)
-public interface JsonUnbakedModelExt {
+public interface JsonBlockModelExt {
 	JmxModelExt<?> jmx_modelExt();
 
-	JsonUnbakedModelExt jmx_parent();
+	JsonBlockModelExt jmx_parent();
 
 	ResourceLocation jmx_parentId();
 
-	void jmx_parent(JsonUnbakedModelExt parent);
+	void jmx_parent(JsonBlockModelExt parent);
 
 	Map<String, Either<Material, String>> jmx_textureMap();
 }
