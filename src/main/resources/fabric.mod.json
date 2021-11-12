@@ -4,22 +4,21 @@
   "version": "${version}",
 
   "name": "JSON Model Extensions",
-  "description": "JSON Model Extensions for Fabric Rendering",
+  "description": "JSON Model Extensions for Minecraft Rendering",
   "authors": [
     "Grondag", "alex5nader"
   ],
   "contact": {
-    "sources": "https://github.com/grondag/json-model-extensions",
-    "homepage": "https://github.com/grondag/json-model-extensions",
-    "issues": "https://github.com/grondag/json-model-extensions/issues"
+    "sources": "https://github.com/vram-guild/json-model-extensions",
+    "homepage": "https://github.com/vram-guild/json-model-extensions",
+    "issues": "https://github.com/vram-guild/json-model-extensions/issues"
   },
-  "license": "Apache-2.0",
+  "license": "LGPL-3.0",
   "icon": "assets/jmx/jmx_icon.png",
 
   "environment": "client",
   "entrypoints": {
-    "client": [ "grondag.jmx.JsonModelExtensions" ],
-    "frex": [ "grondag.jmx.target.FrexHelper" ]
+    "client": [ "io.vram.jmx.JsonModelExtensions" ]
   },
   "mixins": [
 	    "jmx.mixins.json"

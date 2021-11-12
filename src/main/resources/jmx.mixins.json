@@ -1,7 +1,7 @@
 {
 	"required": true,
 	"minVersion": "0.8",
-	"package": "grondag.jmx.mixin",
+	"package": "io.vram.jmx.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"client": [
 		"MixinBlockElementFace",
@@ -10,9 +10,7 @@
 		"MixinBlockModelDeserializer",
 		"MixinFaceBakery",
 		"MixinModelBakery",
-		"MixinMultipartBakedModel",
-		"MixinTextureAtlas",
-		"MixinWeightedBakedModel"
+		"MixinTextureAtlas"
 	],
 	"injectors": {
 		"defaultRequire": 1
