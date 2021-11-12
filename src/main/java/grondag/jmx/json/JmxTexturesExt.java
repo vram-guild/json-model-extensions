@@ -23,6 +23,7 @@ package grondag.jmx.json;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
+
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.client.resources.model.Material;

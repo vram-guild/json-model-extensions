@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
+
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.client.renderer.block.model.BlockModel;

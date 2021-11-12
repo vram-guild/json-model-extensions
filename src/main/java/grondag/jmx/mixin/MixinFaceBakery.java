@@ -20,11 +20,12 @@
 
 package grondag.jmx.mixin;
 
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.block.model.BlockElement;

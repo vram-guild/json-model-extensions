@@ -37,7 +37,7 @@ public class Configurator {
 	public static boolean logResolutionErrors;
 
 	static {
-		final File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "jmx.properties");
+		final File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "jmx.properties");
 		final Properties properties = new Properties();
 
 		if (configFile.exists()) {
