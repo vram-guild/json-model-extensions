@@ -98,18 +98,20 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 sourceSets {
 	main {
 	        java {
-	            include 'grondag/**/*'
+	        	srcDirs = ['src/main/java']
+	            include '**/*'
 	            exclude '*.DS_Store'
 	        }
 	        resources
 	        {
+	        	srcDirs = ['src/main/resources']
 	        	include '**/*'
 	        	exclude '*.DS_Store'
 	        }
 	    }
     test {
         java {
-            exclude 'grondag/**'
+            exclude 'io.vram/**'
         }
     }
 }
