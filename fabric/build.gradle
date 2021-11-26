@@ -24,15 +24,11 @@ targetCompatibility = JavaVersion.VERSION_16
 
 repositories {
 	mavenLocal()
-    jcenter();
-    maven {
-    	name = "Fabric"
-    	url "https://maven.fabricmc.net/"
-	}
-	maven {
-		name = "vram"
-		url = "https://maven.vram.io"
-	}
+  jcenter();
+  maven {url "https://maven.fabricmc.net/"}
+	maven {url "https://maven.vram.io"}
+	maven {url "https://maven.shedaniel.me/"}
+	maven {url "https://maven.terraformersmc.com/releases/"}
 }
 
 ext.archivesBaseName = project.mod_name + "-fabric-" + project.mc_tag
