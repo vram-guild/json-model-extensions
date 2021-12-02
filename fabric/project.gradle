@@ -1,7 +1,7 @@
 dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modIncludeImplementation("io.vram:frex-fabric-mc117:6.0.192")
+	modIncludeImplementation("io.vram:frex-fabric-mc117:6.0.193")
 }
 
 sourceSets {
