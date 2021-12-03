@@ -1,0 +1,182 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "particle": "#stem"
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                -1,
+                8
+            ],
+            "to": [
+                16,
+                15,
+                8
+            ],
+            "rotation": {
+                "origin": [
+                    8,
+                    8,
+                    8
+                ],
+                "axis": "y",
+                "angle": 45,
+                "rescale": true
+            },
+            "faces": {
+                "north": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#stem",
+                    "tintindex": 0,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        }
+                    ]
+                },
+                "south": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#stem",
+                    "tintindex": 0,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "from": [
+                8,
+                -1,
+                0
+            ],
+            "to": [
+                8,
+                15,
+                16
+            ],
+            "rotation": {
+                "origin": [
+                    8,
+                    8,
+                    8
+                ],
+                "axis": "y",
+                "angle": 45,
+                "rescale": true
+            },
+            "faces": {
+                "west": {
+                    "uv": [
+                        0,
+                        0,
+                        16,
+                        16
+                    ],
+                    "texture": "#stem",
+                    "tintindex": 0,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        }
+                    ]
+                },
+                "east": {
+                    "uv": [
+                        16,
+                        0,
+                        0,
+                        16
+                    ],
+                    "texture": "#stem",
+                    "tintindex": 0,
+                    "jmx_layers": [
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        },
+                        {
+                            "texture": "#jmx_tex_stem",
+                            "material": "#jmx_mat_stem",
+                            "tag": "#jmx_tag_stem",
+                            "color": "#jmx_color_stem"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "jmx": {
+        "textures": {
+            "particle": "#jmx_tex_particle"
+        }
+    },
+    "jmx_version": 1
+}

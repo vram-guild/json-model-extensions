@@ -1,0 +1,25 @@
+dependencies {
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modIncludeImplementation("io.vram:frex-fabric-mc118:6.0.215")
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java']
+			include '**/*'
+			exclude '*.DS_Store'
+		}
+		resources {
+			srcDirs = ['src/main/resources']
+			include '**/*'
+			exclude '*.DS_Store'
+		}
+	}
+	test {
+			java {
+				exclude '**/*'
+			}
+	}
+}

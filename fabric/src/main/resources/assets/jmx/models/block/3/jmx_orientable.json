@@ -1,0 +1,9 @@
+{
+  "parent": "jmx:block/3/jmx_orientable_with_bottom", "textures": { "bottom": "#top" }, "jmx": {
+  "textures": {
+    "layered_textures": [
+      { "jmx_tex_bottom": "#jmx_tex_top" }, { "jmx_tex_bottom": "#jmx_tex_top" }, { "jmx_tex_bottom": "#jmx_tex_top" }
+    ]
+  }, "materials": { "jmx_mat_down": "#jmx_mat_top" }
+}
+}
