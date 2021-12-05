@@ -26,8 +26,9 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+
+import io.vram.frex.api.model.provider.ModelProviderRegistry;
 
 import grondag.jmx.api.JmxInitializer;
 import grondag.jmx.impl.DerivedModelRegistryImpl;
@@ -42,7 +43,7 @@ public class JsonModelExtensions implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ModelLoadingRegistry.INSTANCE.registerVariantProvider(DerivedModelRegistryImpl.INSTANCE);
+		ModelProviderRegistry.registerVariantProvider(DerivedModelRegistryImpl.INSTANCE);
 	}
 
 	public static void initializeEndpointsOnce() {
