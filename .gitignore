@@ -49,3 +49,4 @@ notes.txt
 # symlinked vanilla assets
 src/main/resources/assets/vanilla_mc
 .checkstyle
+.vscode
