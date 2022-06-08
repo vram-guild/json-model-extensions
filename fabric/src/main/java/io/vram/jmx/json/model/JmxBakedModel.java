@@ -22,7 +22,6 @@ package io.vram.jmx.json.model;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +34,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
 import io.vram.frex.api.buffer.QuadEmitter;
@@ -66,7 +66,7 @@ public class JmxBakedModel implements BakedModel, BlockItemModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction face, Random rand) {
+	public List<BakedQuad> getQuads(BlockState state, Direction face, RandomSource rand) {
 		List<BakedQuad>[] lists = quadLists == null ? null : quadLists.get();
 
 		if (lists == null) {
