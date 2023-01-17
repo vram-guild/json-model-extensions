@@ -20,27 +20,24 @@
 
 package io.vram.jmx.mixin;
 
-import java.util.Iterator;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 
-import io.vram.jmx.json.v1.JmxTexturesExtV1;
+import io.vram.jmx.Configurator;
+import io.vram.jmx.JsonModelExtensions;
+import io.vram.jmx.json.v1.JmxModelExtV1;
 
-@Mixin(TextureAtlas.class)
-public class MixinTextureAtlas {
-	@Redirect(
-		method = "getBasicSpriteInfos",
-		at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;"),
-		require = 1
-	)
-	Object blockDummySpriteLoad(Iterator<?> it) {
-		final Object result = it.next();
-		return (ResourceLocation) result == JmxTexturesExtV1.DUMMY_ID ? MissingTextureAtlasSprite.getLocation() : result;
-	}
+@Mixin(ModelManager.class)
+public class MixinModelManager {
+	// @Inject(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/ModelBakery;getBakedTopLevelModels()Ljava/util/Map;"))
+	// void logErrorPresence(ModelManager.ReloadState reloadState, ProfilerFiller profilerFiller, CallbackInfo ci) {
+	// 	if (!Configurator.logResolutionErrors && JmxModelExtV1.HAS_ERROR) {
+	// 		JsonModelExtensions.LOG.warn("One or more errors occurred in JMX model(s). Enable `log-resolution-errors` in config/jmx.properties to display all errors.");
+	// 	}
+	// }
 }

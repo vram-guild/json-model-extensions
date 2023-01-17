@@ -245,7 +245,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 
 		final TextureAtlasSprite sprite = spriteFunc.apply(tex);
 
-		if (sprite.getName().equals(MissingTextureAtlasSprite.getLocation())) {
+		if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) {
 			return null;
 		}
 

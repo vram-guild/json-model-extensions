@@ -20,26 +20,30 @@
 
 package io.vram.jmx.mixin;
 
+import java.util.Optional;
+
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.renderer.texture.AtlasSet;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
+import net.minecraft.resources.ResourceLocation;
 
-import io.vram.jmx.Configurator;
-import io.vram.jmx.JsonModelExtensions;
-import io.vram.jmx.json.v1.JmxModelExtV1;
+import io.vram.jmx.json.v1.JmxTexturesExtV1;
 
-@Mixin(ModelBakery.class)
-public class MixinModelBakery {
-	@Inject(method = "uploadTextures", at = @At("TAIL"))
-	void logErrorPresence(TextureManager textureManager, ProfilerFiller profiler, CallbackInfoReturnable<AtlasSet> cir) {
-		if (!Configurator.logResolutionErrors && JmxModelExtV1.HAS_ERROR) {
-			JsonModelExtensions.LOG.warn("One or more errors occurred in JMX model(s). Enable `log-resolution-errors` in config/jmx.properties to display all errors.");
+@Mixin(SingleFile.class)
+public class MixinSingleFile {
+	@Shadow private ResourceLocation resourceId;
+	@Shadow private Optional<ResourceLocation> spriteId;
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	void blockDummySpriteLoad (ResourceLocation resourceLocation, Optional optional, CallbackInfo ci) {
+		if (resourceId.equals(JmxTexturesExtV1.DUMMY_ID)) {
+			resourceId = MissingTextureAtlasSprite.getLocation();
+			spriteId = Optional.of(MissingTextureAtlasSprite.getLocation());
 		}
 	}
 }

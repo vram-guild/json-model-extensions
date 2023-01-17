@@ -21,11 +21,11 @@
 package io.vram.jmx.mixin;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -63,8 +63,8 @@ public abstract class MixinFaceBakery implements BakedQuadFactoryExt {
 		final float[] uvs = help.uv;
 		System.arraycopy(tex.uvs, 0, uvs, 0, BakedQuadFactoryHelper.UV_LEN);
 
-		final float uCent = sprite.getWidth() / (sprite.getU1() - sprite.getU0());
-		final float vCent = sprite.getHeight() / (sprite.getV1() - sprite.getV0());
+		final float uCent = sprite.contents().width() / (sprite.getU1() - sprite.getU0());
+		final float vCent = sprite.contents().height() / (sprite.getV1() - sprite.getV0());
 		final float uvCent = 4.0F / Math.max(vCent, uCent);
 		final float uAdj = (tex.uvs[0] + tex.uvs[0] + tex.uvs[2] + tex.uvs[2]) / 4.0F;
 		final float vAdj = (tex.uvs[1] + tex.uvs[1] + tex.uvs[3] + tex.uvs[3]) / 4.0F;

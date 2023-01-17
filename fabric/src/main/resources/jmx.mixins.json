@@ -9,8 +9,8 @@
 		"MixinBlockModel",
 		"MixinBlockModelDeserializer",
 		"MixinFaceBakery",
-		"MixinModelBakery",
-		"MixinTextureAtlas"
+		"MixinModelManager",
+		"MixinSingleFile"
 	],
 	"injectors": {
 		"defaultRequire": 1
