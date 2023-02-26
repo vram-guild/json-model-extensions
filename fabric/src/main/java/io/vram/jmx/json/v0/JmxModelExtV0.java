@@ -25,11 +25,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import io.vram.frex.api.buffer.QuadEmitter;
+import io.vram.frex.api.material.MaterialFinder;
+import io.vram.frex.api.material.RenderMaterial;
+import io.vram.frex.api.renderer.Renderer;
+import io.vram.jmx.JsonModelExtensions;
+import io.vram.jmx.json.JmxModelExt;
+import io.vram.jmx.json.ext.JmxExtension;
+import io.vram.jmx.json.model.JmxBakedModel;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
@@ -43,15 +52,6 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-
-import io.vram.frex.api.buffer.QuadEmitter;
-import io.vram.frex.api.material.MaterialFinder;
-import io.vram.frex.api.material.RenderMaterial;
-import io.vram.frex.api.renderer.Renderer;
-import io.vram.jmx.JsonModelExtensions;
-import io.vram.jmx.json.JmxModelExt;
-import io.vram.jmx.json.ext.JmxExtension;
-import io.vram.jmx.json.model.JmxBakedModel;
 
 public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 	private final Map<String, Object> materialMap;
@@ -85,7 +85,7 @@ public class JmxModelExtV0 extends JmxModelExt<JmxModelExtV0> {
 
 	@Nullable
 	private ResourceLocation getQuadTransformId() {
-		return quadTransformId == null && parent != null ? parent.getQuadTransformId() : quadTransformId;
+		return quadTransformId == null && parent != null && parent != this ? parent.getQuadTransformId() : quadTransformId;
 	}
 
 	public JmxMaterialV0 resolveMaterial(String matName) {

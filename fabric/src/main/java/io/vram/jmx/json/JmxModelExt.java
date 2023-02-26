@@ -24,6 +24,9 @@ import java.util.function.Function;
 
 import com.google.gson.JsonObject;
 
+import io.vram.jmx.json.model.BakedQuadFactoryExt;
+import io.vram.jmx.json.v0.JmxModelExtV0;
+import io.vram.jmx.json.v1.JmxModelExtV1;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -33,10 +36,6 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-
-import io.vram.jmx.json.model.BakedQuadFactoryExt;
-import io.vram.jmx.json.v0.JmxModelExtV0;
-import io.vram.jmx.json.v1.JmxModelExtV1;
 
 public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 	public static final ThreadLocal<JmxModelExt<?>> TRANSFER = new ThreadLocal<>();
@@ -69,7 +68,7 @@ public abstract class JmxModelExt<Self extends JmxModelExt<Self>> {
 	 * If a ModelExt is empty, its associated model will be formed by vanilla.
 	 */
 	public boolean hierarchyIsEmpty() {
-		return selfIsEmpty() && (parent == null || parent.hierarchyIsEmpty());
+		return selfIsEmpty() && (parent == null || parent == this || parent.hierarchyIsEmpty());
 	}
 
 	/**
