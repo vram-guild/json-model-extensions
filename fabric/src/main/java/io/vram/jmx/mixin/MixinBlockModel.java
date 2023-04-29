@@ -20,7 +20,6 @@
 
 package io.vram.jmx.mixin;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -155,7 +154,7 @@ public abstract class MixinBlockModel implements JsonBlockModelExt {
 	@SuppressWarnings("unchecked")
 	@Inject(at = @At("HEAD"), method = "bake(Lnet/minecraft/client/resources/model/ModelBaker;Lnet/minecraft/client/renderer/block/model/BlockModel;Ljava/util/function/Function;Lnet/minecraft/client/resources/model/ModelState;Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/resources/model/BakedModel;", cancellable = true)
 	public void onBake(ModelBaker baker, BlockModel unbakedModel, Function<Material, TextureAtlasSprite> textureGetter,
-					   ModelState bakeProps, ResourceLocation modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
+						ModelState bakeProps, ResourceLocation modelId, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
 		final BlockModel me = (BlockModel) (Object) this;
 
 		// leave vanilla logic for built-ins
