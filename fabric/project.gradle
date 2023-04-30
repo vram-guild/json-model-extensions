@@ -1,8 +1,8 @@
 dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("io.vram:frex-fabric:19.4.328")
-	include("io.vram:frex-fabric:19.4.328:fat")
+	modImplementation("io.vram:frex-fabric:19.4.329")
+	include("io.vram:frex-fabric:19.4.329:fat")
 }
 
 sourceSets {
