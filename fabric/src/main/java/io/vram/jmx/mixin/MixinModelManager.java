@@ -21,16 +21,8 @@
 package io.vram.jmx.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.util.profiling.ProfilerFiller;
-
-import io.vram.jmx.Configurator;
-import io.vram.jmx.JsonModelExtensions;
-import io.vram.jmx.json.v1.JmxModelExtV1;
 
 @Mixin(ModelManager.class)
 public class MixinModelManager {
