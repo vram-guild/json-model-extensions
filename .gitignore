@@ -50,3 +50,5 @@ notes.txt
 src/main/resources/assets/vanilla_mc
 .checkstyle
 .vscode
+
+.gradle
