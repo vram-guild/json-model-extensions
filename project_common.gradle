@@ -3,7 +3,7 @@ project.group = 'io.vram'
 ext.author = 'Grondag'
 ext.title = 'JSON Model Extensions'
 ext.mod_name = 'jmx'
-ext.mod_version = '1.22'
+ext.mod_version = '19.2'
 
 ext.github_repository_owner = 'vram-guild'
 ext.github_repository = 'json-model-extensions'
