@@ -12,6 +12,7 @@ bin
 .metadata
 .classpath
 .project
+.gradle
 eclipse
 gruntle
 
@@ -20,6 +21,7 @@ run
 
 
 ##idea
+.idea/
 *.iml
 *.ipr
 *.iws
