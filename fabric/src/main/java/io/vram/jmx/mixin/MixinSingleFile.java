@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 
 import io.vram.jmx.json.v1.JmxTexturesExtV1;
 
@@ -40,7 +41,7 @@ public class MixinSingleFile {
 	@Shadow private Optional<ResourceLocation> spriteId;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	void blockDummySpriteLoad (ResourceLocation resourceLocation, Optional optional, CallbackInfo ci) {
+	void blockDummySpriteLoad (ResourceLocation resourceLocation, Optional<Resource>  optional, CallbackInfo ci) {
 		if (resourceId.equals(JmxTexturesExtV1.DUMMY_ID)) {
 			resourceId = MissingTextureAtlasSprite.getLocation();
 			spriteId = Optional.of(MissingTextureAtlasSprite.getLocation());
