@@ -1,13 +1,8 @@
-ext.minecraft_version = '1.20.2'
-ext.release_version = '1.20.2'
+ext.minecraft_version = '1.20.4'
+ext.release_version = '1.20.4'
 
 base {
 	archivesName = project.mod_name + "-" + project.platform_name
-}
-
-java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -66,6 +61,9 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+	
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {
